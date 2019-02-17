@@ -1,0 +1,83 @@
+@font-face {
+  font-family: 'InterUI';
+  src: url('../../assets/fonts/Inter-Light.woff2') format('woff2'),
+    url('../../assets/fonts/Inter-Light.woff') format('woff');
+  font-weight: 100 300;
+}
+
+@font-face {
+  font-family: 'InterUI';
+  src: url('../../assets/fonts/Inter-Medium.woff2') format('woff2'),
+    url('../../assets/fonts/Inter-Medium.woff') format('woff');
+  font-weight: 400 600;
+}
+
+@font-face {
+  font-family: 'InterUI';
+  src: url('../../assets/fonts/Inter-ExtraBold.woff2') format('woff2'),
+    url('../../assets/fonts/Inter-ExtraBold.woff') format('woff');
+  font-weight: 700 800;
+}
+
+
+:root {
+  --yellow: #fed67d;
+  --forest-green: #013540;
+
+  --light: 300;
+  --medium: 600;
+  --extra-bold: 800;
+}
+
+::selection {
+  background: var(--yellow);
+  color: #fff;
+}
+::-moz-selection {
+  background: var(--yellow);
+  color: #fff;
+}
+
+* {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-font-feature-settings: 'pnum';
+  font-feature-settings: 'pnum';
+  font-variant-numeric: proportional-nums;
+  font-family: InterUI;
+  box-sizing: border-box;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--forest-green);
+  transition: background-color 100000000s;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+a,
+button,
+input,
+select,
+textarea,
+label {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  max-width: 2000px;
+  width: 100%;
+  margin: auto;
+}
