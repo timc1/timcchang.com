@@ -1,6 +1,5 @@
 import React from 'react'
 import { StaticQuery, graphql } from 'gatsby'
-
 import './layout.css'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -17,15 +16,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       `}
       render={data => (
         <>
-          <Header />
           <main>{children}</main>
-          <Footer />{' '}
         </>
       )}
     />
   )
 }
 
-const Header = () => <header>hi</header>
+//const Header = () => <header>hi</header>
 
-const Footer = () => <footer>feet</footer>
+//const Footer = () => <footer>feet</footer>

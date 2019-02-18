@@ -1,0 +1,113 @@
+---
+title: "Animations With React"
+subtitle: "Using IntersectionObserver API to trigger efficient timed animations dependent on a
+user's scroll position"
+keywords: ["IntersectionObserver", "CSS Animation"]
+breadcrumbs: ["Post", "Javascript", "Animations"]
+---
+
+React makes building UIs really fun 😄 I've been experimenting with the new
+[Hooks](https://reactjs.org/docs/hooks-reference.html) feature for some time now
+([hi](https://github.com/timc1)) and recently found a neat way to handle
+animations that depend on user interaction & scrolling.
+
+I've recently create a landing page which has a fixed navigation that shows a
+progress bar for how much content is left to read as well as a highlight for
+each 'active' section.
+
+The full demo is available to play with live
+[here](https://codesandbox.io/s/o599joo75z).
+
+In this post I will attempt to explain and cover how to efficiently create a
+navigation like above.
+
+### What we will cover
+
+1. Setting up the markup
+2. Create a hook to track when an element intersections with the viewport or
+   another element
+3. Use the hook to trigger animations updates to the UI
+
+Let's get started!
+
+### Setting up the markup
+
+We're going to need a few `<sections />` that distinguish the start and end to
+each. We'll give each section a unique color and heading.
+
+We're using [emotion](https://emotion.sh) to style our components.
+
+In demo.js:
+
+```js
+import React from 'react'
+import { styled } from '@emotion/styled'
+import Nav from './nav'
+
+export default function Demo() {
+  const sections = [
+    { id: 'home', header: 'Home' },
+    { id: 'about', header: 'About' },
+    { id: 'products', header: 'Products' },
+    { id: 'pricing', header: 'Pricing' },
+    { id: 'jobs', header: 'Jobs' },
+  ]
+
+  return (
+    <Container>
+      <Nav sections={sections} />
+      <Section ref={bannerRef} data-section-id="banner">
+        <Heading>Banner</Heading>
+      </Section>
+      {sections.map(section => (
+        <Section
+          key={section.id}
+          // data-section-id will be a data attribute we
+          data-section-id={section.id}
+        >
+          <Heading>{section.header}</Heading>
+        </Section>
+      ))}
+    </Container>
+  )
+}
+
+// styles
+const Container = styled.div`
+  section:first-of-type {
+    background: #25283c;
+    color: #fdffdf;
+  }
+  section:nth-of-type(2) {
+    background: #fff6e2;
+    color: #000;
+  }
+  section:nth-of-type(3) {
+    background: #200623;
+    color: #fff;
+  }
+  section:nth-of-type(4) {
+    background: #ffda83;
+    color: #042996;
+  }
+  section:nth-of-type(5) {
+    background: #00674a;
+    color: #fff;
+  }
+  section:nth-of-type(6) {
+    background: #fff;
+    color: #000;
+  }
+`
+
+const Section = styled.section`
+  height: 100vh;
+  display: grid;
+  place-items: center;
+`
+
+const Heading = styled.h1`
+  margin: 0;
+  font-size: 3rem;
+`
+```

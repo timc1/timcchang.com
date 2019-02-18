@@ -1,4 +1,11 @@
 @font-face {
+  font-family: 'PXGrotesk';
+  src: url('../../assets/fonts/Px-Grotesk-Bold.woff2') format('woff2'),
+    url('../../assets/fonts/Px-Grotesk-Bold.woff') format('woff');
+  font-weight: 100 800;
+}
+
+@font-face {
   font-family: 'InterUI';
   src: url('../../assets/fonts/Inter-Light.woff2') format('woff2'),
     url('../../assets/fonts/Inter-Light.woff') format('woff');
@@ -14,27 +21,52 @@
 
 @font-face {
   font-family: 'InterUI';
-  src: url('../../assets/fonts/Inter-ExtraBold.woff2') format('woff2'),
-    url('../../assets/fonts/Inter-ExtraBold.woff') format('woff');
-  font-weight: 700 800;
+  src: url('../../assets/fonts/Inter-Bold.woff2') format('woff2'),
+    url('../../assets/fonts/Inter-Bold.woff') format('woff');
+  font-weight: 700;
 }
 
+@font-face {
+  font-family: 'InterUI';
+  src: url('../../assets/fonts/Inter-ExtraBold.woff2') format('woff2'),
+    url('../../assets/fonts/Inter-ExtraBold.woff') format('woff');
+  font-weight: 800;
+}
 
 :root {
-  --yellow: #fed67d;
+  --base-gap: 10px;
+
+  --cubic: cubic-bezier(0.19, 1, 0.22, 1);
+
+  --yellow: #fffbda;
+  --blue: #354eff;
   --forest-green: #013540;
+  --color-black: #000;
+  --color-dark: rgba(15, 13, 32, 0.99);
+  --color-dark-0: #292e31;
+  --color-dark-1: #4c555a;
+  --color-dark-2: #939da3;
 
   --light: 300;
   --medium: 600;
+  --bold: 700;
   --extra-bold: 800;
+
+  --font-x-large: 3.5rem;
+  --font-medium: 1.5rem;
+  --font-small: 1rem;
+  --font-x-small: 0.85rem;
+
+  --ss-font: InterUI;
+  --ss-font2: PXGrotesk;
 }
 
 ::selection {
-  background: var(--yellow);
+  background: var(--blue);
   color: #fff;
 }
 ::-moz-selection {
-  background: var(--yellow);
+  background: var(--blue);
   color: #fff;
 }
 
