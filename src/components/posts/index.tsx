@@ -51,17 +51,18 @@ export default function PostIndex() {
         const posts = data.allMdx.edges
         return (
           <Ul>
-            {posts.map((post: PostType) => (
+            {posts.map((post: PostType, index: number) => (
               <li key={post.node.id}>
                 <PostLink to={post.node.fields.slug}>
                   <Categories>
+                    <li>{index + 1 < 10 ? `0${index + 1}` : index + 1}.</li>
                     {post.node.frontmatter.breadcrumbs.map((bc: string) => (
                       <li key={bc}>{bc}</li>
                     ))}
                   </Categories>
                   <Title>{post.node.frontmatter.title}</Title>
                   <Preview>{post.node.excerpt}</Preview>
-                  <ReadMore to="/">Read more</ReadMore>
+                  <ReadMore>Read more</ReadMore>
                 </PostLink>
               </li>
             ))}

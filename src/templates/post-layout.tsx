@@ -27,7 +27,6 @@ import Img from 'gatsby-image'
 
 // @ts-ignore
 export default function PageTemplate({ data: { mdx } }) {
-  console.log(mdx)
   return (
     <Container>
       <Header>
@@ -48,8 +47,8 @@ export default function PageTemplate({ data: { mdx } }) {
           css={css`
             position: absolute !important;
             top: 0;
-            left: 0;
-            right: 0;
+            left: calc(var(--base-gap) * -1);
+            right: calc(var(--base-gap) * -1);
             bottom: 0;
           `}
         />
@@ -87,21 +86,14 @@ export const pageQuery = graphql`
 `
 
 const Container = styled.div`
-  max-width: 1300px;
-  margin: auto;
+  --padding: 12%;
   padding: var(--base-gap);
 `
 
-const Header = styled.div`
-  padding: 10% 0;
-`
-
-const Content = styled.div`
-  position: relative;
-  max-width: 750px;
+const Header = styled.section`
+  max-width: 1300px;
   margin: auto;
-  padding: 100px 0;
-  font-size: var(--font-small);
+  padding: var(--padding) 0 calc(var(--padding) / 2) 0;
 `
 
 const Title = styled.h1`
@@ -126,11 +118,13 @@ const Breadcrumbs = styled.ul`
   padding: 0;
   list-style: none;
   display: flex;
-  font-size: var(--font-small);
+  font-size: var(--font-x-small);
   font-weight: var(--regular);
+  text-transform: uppercase;
 
   > li {
     color: var(--color-dark-0);
+    font-family: var(--ss-font2);
   }
   > li:first-of-type {
     font-weight: var(--bold);
@@ -145,15 +139,16 @@ const Breadcrumbs = styled.ul`
   }
 `
 
-const BannerImageContainer = styled.div`
+const BannerImageContainer = styled.section`
   position: relative;
   padding-top: 40%;
+`
 
-  > img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
+const Content = styled.section`
+  position: relative;
+  max-width: 700px;
+  margin: auto;
+  padding: calc(var(--padding) / 2) 0;
+  font-size: var(--font-small);
+  color: var(--color-dark-0);
 `

@@ -2,6 +2,14 @@ const { createFilePath } = require('gatsby-source-filesystem')
 const componentWithMDXScope = require('gatsby-mdx/component-with-mdx-scope')
 const path = require('path')
 
+exports.onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    resolve: {
+      modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    },
+  })
+}
+
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
 

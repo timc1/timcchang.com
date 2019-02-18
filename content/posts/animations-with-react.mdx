@@ -7,6 +7,13 @@ breadcrumbs: ["Post", "Javascript", "Animations"]
 image: "../images/displacement_image.jpg"
 ---
 
+import Image from 'components/shared/img'
+import video1 from 'assets/videos/animations-with-react-1.gif'
+import video2 from 'assets/videos/animations-with-react-2.gif'
+import video3 from 'assets/videos/animations-with-react-3.gif'
+import video4 from 'assets/videos/animations-with-react-4.gif'
+import video5 from 'assets/videos/animations-with-react-5.gif'
+
 React makes building UIs really fun 😄 I've been experimenting with the new
 [Hooks](https://reactjs.org/docs/hooks-reference.html) feature for some time now
 ([hi](https://github.com/timc1)) and recently found a neat way to handle
@@ -112,3 +119,590 @@ const Heading = styled.h1`
   font-size: 3rem;
 `
 ```
+
+Next, lets create our sticky navigation in a separate file, `nav.js`:
+
+```js
+import React from 'react'
+import styled from '@emotion/styled'
+
+export default function Nav() {
+  return (
+    <Aside>
+      <Items>
+        {sections.map(section => (
+          <Item key={section.id}>
+            <NavLink to="#">{section.header}</NavLink>
+          </Item>
+        ))}
+        <li className="scaler" aria-hidden="true" />
+      </Items>
+    </Aside>
+  )
+}
+
+// styles
+const Aside = styled.aside`
+  position: sticky;
+  top: 50%;
+  opacity: 1;
+  transition: opacity 0.25s ease-out;
+  mix-blend-mode: difference;
+  padding-left: 25px;
+`
+
+const Items = styled.ul`
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+  margin: 0 0 0 25px;
+  padding: 0 0 0 25px;
+  list-style: none;
+  display: grid;
+  grid-gap: 20px;
+
+  &::before {
+    content: '';
+    background: rgba(212, 212, 212, 0.4);
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    width: 1px;
+  }
+
+  .scaler {
+    background: #fff;
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    width: 1px;
+    transform-origin: 0 0;
+    transform: scaleY(0);
+    transition: transform 0.25s ease-out;
+  }
+`
+
+const Item = styled.li``
+
+const NavLink = styled.a`
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 15px;
+  font-size: 12px;
+  font-family: sans-serif;
+  text-transform: uppercase;
+`
+```
+
+With these styles, we should see this now:
+
+<Image src={video1} alt="" />
+
+### Using IntersectionObserver to track when elements intersect with the viewport or another element
+
+Usually when we want to track elements' positions on the screen, we need to do
+something like
+
+```js
+window.addEventListener('scroll', handleScroll)
+
+const handleScroll = () => {
+  elements.forEach(element => {
+    const position = element.getBoundingClientRect()
+    if (elementIsInViewport) {
+      // animate in
+    }
+  })
+}
+```
+
+Quickly we'll notice that we're firing off hundreds of events per second, making
+calculations to check if the element is in view, on the main thread. Though
+that'll work, it is inefficient, hard to maintain, and also will make your
+computer go 🔥🥵.
+
+IntersectionObserver is an implementation that provides a way to "asynchronously
+observe changes in the intersection of a target element with an ancestor element
+or with a top-level document's viewport."
+([reference](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)).
+What this means for us is a very efficient way to track a user's current
+position on the screen, without us to have to set up individual listeners. We
+provide a callback and a few options to the API, and it will call our callback
+only when the element has entered or left the boundary we provide.
+
+This boundary defaults to the document viewport, but can be other elements as we
+will see later.
+
+Here's a basic implementation of the API:
+
+```js
+const options = {
+  rootMargin: '0px',
+  root: null, // null defaults to the document viewport
+  threshold: 1.0, // trigger when 100% of the target is visible within the element defined by root
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // do something
+    }
+  }, options)
+})
+
+observer.observe(document.getElementById('my-element-that-needs-tracking'))
+```
+
+Now turning this into a React Hook is super simple:
+
+```js
+import { useEffect } from 'react'
+
+// We pass refs to the observer so we can access
+// the actual reference to the dom node we are targeting
+export default function useIntersectionObserver({
+  refs,
+  callback,
+  options = {
+    rootMargin: '0px',
+    root: null,
+    threshold: [0.9, 1],
+  },
+}) {
+  // Setup our api here
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        callback({
+          isIntersecting: entry.isIntersecting,
+          target: entry.target,
+          observer,
+        })
+      })
+    }, options)
+
+    refs.forEach(ref => {
+      observer.observe(ref.current)
+    })
+
+    // Cleanup when the component unmnounts
+    return () => observer.disconnect()
+  }, [])
+}
+```
+
+What's happening here is we're creating a reusable component that sets up and
+cleans up a new observer without us actually having to instantiate a new
+IntersectionObserver every time we want to use one.
+
+We pass an object parameter with three properties, `refs`, `options`, and
+`callback`.
+
+`refs` is an array of refs that we'll use to reference actual DOM nodes,
+`options` is an object of
+[options](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Creating_an_intersection_observer)
+that we pass along to the observer, and `callback` is the callback we want to
+trigger when our observer intersects with something. Our callback will be called
+with an `isIntersecting` boolean property, the `target` element that was
+intersected, as well as the `observer` itself. This way, we create an
+[inversion of control](https://en.wikipedia.org/wiki/Inversion_of_control) to
+allow the user of our hook to disconnect the observer (observer.disconnect())
+whenever they see fit!
+
+\*A `ref` is a method of accessing a DOM node within a render function
+([docs](https://reactjs.org/docs/refs-and-the-dom.html)). Our
+IntersectionObserver hook is going to take these refs and asynchronously track
+the position of the DOM nodes that they reference.
+
+Okay, let's integrate this hook into our demo.
+
+### Toggling the sticky menu's visibility
+
+As we see in the demo, the sticky menu only appears when the top banner is out
+of view.
+
+To do this, we need to:
+
+1. Create a ref to pass to the `<Banner />` component
+2. Use our useIntersectionObserver hook with the banner ref
+3. Use React's built in `useReducer` hook to manage our state
+4. In our useIntersectionObserver hook's callback, dispatch an action to change
+   the `isNavShowing` state of our `<Nav />` to `false` when the banner is in
+   view, and vice versa when the `<Banner />` is not.
+5. Pass the `isNavShowing` state down to our `<Nav />`
+
+In demo.js:
+
+```js
+// ...
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SHOW_NAV':
+      return {
+        ...state,
+        isNavShowing: true,
+      }
+    case 'HIDE_NAV': {
+      return {
+        ...state,
+        isNavShowing: false,
+      }
+    }
+    default:
+      return state
+  }
+}
+
+const initialState = {
+  isNavShowing: false,
+}
+
+// ...
+
+export default function Demo() {
+  // ...
+
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  // An IntersectionObserver hook for showing the <Nav /> when
+  // the <Banner /> leaves the view.
+  useIntersectionObserver({
+    refs: [bannerRef],
+    callback: ({ isIntersecting }) => {
+      if (isIntersecting) {
+        dispatch({ type: 'HIDE_NAV' })
+      } else {
+        dispatch({ type: 'SHOW_NAV' })
+      }
+    },
+    options: {
+      // a threshold of 0 will trigger our IntersectionObserver at the
+      // base of the element – a threshold of 1 would trigger at the top.
+      threshold: [0],
+    },
+  })
+
+  return (
+    <Container>
+      <Nav sections={sections} isShowing={state.isNavShowing} />
+      // ...
+    </Container>
+  )
+}
+```
+
+In nav.js, we'll need to take the `isShowing` prop and toggle a few styles
+depending on its value:
+
+```js
+// ...
+
+const Aside = styled.aside`
+  position: sticky;
+  top: 50%;
+  opacity: ${props => (props.isShowing ? 1 : 0)};
+  transition: opacity 0.25s ease-out;
+  mix-blend-mode: difference;
+  padding-left: 25px;
+`
+
+// ...
+```
+
+Now, we'll see our `<Nav />` hide and showing like so:
+
+<Image src={video3} src="" />
+
+### Keeping track of the currently focused section
+
+As we scroll past each individual section, we want to have the sticky navbar
+update the color of the current section that we're on, like so:
+
+<Image src={video2} alt="" />
+
+In order to create this, just like with the `<Banner />` earlier, we need to
+create `refs` to pass along to each `section`. They will be the reference for
+our IntersectionObserver to keep track of.:
+
+In our demo.js file:
+
+```js
+import React, { useReducer, useRef } from 'react'
+
+// These refs will be passed to their respective <section /> components in order for us to keep
+// a reference of the DOM elements and their position.
+const navRef = useRef(null)
+const bannerRef = useRef(null)
+const homeRef = useRef(null)
+const aboutRef = useRef(null)
+const productsRef = useRef(null)
+const pricingRef = useRef(null)
+const jobsRef = useRef(null)
+
+// We'll update our sections array to include each section's ref
+const sections = [
+  { id: 'home', header: 'Home', ref: homeRef },
+  { id: 'about', header: 'About', ref: aboutRef },
+  { id: 'products', header: 'Products', ref: productsRef },
+  { id: 'pricing', header: 'Pricing', ref: pricingRef },
+  { id: 'jobs', header: 'Jobs', ref: jobsRef },
+]
+
+// ...
+
+// An IntersectionObserver hook for updating which navigation
+// list item is currently in focus, based on which DOM element
+// is currently in the viewport.
+let currentSection, previousSection
+useIntersectionObserver({
+  refs: [homeRef, aboutRef, productsRef, pricingRef, jobsRef],
+  callback: ({ isIntersecting, target }) => {
+    const sectionData = target.getAttribute('data-section-id')
+    if (isIntersecting) {
+      dispatch({
+        type: 'TOGGLE_SECTION',
+        payload: {
+          sectionId: sectionData,
+        },
+      })
+
+      previousSection = currentSection
+      currentSection = sectionData
+    } else {
+      if (currentSection === sectionData && previousSection) {
+        currentSection = previousSection
+
+        dispatch({
+          type: 'TOGGLE_SECTION',
+          payload: {
+            sectionId: previousSection,
+          },
+        })
+      }
+    }
+  },
+  options: {
+    // *** Notice we pass navRef.current to the IntersectionObserver API options
+    //     which effectively sets our <Nav /> component as the root of intersection.
+    //     The refs passed to IntersectionObserver will trigger when they intersect
+    //     with this root.
+    root: navRef.current,
+    threshold: [0.5],
+  },
+})
+
+return (
+  <Container>
+    <Nav sections={sections} ref={navRef} />
+    <Section>
+      <Heading>Banner</Heading>
+    </Section>
+    {sections.map(section => (
+      <Section key={section.id} data-section-id={section.id} ref={section.ref}>
+        <Heading>{section.header}</Heading>
+      </Section>
+    ))}
+  </Container>
+)
+
+// ...
+```
+
+In our nav.js file, we need to take the `navRef` and
+[forward the ref](https://reactjs.org/docs/forwarding-refs.html) to
+`<Nav ref={navRef} />`
+
+```js
+// ...
+
+export default React.forwardRef(function Nav(
+  { sections, beginningContent, endContent, isShowing, currentSection },
+  ref
+) {
+  // ...
+
+  return (
+    <Aside ref={ref} isShowing={isShowing}>
+      // ...
+    </Aside>
+  )
+})
+```
+
+Let's look at the hook logic we have –
+
+When the IntersectionObserver triggers, it'll call our callback function which
+will in turn:
+
+1. Check which element was intersected and save it in a variable `sectionData`.
+   This is done through using javascript's
+   Element.getAttribute('data-section-id'), which we explicitly passed to each
+   `<Section />`
+2. If it is intersecting (entering), we'll dispatch an update to the reducer we
+   created earlier, passing in the `currentSection`
+3. If it is _not_ intersecting, we'll do a check to see if the user actually
+   scrolled to the previous section, and dispatch an update to update the
+   `currentSection` back to the `previousSection`.
+
+There's definitely a better way to do this, send me a message if you think of
+one!
+
+Let's update our reducer function and add a new case
+
+```js
+// ...
+
+  case "TOGGLE_SECTION":
+    return {
+      ...state,
+      currentlyFocusedSection: action.payload.sectionId
+    };
+
+// ...
+```
+
+and pass the state to our state down to our nav.
+
+```js
+// ...
+<Nav currentSection={state.currentlyFocusedSection} />
+// ...
+```
+
+In our nav.js file, we'll update the styles to reflect the `currentSection`:
+
+```js
+// ...
+return (
+  // ...
+  <Item key={section.id} isActive={section.id === currentSection}>
+    <NavLink to="#" tabIndex={isShowing ? 0 : -1}>
+      {section.header}
+    </NavLink>
+  </Item>
+  // ...
+)
+
+// ...
+
+const Item = styled.li`
+  > a {
+    color: ${props => (props.isActive ? '#fff' : 'rgba(78, 78, 78, 0.5)')};
+  }
+`
+```
+
+We're almost done! Here's how things should be looking:
+
+<Image src={video4} alt="" />
+
+### Animating a scaling progress bar
+
+The last thing we need to do is animate the progress bar on the sticky nav.
+
+To do this, we will not be using the IntersectionObserver hook, but just a
+`scroll` event listener.
+
+The basic idea is:
+
+1. Calculate the `totalHeight` between the top of the element that we want to
+   begin the scrolling and the bottom of the end of the element that we want to
+   end the scrolling.
+2. Create a `scrollEvent` that calculates how much content is left to scroll and
+   set the style `<li className="scaler" />`
+3. Trigger a `scroll` event when the `<Nav />` is showing
+4. Remove the `scroll` event when the `<Nav />` is hidden
+
+In order to calculate the `totalHeight`, we need to know which elements are the
+start and end of the scrolling content.
+
+To do this, let's pass our `homeRef` and `jobsRef` from demo.js down to our
+`<Nav />`:
+
+```js
+<Nav
+  ref={navRef}
+  sections={sections}
+  beginningContent={homeRef}
+  endContent={jobsRef}
+  isShowing={state.isNavShowing}
+  currentSection={state.currentlyFocusedSection}
+/>
+```
+
+and in our nav.js file:
+
+```js
+export default React.forwardRef(function Nav(
+  { sections, beginningContent, endContent, isShowing, currentSection },
+  ref
+) {
+ // ...
+}
+
+// ...
+```
+
+We're almost done!
+
+Create a `scalerRef` in our `<Nav />` component and pass it to our
+`<li className="scaler" />` in order to reference it (because we're going to be
+manipulating its `style` property dynamically.
+
+Then, we'll add an effect which triggers only on mount, unmount, and each time
+`<Nav />`'s `isShowing` prop changes:
+
+```js
+// ...
+const scalerRef = useRef(null)
+useEffect(
+  () => {
+    const {
+      top: topOfBeginning,
+      bottom: bottomOfTop,
+    } = beginningContent.current.getBoundingClientRect()
+    const { bottom: bottomOfEnd } = endContent.current.getBoundingClientRect()
+
+    // We will be using totalHeight to calculate how much content is left to scroll
+    const totalHeight = bottomOfEnd - topOfBeginning
+
+    // Setup our scroll event
+    const scrollEvent = () => {
+      if (topOfBeginning <= window.scrollY) {
+        const percentage = (window.scrollY / totalHeight).toFixed(2)
+        scalerRef.current.style.transform = `scaleY(${percentage})`
+      } else {
+        scalerRef.current.style.transform = `scaleY(0)`
+      }
+    }
+
+    if (isShowing) {
+      window.addEventListener('scroll', scrollEvent)
+    } else {
+      window.removeEventListener('scroll', scrollEvent)
+      // Reset scroller to 0
+      scalerRef.current.style.transform = `scaleY(0)`
+    }
+
+    // Cleanup before unmount
+    return () => window.removeEventListener('scroll', scrollEvent)
+  },
+  [isShowing]
+)
+
+return (
+  // ...
+)
+```
+
+And there we have it!
+
+<Image src={video5} alt="" />
+
+Wrapping our heads around Hooks and this way of building React apps may be
+confusing at first, but after working with Hooks for a bit, you'll realize how
+powerful they can be to building awesome UIs.
+
+Shoot me an email if you need any help ☺️
