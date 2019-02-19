@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "commonjs",
     "target": "es5",
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
     "sourceMap": true,
     "allowJs": false,
-    "jsx": "preserve",
+    "jsx": "react",
     "moduleResolution": "node",
+    "rootDir": "src",
+    "baseUrl": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "strict": true,
@@ -15,12 +17,8 @@
     "noUnusedLocals": true,
     "declaration": true,
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true
+    "experimentalDecorators": true
   },
-  "exclude": ["node_modules", "build", "scripts"],
-  "include": ["src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build", "scripts"]
 }

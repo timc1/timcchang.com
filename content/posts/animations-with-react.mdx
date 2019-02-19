@@ -206,15 +206,27 @@ Usually when we want to track elements' positions on the screen, we need to do
 something like
 
 ```js
-window.addEventListener('scroll', handleScroll)
+let isAnimating = false
+requestAnimationFrame(aniamte)
+
+const animate = () => {
+  handleScroll()
+  requestAnimationFrame(animate)
+}
 
 const handleScroll = () => {
-  elements.forEach(element => {
-    const position = element.getBoundingClientRect()
-    if (elementIsInViewport) {
-      // animate in
-    }
-  })
+  if (!isAnimating) {
+    isAnimating = true
+
+    elements.forEach(element => {
+      const position = element.getBoundingClientRect()
+      if (elementIsInViewport) {
+        // animate in
+      }
+    })
+
+    isAnimating = false
+  }
 }
 ```
 
@@ -604,7 +616,7 @@ We're almost done! Here's how things should be looking:
 The last thing we need to do is animate the progress bar on the sticky nav.
 
 To do this, we will not be using the IntersectionObserver hook, but just a
-`scroll` event listener.
+requestAnimationFrame loop.
 
 The basic idea is:
 
@@ -657,45 +669,43 @@ Then, we'll add an effect which triggers only on mount, unmount, and each time
 
 ```js
 // ...
-const scalerRef = useRef(null)
-useEffect(
-  () => {
-    const {
-      top: topOfBeginning,
-      bottom: bottomOfTop,
-    } = beginningContent.current.getBoundingClientRect()
-    const { bottom: bottomOfEnd } = endContent.current.getBoundingClientRect()
+useEffect(() => {
+  const {
+    top: topOfBeginning,
+    bottom: bottomOfTop,
+  } = beginningContent.current.getBoundingClientRect()
+  const { bottom: bottomOfEnd } = endContent.current.getBoundingClientRect()
 
-    // We will be using totalHeight to calculate how much content is left to scroll
-    const totalHeight = bottomOfEnd - topOfBeginning
+  // We will be using totalHeight to calculate how much content is left to scroll
+  const totalHeight = bottomOfEnd - topOfBeginning
+  // Use animationId to cancel animation on unmount
+  let animationId
 
-    // Setup our scroll event
-    const scrollEvent = () => {
-      if (topOfBeginning <= window.scrollY) {
-        const percentage = (window.scrollY / totalHeight).toFixed(2)
-        scalerRef.current.style.transform = `scaleY(${percentage})`
-      } else {
-        scalerRef.current.style.transform = `scaleY(0)`
-      }
-    }
-
-    if (isShowing) {
-      window.addEventListener('scroll', scrollEvent)
+  const calculateScroll = () => {
+    if (topOfBeginning <= window.scrollY) {
+      const percentage = (window.scrollY / totalHeight).toFixed(2)
+      scalerRef.current.style.transform = `scaleY(${percentage})`
     } else {
-      window.removeEventListener('scroll', scrollEvent)
-      // Reset scroller to 0
       scalerRef.current.style.transform = `scaleY(0)`
     }
+  }
 
-    // Cleanup before unmount
-    return () => window.removeEventListener('scroll', scrollEvent)
-  },
-  [isShowing]
-)
+  const animate = () => {
+    calculateScroll()
+    animationId = requestAnimationFrame(animate)
+  }
 
-return (
-  // ...
-)
+  if (isShowing) {
+    animate()
+  } else {
+    cancelAnimationFrame(animationId)
+    // Reset scroller to 0
+    scalerRef.current.style.transform = `scaleY(0)`
+  }
+
+  // Cleanup before unmount
+  return () => cancelAnimationFrame(animationId)
+}, [isShowing])
 ```
 
 And there we have it!

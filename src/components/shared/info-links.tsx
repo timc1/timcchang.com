@@ -12,7 +12,7 @@ export default function InfoLinks() {
         <BasicLink to="/">Resume</BasicLink>
       </li>
       <li>
-        <BasicLink to="/">Process</BasicLink>
+        <BasicLink to="/process/">Process</BasicLink>
       </li>
     </ListItems>
   )
