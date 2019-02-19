@@ -1,10 +1,12 @@
 import React from 'react'
-import { graphql } from 'gatsby'
+import { graphql, Link } from 'gatsby'
 // @ts-ignore
 import MDXRenderer from 'gatsby-mdx/mdx-renderer'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
 import Img from 'gatsby-image'
+import { Categories } from '../components/posts/index'
+import { mq } from '../components/shared/global-styles'
 
 // FIXME: Typescript seeming to not work with gastby-node when building pages.
 //type PageTemplateType = {
@@ -26,7 +28,14 @@ import Img from 'gatsby-image'
 //}
 
 // @ts-ignore
-export default function PageTemplate({ data: { mdx } }) {
+export default function PageTemplate(data) {
+  const {
+    pageContext: { previous, next },
+    data: { mdx },
+  } = data
+
+  console.log(previous, next)
+
   return (
     <Container>
       <Header>
@@ -57,6 +66,33 @@ export default function PageTemplate({ data: { mdx } }) {
       <Content>
         <MDXRenderer>{mdx.code.body}</MDXRenderer>
       </Content>
+      {/* 
+        FIXME: Typescript seeming to not work with gastby-node when building pages.
+        // @ts-ignore */}
+      <ReadNext>
+        <Suggestion to={previous.node.fields.slug}>
+          <Direction>Previous</Direction>
+          <Categories>
+            {/* 
+               // @ts-ignore */}
+            {previous.node.frontmatter.breadcrumbs.map(bc => (
+              <li key={bc}>{bc}</li>
+            ))}
+          </Categories>
+          <p>{previous.node.frontmatter.title}</p>
+        </Suggestion>
+        <Suggestion to={next.node.fields.slug}>
+          <Direction>Up Next</Direction>
+          <Categories>
+            {/* 
+               // @ts-ignore */}
+            {next.node.frontmatter.breadcrumbs.map(bc => (
+              <li key={bc}>{bc}</li>
+            ))}
+          </Categories>
+          <p>{next.node.frontmatter.title}</p>
+        </Suggestion>
+      </ReadNext>
     </Container>
   )
 }
@@ -163,4 +199,49 @@ const Content = styled.section`
     font-weight: var(--bold);
     color: var(--color-black);
   }
+`
+
+const Suggestion = styled(Link)`
+  padding: calc(var(--base-gap) * 5);
+  display: flex;
+  flex-direction: column;
+  place-content: center start;
+  text-decoration: none;
+  color: var(--color-dark);
+  background: var(--color-light-3);
+  border-radius: var(--base-radius);
+
+  > p {
+    margin: 0;
+    font-size: var(--font-medium);
+    font-weight: var(--medium);
+    color: var(--color-dark);
+  }
+`
+
+const ReadNext = styled.section`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: var(--base-gap);
+  max-width: 1000px;
+  margin: auto auto calc(var(--base-gap) * 5) auto;
+
+  ${mq[1]} {
+    grid-template-columns: 1fr;
+
+    ${Suggestion}:last-of-type {
+      grid-row: 1;
+    }
+  }
+`
+
+const Direction = styled.span`
+  text-align: center;
+  margin-bottom: calc(var(--base-gap) * 3);
+  margin-top: calc(var(--base-gap) * -1.5);
+  color: var(--color-dark-1);
+  font-size: var(--font-x-small);
+  font-family: var(--ss-font2);
+  font-weight: var(--medium);
+  text-transform: uppercase;
 `

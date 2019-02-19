@@ -38,6 +38,7 @@ export default function PostIndex() {
                   subtitle
                   keywords
                   breadcrumbs
+                  date
                 }
                 fields {
                   slug
@@ -83,7 +84,7 @@ const Ul = styled.ul`
   }
 `
 
-const Categories = styled.ul`
+export const Categories = styled.ul`
   list-style: none;
   margin: 0 0 var(--base-gap) 0;
   padding: 0;
@@ -135,8 +136,8 @@ const Preview = styled.p`
     bottom: 0;
     background: linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0.8)
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.7)
     );
   }
 `

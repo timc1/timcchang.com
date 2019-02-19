@@ -49,6 +49,7 @@ exports.createPages = ({ graphql, actions }) => {
                   excerpt(pruneLength: 280)
                   frontmatter {
                     title
+                    breadcrumbs
                   }
                   fields {
                     slug
@@ -65,8 +66,10 @@ exports.createPages = ({ graphql, actions }) => {
           reject(result.errors)
         }
 
+        const edges = result.data.allMdx.edges
+
         // We'll call `createPage` for each result
-        result.data.allMdx.edges.forEach(({ node }) => {
+        edges.forEach(({ node }, index) => {
           createPage({
             // This is the slug we created before
             // (or `node.frontmatter.slug`)
@@ -79,7 +82,13 @@ exports.createPages = ({ graphql, actions }) => {
             ),
             // We can use the values in this context in
             // our page layout component
-            context: { id: node.id },
+            context: {
+              id: node.id,
+              previous: edges[index - 1]
+                ? edges[index - 1]
+                : edges[edges.length - 1],
+              next: edges[index + 1] ? edges[index + 1] : edges[0],
+            },
           })
         })
       })

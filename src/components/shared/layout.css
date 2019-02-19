@@ -59,12 +59,16 @@
   --color-dark-1: #4c555a;
   --color-dark-2: #939da3;
 
+  --color-light-2: #E6EBF1;
+  --color-light-3: #f5f6f7;
+
   --light: 300;
   --medium: 600;
   --bold: 700;
   --extra-bold: 800;
 
   --font-x-large: 3.5rem;
+  --font-large: 2rem;
   --font-medium: 1.5rem;
   --font-small: 1rem;
   --font-x-small: 0.85rem;
