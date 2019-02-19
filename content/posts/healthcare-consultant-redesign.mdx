@@ -6,6 +6,70 @@ breadcrumbs: ['Case Study', 'AVRC', 'Client']
 image: '../images/displacement_image.jpg'
 ---
 
-hi
+import Scope from 'components/posts/scope'
+import Description from 'components/posts/description'
+import Landing from 'components/posts/avrc/landing'
+import IllustrationWrapper from 'components/posts/avrc/illustration-wrapper'
+import Jobs from 'components/posts/avrc/jobs'
+import Forms from 'components/posts/avrc/forms'
+import Consulting from 'components/posts/avrc/consulting'
+import Dashboard from 'components/posts/avrc/dashboard'
+import Events from 'components/posts/avrc/events'
+import Openings from 'components/posts/avrc/openings'
+import Blog from 'components/posts/avrc/Blog'
+import FormsApp from 'components/posts/avrc/forms-app'
 
-Donec elementum eu dui sit amet dapibus. Vivamus sollicitudin felis vel ex commodo placerat. Nullam lacinia porttitor interdum. Maecenas sed mattis purus. Cras luctus enim non maximus porttitor. Pellentesque id turpis venenatis, tincidunt quam vitae, bibendum odio. Donec tempus tincidunt sapien a dignissim. Quisque auctor purus velit, sit amet ornare arcu tincidunt eget. Ut vestibulum mollis risus, eget posuere risus imperdiet quis. Morbi convallis blandit cursus. Vivamus aliquam dolor elementum finibus auctor. Aliquam erat volutpat. Sed quis ligula aliquam, vestibulum sapien vitae, facilisis dui.
+## Over the span of two months I helped AV Resources Corporation in developing a new, modern voice to their healthcare consulting firm.
+
+We took their 25+ years of industry expertise and reflected it through a new website and custom CMS. This is an illustrated case study of the project.
+
+<Scope
+  background="Healthcare processes are many times inefficient and outdated. The AV team is there to change that. We partnered to design, develop, & launch a ground-up web experience to set their consulting business apart. The project consisted of curating beautiful and clear landing pages, a content management system, and internal software tools to manage job recruiting and government forms generation."
+  scope={['Strategy', 'UI/UX', 'Design', 'Development']}
+/>
+
+<Landing />
+
+<Description
+  section="01."
+  title="Clear Structure & Visual Cues"
+  content="
+  Pages are structured with accessibility and usability in mind. Without a illustrator at hand, we decided to create illustrations and animations in place of photos using plain HTML/CSS and a bit of javascript to move things along, just like on this page. This experience is performant, eye-catching, and provides a different experience than what we typically see. Click on each of the search bars above to see the page.
+"
+/>
+
+<IllustrationWrapper illustrations={[Jobs, Forms, Consulting]} />
+
+<Description
+  section="02."
+  title="Control & Customization"
+  content="We built an in-house, custom dashboard & CMS to pair with the site. Administrators have full control on creating and managing job listings, blog posts, events, and users. Dynamic content created each have their own social sharing cards and search engine optimization (SEO)."
+/>
+
+<Dashboard />
+
+<Description
+  section="03."
+  title="Creating A Healthcare Home Base"
+  content="With dozens of remote consultants and at a rapidly growing rate, AV needed a home base to to easily communicate new job opportunities, upcoming events, and to keep their community up to date. Along with their social channels, they wanted a single entry point to everything regarding the company. Visitors can view and apply for various openings, sign up for upcoming events and meetups, and read about the latest in running an independent healthcare business."
+/>
+
+<IllustrationWrapper illustrations={[Events, Openings, Blog]} />
+
+<Description
+  section="04."
+  title="Digital Tools"
+  content="We opted to create a tool that auto generated POC and QAPI forms through a step-by-step module experience. With hundreds of pre-filled form data provided by AV, users can simply select the scenarios that match their facility, customize results, and let the system format and generate their form."
+/>
+
+<FormsApp />
+
+<Description
+  section="05."
+  title="Wrapping It Up"
+  content="Redesigning and giving AV's website a modern look & feel was one of the primary goals of
+the project. From the clean landing pages showcasing their services, custom CMS and administration,
+to the tools that help streamline healthcare work, the site now encompasses much more. While early
+in implementation, AV has received great feedback from their clients and users. Within the first
+month, the site has received 300% increase in page views with 11 search queries ranked in the top 5."
+/>

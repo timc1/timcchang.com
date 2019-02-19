@@ -1,0 +1,383 @@
+---
+title: 'Smooth & Snappy Parallax Scrolling'
+subtitle: 'Building a simple vanilla javascript parallax scrolling library'
+keywords: ['Parallax Scrolling', 'CSS Animation', 'Javascript Animations']
+breadcrumbs: ['Post', 'Javascript']
+image: '../images/displacement_image.jpg'
+---
+
+import Image from 'components/shared/img'
+import parallax1 from 'assets/images/parallax-example-1.jpg'
+import parallax2 from 'assets/images/parallax-example-2.jpg'
+import parallaxVideo1 from 'assets/videos/parallax-1.gif'
+
+Recently I built a site that required a parallax effect while visitors scroll.
+Before using a library, I wanted to attempt building the effect from scratch.
+Thinking about how to build a UI/animation ground up is a great way to learn the
+logic behind why UI libraries are implemented the way they are.
+
+In this post we will create a small vanilla js library, `parallax.js` that takes
+an element and applies a parallax effect through CSS transforms. The way we want
+to use the API will be:
+
+```js
+const { init, cleanup } = new Parallax('some-class-name')
+init()
+```
+
+`init()` will target all elements with the class name of `some-class-name` and
+apply a `transform: translate3d()` CSS style on the target itself.
+
+`cleanup()` will remove the `requestAnimationFrame` (more on that in a bit) loop
+that we use to do the animating, which will be useful when used with libraries
+like React, where we cleanup any events when a component unmounts.
+
+In this demo we'll keep things super simple and work one html, css, and js file.
+
+### Let's get started
+
+In our `index.html` file, let's create the markup for all text and shapes
+elements:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Parcel Sandbox</title>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <div class="background-grid">
+      <span></span> <span></span> <span></span> <span></span>
+    </div>
+    <ul class="container">
+      <li class="item"><span class="text">Hello</span></li>
+      <li class="item"><span class="text">This</span></li>
+      <li class="item"><span class="text">Is</span></li>
+      <li class="item"><span class="text">Quite</span></li>
+      <li class="item"><span class="text">Nice</span></li>
+      <li class="item"><span class="parallax" data-parallax="-2"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-4"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-5"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-2"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-3"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-5"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-3"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-2"> </span></li>
+      <li class="item"><span class="parallax" data-parallax="-1"> </span></li>
+    </ul>
+    <script src="src/index.js"></script>
+  </body>
+</html>
+```
+
+and in our `styles.css` file:
+
+```css
+ul.container {
+  height: 2800px;
+  list-style: none;
+}
+
+.background-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-auto-flow: column;
+  z-index: -1;
+}
+
+.background-grid > span:not(:first-of-type) {
+  border-left: 1px solid #eee;
+}
+
+.item > span {
+  position: absolute;
+}
+
+.item > span {
+  font-size: 100px;
+}
+
+.text {
+  z-index: 1;
+}
+
+.container .item:first-of-type > span {
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.container .item:nth-of-type(2) > span {
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.container .item:nth-of-type(2) > span {
+  top: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.container .item:nth-of-type(3) > span {
+  top: 160%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.container .item:nth-of-type(4) > span {
+  top: 220%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.container .item:nth-of-type(5) > span {
+  top: 280%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.container .item:nth-of-type(6) > span {
+  height: 60px;
+  width: 60px;
+  top: 50%;
+  left: calc(25% - 30px);
+  background: #616aff;
+  border-radius: 5px;
+}
+
+.container .item:nth-of-type(7) > span {
+  height: 100px;
+  width: 100px;
+  top: 70%;
+  left: calc(50% - 50px);
+  background: #ffda83;
+  border-radius: 50%;
+}
+
+.container .item:nth-of-type(8) > span {
+  height: 80px;
+  width: 80px;
+  top: 40%;
+  left: calc(75% - 40px);
+  background: #dbdeea;
+  border-radius: 5px;
+}
+
+.container .item:nth-of-type(9) > span {
+  height: 50px;
+  width: 50px;
+  top: 120%;
+  left: calc(75% - 25px);
+  background: #2dbae7;
+  border-radius: 5px;
+}
+
+.container .item:nth-of-type(10) > span {
+  height: 80px;
+  width: 80px;
+  top: 130%;
+  left: calc(25% - 40px);
+  background: #fc6e3f;
+  border-radius: 5px;
+}
+
+.container .item:nth-of-type(11) > span {
+  height: 120px;
+  width: 120px;
+  top: 190%;
+  left: calc(50% - 60px);
+  background: #21c8b7;
+  border-radius: 50%;
+}
+
+.container .item:nth-of-type(12) > span {
+  height: 80px;
+  width: 100px;
+  top: 250%;
+  left: calc(25% - 50px);
+  background: #013540;
+  border-radius: 5px;
+}
+
+.container .item:nth-of-type(13) > span {
+  height: 100px;
+  width: 80px;
+  top: 260%;
+  left: calc(75% - 40px);
+  background: #beb0f4;
+  border-radius: 5px;
+}
+```
+
+With these two file set up, we should see something like this:
+
+<Image
+  src={parallaxVideo1}
+  alt="Video showing elements in their styled positions"
+/>
+
+Now, let's work on the javascript that will take the background shapes and
+translate them at different speeds to get the parallax effect.
+
+Each element we want to apply the parallax effect to must have a class name that
+the user defines and passes it to the constructor function
+`new Parallax('class-name')`.
+
+Each element should also have a `data-parallax` attribute which has a number as
+its value, for us to calculate the intensity of the effect we need to apply to
+the specific element.
+
+Let's setup `Parallax`:
+
+```js
+export default function Parallax(className) {
+  let elements = []
+  let screenHeight, animationId, isAnimating
+}
+```
+
+Within `Parallax` we will create a few methods, specifically:
+
+### setup()
+
+This is a function only to be ran at the start, to save values that stay the
+same in each requestAnimationFrame loop.
+
+- For each element, cache its height, speed (from `data-parallax`), and original
+  top position relative to the top of the document.
+- Cache the current innerHeight of the window
+
+```js
+const setup = () => {
+  // Cleanup before setting up new requestAnimationFrame.
+  cancelAnimationFrame(animationId)
+
+  const parallaxElements = Array.from(
+    document.querySelectorAll(`.${className}`)
+  )
+
+  if (!parallaxElements.length) {
+    console.error('No parallax elements found.')
+    return
+  }
+
+  elements = parallaxElements.map(el => {
+    const { top, height } = el.getBoundingClientRect()
+    const speed = Number(el.getAttribute('data-parallax'))
+    return {
+      el,
+      originalTop: top + window.scrollY,
+      height,
+      speed,
+    }
+  })
+  screenHeight = window.innerHeight
+
+  animate()
+}
+```
+
+### animate()
+
+This function is called recursively with `requestAnimationFrame` to calculate
+the new positions for each element depending on the current `window.scrollY`.
+
+Note: the reason we use requestAnimationFrame (raf) rather than
+`window.addEventListener('scroll', animate)` is because raf is specifically
+designed for animations, and the browser optimizes when to run the animation.
+
+```js
+const animate = () => {
+  if (!isAnimating) {
+    isAnimating = true
+    elements.forEach(({ el, originalTop, height, speed }) => {
+      const { top: newTop } = el.getBoundingClientRect()
+      let translate
+      if (screenHeight >= originalTop) {
+        translate = Math.floor((window.scrollY / speed) * -1)
+      } else {
+        translate = Math.floor((newTop - height / 2) / speed)
+      }
+
+      el.style.transform = `translate3d(0, ${translate}px, 0)`
+    })
+    isAnimating = false
+    animationId = requestAnimationFrame(animate)
+  }
+}
+```
+
+Here's the tricky part that took me a bit to figure out.
+
+We want all the elements to translate to the center of the screen when the user
+scrolls to that part of the screen. Meaning, initially an element on the bottom
+of the screen will be translated a farther distance from its original position
+than an element closer to the top of the screen because as the user scrolls the
+page, the element will continue to translate closer to their initial position.
+Once the user scrolls to their original position on the screen, the element will
+be centered in view.
+
+<Image
+  src={parallax1}
+  alt="Image showing each element in its original position"
+/>
+
+Now, this logic is different for elements that are
+"[above the fold](https://en.wikipedia.org/wiki/Above_the_fold)", or the content
+that is in view on our initial load. These elements must stay in their original
+position and translate relative to the current scroll position
+(`window.scrollY`). The reason being we don't want to skew the original position
+that the developer set.
+
+<Image
+  src={parallax2}
+  alt="Image showing each parallax element's offset relative to the top of the
+screen"
+/>
+
+### cleanup()
+
+This will remove any event listeners and cancel any requestAnimationFrames.
+
+```js
+const cancelAnimationFrame =
+  window.cancelAnimationFrame || window.mozCancelAnimationFrame || clearTimeout
+
+const cleanup = () => {
+  cancelAnimationFrame(animationId)
+  window.removeEventListener('resize', setup)
+}
+```
+
+### init()
+
+```js
+const init = () => {
+  setup()
+  // We want to update our cached calculations when a user resizes their window
+  window.addEventListener('resize', setup)
+}
+```
+
+```js
+// return our init and cleanup functions to let the users of the API use as they wish.
+return {
+  init,
+  cleanup,
+}
+```
+
+And that's it! Here's the live CodeSandbox:
+
+<iframe
+  src="https://codesandbox.io/embed/w6yryn64yl?autoresize=1&hidenavigation=1&moduleview=1"
+  style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+  sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
+/>

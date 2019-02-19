@@ -77,7 +77,6 @@ const Ul = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
-  height: 100vh;
 
   > li:not(:last-of-type) {
     margin-bottom: 80px;
@@ -108,6 +107,7 @@ const Title = styled.h1`
   font-weight: var(--bold);
   font-size: var(--font-x-large);
   font-family: var(--ss-font2);
+  font-weight: var(--regular);
   color: var(--color-dark-0);
   opacity: 1;
   transition: opacity 250ms ease;
@@ -145,7 +145,7 @@ const ReadMore: any = styled.span`
   --arrow-width: 15px;
   position: relative;
   display: inline-block;
-  margin: var(--base-gap) 0 0 0;
+  margin: calc(var(--base-gap) * 2) 0 0 0;
   font-family: var(--ss-font2);
   font-size: var(--font-x-small);
   color: var(--color-dark);

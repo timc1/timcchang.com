@@ -62,6 +62,6 @@ const InfoLinksContainer = styled.div`
 `
 
 const PostsSection = styled.section`
-  padding: 5%;
+  padding: 5% 5% 100px 5%;
   max-width: 750px;
 `

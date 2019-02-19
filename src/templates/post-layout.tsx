@@ -100,6 +100,7 @@ const Title = styled.h1`
   margin: 0;
   font-size: var(--font-x-large);
   font-family: var(--ss-font2);
+  font-weight: var(--regular);
   color: var(--color-dark-0);
   max-width: 750px;
 `
@@ -146,9 +147,20 @@ const BannerImageContainer = styled.section`
 
 const Content = styled.section`
   position: relative;
-  max-width: 700px;
+  max-width: 650px;
   margin: auto;
   padding: calc(var(--padding) / 2) 0;
   font-size: var(--font-small);
-  color: var(--color-dark-0);
+  line-height: 1.7rem;
+  color: var(--color-dark-1);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--ss-font2);
+    font-weight: var(--bold);
+    color: var(--color-black);
+  }
 `

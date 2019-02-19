@@ -2,7 +2,14 @@
   font-family: 'PXGrotesk';
   src: url('../../assets/fonts/Px-Grotesk-Regular.woff2') format('woff2'),
     url('../../assets/fonts/Px-Grotesk-Regular.woff') format('woff');
-  font-weight: 100 800;
+  font-weight: 100 400;
+}
+
+@font-face {
+  font-family: 'PXGrotesk';
+  src: url('../../assets/fonts/Px-Grotesk-Bold.woff2') format('woff2'),
+    url('../../assets/fonts/Px-Grotesk-Bold.woff') format('woff');
+  font-weight: 500 800;
 }
 
 @font-face {
@@ -34,9 +41,14 @@
 }
 
 :root {
+  --post-content-margin: 40px;
   --base-gap: 10px;
+  --base-radius: 3px;
+  --base-box-shadow: 0 1px 3px rgba(188, 193, 217, 0.12),
+    0 5px 12px rgba(188, 193, 217, 0.25);
 
   --cubic: cubic-bezier(0.19, 1, 0.22, 1);
+  --cubic-2: cubic-bezier(0.74, -0.21, 0.51, 1.39);
 
   --yellow: #fffbda;
   --blue: #354eff;
@@ -59,6 +71,8 @@
 
   --ss-font: InterUI;
   --ss-font2: PXGrotesk;
+
+  --illustrationavfont: Arial;
 }
 
 ::selection {
