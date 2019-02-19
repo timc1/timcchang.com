@@ -59,7 +59,8 @@
   --color-dark-1: #4c555a;
   --color-dark-2: #939da3;
 
-  --color-light-2: #E6EBF1;
+  --color-light: #fff;
+  --color-light-2: #e6ebf1;
   --color-light-3: #f5f6f7;
 
   --light: 300;
@@ -126,7 +127,9 @@ body {
   padding: 0;
 }
 
-main {
+header,
+main,
+footer {
   max-width: 2000px;
   width: 100%;
   margin: auto;

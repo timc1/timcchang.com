@@ -76,7 +76,7 @@ exports.createPages = ({ graphql, actions }) => {
             path: node.fields.slug,
             // This component will wrap our MDX content
             component: componentWithMDXScope(
-              path.resolve(`./src/templates/post-layout.tsx`),
+              path.resolve(`./src/templates/post-template.tsx`),
               node.code.scope,
               __dirname
             ),

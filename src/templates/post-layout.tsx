@@ -1,247 +1,127 @@
 import React from 'react'
-import { graphql, Link } from 'gatsby'
-// @ts-ignore
-import MDXRenderer from 'gatsby-mdx/mdx-renderer'
 import styled from '@emotion/styled'
-import { css } from '@emotion/core'
-import Img from 'gatsby-image'
-import { Categories } from '../components/posts/index'
-import { mq } from '../components/shared/global-styles'
 
-// FIXME: Typescript seeming to not work with gastby-node when building pages.
-//type PageTemplateType = {
-//  data: {
-//    mdx: {
-//      id: string
-//      frontmatter: {
-//        title: string
-//        subtitle: string
-//        keywords: string[]
-//        breadcrumbs: string[]
-//        image: string
-//      }
-//      code: {
-//        body: string
-//      }
-//    }
-//  }
-//}
+import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
 
-// @ts-ignore
-export default function PageTemplate(data) {
-  const {
-    pageContext: { previous, next },
-    data: { mdx },
-  } = data
+export default function PostLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const [isAnimated, setAnimate] = React.useState(false)
+  const header = React.useRef(null)
+  const main = React.useRef(null)
 
-  console.log(previous, next)
+  useIntersectionObserver({
+    base: null,
+    targets: [header],
+    callback: ({ isIntersecting, target }) => {
+      if (isIntersecting) {
+        setAnimate(prev => false)
+      } else {
+        setAnimate(prev => true)
+      }
+    },
+  })
 
   return (
-    <Container>
-      <Header>
-        <Title>{mdx.frontmatter.title}</Title>
-        <Subtitle>{mdx.frontmatter.subtitle}</Subtitle>
-        <Breadcrumbs>
-          {/* 
-            FIXME: Typescript seeming to not work with gastby-node when building pages.
-            // @ts-ignore */}
-          {mdx.frontmatter.breadcrumbs.map(bc => (
-            <li key={bc}>{bc}</li>
-          ))}
-        </Breadcrumbs>
+    <>
+      <Header ref={header}>
+        <Nav>
+          <ul>
+            <li>
+              <Logo isAnimated={isAnimated}>
+                <span>t</span>
+                <span>i</span>
+                <span>m</span>
+                <span>.</span>
+                <span>c</span>
+              </Logo>
+            </li>
+          </ul>
+        </Nav>
       </Header>
-      <BannerImageContainer>
-        <Img
-          fluid={mdx.frontmatter.image.childImageSharp.fluid}
-          css={css`
-            position: absolute !important;
-            top: 0;
-            left: calc(var(--base-gap) * -1);
-            right: calc(var(--base-gap) * -1);
-            bottom: 0;
-          `}
-        />
-      </BannerImageContainer>
-
-      <Content>
-        <MDXRenderer>{mdx.code.body}</MDXRenderer>
-      </Content>
-      {/* 
-        FIXME: Typescript seeming to not work with gastby-node when building pages.
-        // @ts-ignore */}
-      <ReadNext>
-        <Suggestion to={previous.node.fields.slug}>
-          <Direction>Previous</Direction>
-          <Categories>
-            {/* 
-               // @ts-ignore */}
-            {previous.node.frontmatter.breadcrumbs.map(bc => (
-              <li key={bc}>{bc}</li>
-            ))}
-          </Categories>
-          <p>{previous.node.frontmatter.title}</p>
-        </Suggestion>
-        <Suggestion to={next.node.fields.slug}>
-          <Direction>Up Next</Direction>
-          <Categories>
-            {/* 
-               // @ts-ignore */}
-            {next.node.frontmatter.breadcrumbs.map(bc => (
-              <li key={bc}>{bc}</li>
-            ))}
-          </Categories>
-          <p>{next.node.frontmatter.title}</p>
-        </Suggestion>
-      </ReadNext>
-    </Container>
+      <Main ref={main}>{children}</Main>
+      <footer />
+    </>
   )
 }
 
-export const pageQuery = graphql`
-  query($id: String) {
-    mdx(id: { eq: $id }) {
-      id
-      frontmatter {
-        title
-        subtitle
-        keywords
-        breadcrumbs
-        image {
-          childImageSharp {
-            fluid(maxWidth: 1920) {
-              ...GatsbyImageSharpFluid
-            }
-          }
-        }
-      }
-      code {
-        body
-      }
-    }
-  }
-`
-
-const Container = styled.div`
-  --padding: 12%;
+const Header = styled.header`
   padding: var(--base-gap);
 `
 
-const Header = styled.section`
-  max-width: 1300px;
-  margin: auto;
-  padding: var(--padding) 0 calc(var(--padding) / 2) 0;
+const Nav = styled.nav`
+  height: 50px;
+  background: var(--color-light);
+  z-index: 3;
+
+  > ul {
+    max-width: 2000px;
+    list-style: none;
+    margin: 0 auto;
+    padding: var(--base-gap);
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    > li:first-of-type {
+    }
+  }
 `
 
-const Title = styled.h1`
+const Logo = styled.h1`
   margin: 0;
-  font-size: var(--font-x-large);
-  font-family: var(--ss-font2);
-  font-weight: var(--regular);
-  color: var(--color-dark-0);
-  max-width: 750px;
-`
+  font-size: 25px;
+  font-weight: var(--bold);
+  position: fixed;
+  top: 20px;
+  z-index: 3;
 
-const Subtitle = styled.p`
-  margin: var(--base-gap) 0 0 0;
-  font-size: var(--font-medium);
-  font-family: var(--ss-font);
-  font-weight: var(--regular);
-  color: var(--color-dark);
-  max-width: 750px;
-`
-
-const Breadcrumbs = styled.ul`
-  margin: calc(var(--base-gap) * 2) 0 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  font-size: var(--font-x-small);
-  font-weight: var(--regular);
-  text-transform: uppercase;
-
-  > li {
-    color: var(--color-dark-0);
-    font-family: var(--ss-font2);
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
   }
-  > li:first-of-type {
-    font-weight: var(--bold);
-    color: var(--color-dark-1);
+
+  &::before {
+    top: -10px;
+    left: -10px;
+    right: 20px;
+    bottom: -10px;
+    background: var(--color-light);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    border-radius: var(--base-radius);
+    transform: ${(props: { isAnimated: boolean }) =>
+      props.isAnimated ? 'rotate(90deg)' : 'rotate(0deg)'};
+    opacity: ${(props: { isAnimated: boolean }) =>
+      props.isAnimated ? '1' : '0'};
+    transition: 200ms ease;
+    transition-property: opacity, transform;
+    z-index: -1;
   }
-  > li:not(:last-of-type) {
-    padding-right: var(--base-gap);
-    &::after {
-      content: '·';
-      padding-left: var(--base-gap);
+
+  > span {
+    display: inline-block;
+    &:first-of-type {
+      transform: ${(props: { isAnimated: boolean }) =>
+        props.isAnimated ? 'translateX(10px)' : 'translateX(0)'};
+      transition: 200ms var(--cubic);
+    }
+
+    &:not(:first-of-type) {
+      opacity: ${(props: { isAnimated: boolean }) =>
+        props.isAnimated ? '0' : '1'};
+      transform: ${(props: { isAnimated: boolean }) =>
+        props.isAnimated ? 'translateX(-25px)' : 'translateX(0)'};
+      transition: 200ms var(--cubic);
     }
   }
 `
 
-const BannerImageContainer = styled.section`
-  position: relative;
-  padding-top: 40%;
-`
-
-const Content = styled.section`
-  position: relative;
-  max-width: 650px;
-  margin: auto;
-  padding: calc(var(--padding) / 2) 0;
-  font-size: var(--font-small);
-  line-height: 1.7rem;
-  color: var(--color-dark-1);
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5 {
-    font-family: var(--ss-font2);
-    font-weight: var(--bold);
-    color: var(--color-black);
-  }
-`
-
-const Suggestion = styled(Link)`
-  padding: calc(var(--base-gap) * 5);
-  display: flex;
-  flex-direction: column;
-  place-content: center start;
-  text-decoration: none;
-  color: var(--color-dark);
-  background: var(--color-light-3);
-  border-radius: var(--base-radius);
-
-  > p {
-    margin: 0;
-    font-size: var(--font-medium);
-    font-weight: var(--medium);
-    color: var(--color-dark);
-  }
-`
-
-const ReadNext = styled.section`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: var(--base-gap);
-  max-width: 1000px;
-  margin: auto auto calc(var(--base-gap) * 5) auto;
-
-  ${mq[1]} {
-    grid-template-columns: 1fr;
-
-    ${Suggestion}:last-of-type {
-      grid-row: 1;
-    }
-  }
-`
-
-const Direction = styled.span`
-  text-align: center;
-  margin-bottom: calc(var(--base-gap) * 3);
-  margin-top: calc(var(--base-gap) * -1.5);
-  color: var(--color-dark-1);
-  font-size: var(--font-x-small);
-  font-family: var(--ss-font2);
-  font-weight: var(--medium);
-  text-transform: uppercase;
+const Main = styled.main`
+  --padding: 12%;
+  padding: var(--base-gap);
 `
