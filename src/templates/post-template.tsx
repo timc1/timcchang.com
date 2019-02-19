@@ -9,6 +9,7 @@ import { graphql, Link } from 'gatsby'
 import { Categories } from '../components/posts/index'
 import { mq } from '../components/shared/global-styles'
 import { css } from '@emotion/core'
+import InfoLinks from '../components/shared/info-links'
 
 // FIXME: Typescript seeming to not work with gastby-node when building pages.
 //type PageTemplateType = {
@@ -66,6 +67,11 @@ export default function PageTemplate(data) {
             bottom: 0;
           `}
         />
+        {mdx.frontmatter.image_alt && (
+          <Caption>
+            <p>{mdx.frontmatter.image_alt}</p>
+          </Caption>
+        )}
       </BannerImageContainer>
 
       <Content>
@@ -97,6 +103,9 @@ export default function PageTemplate(data) {
           <p>{next.node.frontmatter.title}</p>
         </Suggestion>
       </ReadNext>
+      <Footer>
+        <InfoLinks />
+      </Footer>
     </PostLayout>
   )
 }
@@ -117,6 +126,7 @@ export const pageQuery = graphql`
             }
           }
         }
+        image_alt
       }
       code {
         body
@@ -128,7 +138,7 @@ export const pageQuery = graphql`
 const Header = styled.section`
   max-width: 1300px;
   margin: auto;
-  padding: var(--padding) 0 calc(var(--padding) / 2) 0;
+  padding: calc(var(--padding) / 2) 0;
 `
 
 const Title = styled.h1`
@@ -178,6 +188,26 @@ const Breadcrumbs = styled.ul`
 const BannerImageContainer = styled.section`
   position: relative;
   padding-top: 40%;
+
+  ${mq[1]} {
+    padding-top: 60%;
+  }
+`
+
+const Caption = styled.div`
+  position: absolute;
+  margin: var(--base-gap) auto 0 auto;
+  max-width: 1300px;
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  > p {
+    margin: 0;
+    color: var(--color-dark-3);
+    font-size: var(--font-x-small);
+    text-align: center;
+  }
 `
 
 const Content = styled.section`
@@ -186,7 +216,7 @@ const Content = styled.section`
   margin: auto;
   padding: calc(var(--padding) / 2) 0;
   font-size: var(--font-small);
-  line-height: 1.7rem;
+  line-height: 1.5rem;
   color: var(--color-dark-1);
 
   h1,
@@ -243,4 +273,13 @@ const Direction = styled.span`
   font-family: var(--ss-font2);
   font-weight: var(--medium);
   text-transform: uppercase;
+`
+
+const Footer = styled.footer`
+  max-width: 1000px;
+  margin: auto;
+  > ul {
+    max-width: 1000px;
+    padding-bottom: calc(var(--base-gap) * 3);
+  }
 `

@@ -53,11 +53,12 @@
   --yellow: #fffbda;
   --blue: #354eff;
   --forest-green: #013540;
-  --color-black: #000;
+  --color-black: #121519;
   --color-dark: rgba(15, 13, 32, 0.99);
   --color-dark-0: #292e31;
   --color-dark-1: #4c555a;
   --color-dark-2: #939da3;
+  --color-dark-3: #727f88;
 
   --color-light: #fff;
   --color-light-2: #e6ebf1;
@@ -78,6 +79,15 @@
   --ss-font2: PXGrotesk;
 
   --illustrationavfont: Arial;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --font-x-large: 6vw;
+    --font-medium: 3.5vw;
+    --font-small: 3vw;
+    --font-x-small: 3vw;
+  }
 }
 
 ::selection {

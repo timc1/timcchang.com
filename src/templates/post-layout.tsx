@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import { Link } from 'gatsby'
 
 import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
+import { mq } from '../components/shared/global-styles'
 
 export default function PostLayout({
   children,
@@ -26,11 +28,11 @@ export default function PostLayout({
 
   return (
     <>
-      <Header ref={header}>
+      <Header ref={header} isAnimated={isAnimated}>
         <Nav>
           <ul>
             <li>
-              <Logo isAnimated={isAnimated}>
+              <Logo to="/">
                 <span>t</span>
                 <span>i</span>
                 <span>m</span>
@@ -46,10 +48,6 @@ export default function PostLayout({
     </>
   )
 }
-
-const Header = styled.header`
-  padding: var(--base-gap);
-`
 
 const Nav = styled.nav`
   height: 50px;
@@ -70,12 +68,15 @@ const Nav = styled.nav`
   }
 `
 
-const Logo = styled.h1`
+const Logo: any = styled(Link)`
   margin: 0;
   font-size: 25px;
   font-weight: var(--bold);
+  text-decoration: none;
+  color: var(--color-dark);
   position: fixed;
   top: 20px;
+  outline: none;
   z-index: 3;
 
   &::before,
@@ -85,38 +86,47 @@ const Logo = styled.h1`
     top: 0;
     left: 0;
   }
+`
 
-  &::before {
-    top: -10px;
-    left: -10px;
-    right: 20px;
-    bottom: -10px;
-    background: var(--color-light);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    border-radius: var(--base-radius);
-    transform: ${(props: { isAnimated: boolean }) =>
-      props.isAnimated ? 'rotate(90deg)' : 'rotate(0deg)'};
-    opacity: ${(props: { isAnimated: boolean }) =>
-      props.isAnimated ? '1' : '0'};
+const Header = styled.header`
+  padding: var(--base-gap);
+
+  ${Logo} {
+    transform: ${props =>
+      props.isAnimated ? 'translateX(0)' : 'translateX(-10px)'};
     transition: 200ms ease;
-    transition-property: opacity, transform;
-    z-index: -1;
-  }
-
-  > span {
-    display: inline-block;
-    &:first-of-type {
+    &::before {
+      top: -10px;
+      left: -10px;
+      right: 20px;
+      bottom: -10px;
+      background: var(--color-light);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      border-radius: var(--base-radius);
       transform: ${(props: { isAnimated: boolean }) =>
-        props.isAnimated ? 'translateX(10px)' : 'translateX(0)'};
-      transition: 200ms var(--cubic);
+        props.isAnimated ? 'rotate(90deg)' : 'rotate(0deg)'};
+      opacity: ${(props: { isAnimated: boolean }) =>
+        props.isAnimated ? '1' : '0'};
+      transition: 200ms ease;
+      transition-property: opacity, transform;
+      z-index: -1;
     }
 
-    &:not(:first-of-type) {
-      opacity: ${(props: { isAnimated: boolean }) =>
-        props.isAnimated ? '0' : '1'};
-      transform: ${(props: { isAnimated: boolean }) =>
-        props.isAnimated ? 'translateX(-25px)' : 'translateX(0)'};
-      transition: 200ms var(--cubic);
+    > span {
+      display: inline-block;
+      &:first-of-type {
+        transform: ${(props: { isAnimated: boolean }) =>
+          props.isAnimated ? 'translateX(10px)' : 'translateX(0)'};
+        transition: 200ms var(--cubic);
+      }
+
+      &:not(:first-of-type) {
+        opacity: ${(props: { isAnimated: boolean }) =>
+          props.isAnimated ? '0' : '1'};
+        transform: ${(props: { isAnimated: boolean }) =>
+          props.isAnimated ? 'translateX(-10px)' : 'translateX(0)'};
+        transition: 200ms var(--cubic);
+      }
     }
   }
 `
@@ -124,4 +134,8 @@ const Logo = styled.h1`
 const Main = styled.main`
   --padding: 12%;
   padding: var(--base-gap);
+
+  ${mq[1]} {
+    --padding: 20%;
+  }
 `

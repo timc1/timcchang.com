@@ -3,9 +3,10 @@ import { Link, StaticQuery, graphql } from 'gatsby'
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/core'
 
-import { rmq } from '../../components/shared/global-styles'
+import { rmq, mq } from '../../components/shared/global-styles'
 // @ts-ignore
 import arrow from '../../assets/images/arrow.svg'
+import { ThemeProvider } from 'emotion-theming'
 
 type PostType = {
   node: {
@@ -23,7 +24,7 @@ type PostType = {
   }
 }
 
-export default function PostIndex() {
+export default function PostIndex({ dark }: { dark?: boolean }) {
   return (
     <StaticQuery
       query={graphql`
@@ -51,23 +52,25 @@ export default function PostIndex() {
       render={data => {
         const posts = data.allMdx.edges
         return (
-          <Ul>
-            {posts.map((post: PostType, index: number) => (
-              <li key={post.node.id}>
-                <PostLink to={post.node.fields.slug}>
-                  <Categories>
-                    <li>{index + 1 < 10 ? `0${index + 1}` : index + 1}.</li>
-                    {post.node.frontmatter.breadcrumbs.map((bc: string) => (
-                      <li key={bc}>{bc}</li>
-                    ))}
-                  </Categories>
-                  <Title>{post.node.frontmatter.title}</Title>
-                  <Preview>{post.node.excerpt}</Preview>
-                  <ReadMore>Read more</ReadMore>
-                </PostLink>
-              </li>
-            ))}
-          </Ul>
+          <ThemeProvider theme={{ dark: dark }}>
+            <Ul>
+              {posts.map((post: PostType, index: number) => (
+                <li key={post.node.id}>
+                  <PostLink to={post.node.fields.slug}>
+                    <Categories>
+                      <li>{index + 1 < 10 ? `0${index + 1}` : index + 1}.</li>
+                      {post.node.frontmatter.breadcrumbs.map((bc: string) => (
+                        <li key={bc}>{bc}</li>
+                      ))}
+                    </Categories>
+                    <Title>{post.node.frontmatter.title}</Title>
+                    <Preview>{post.node.excerpt}</Preview>
+                    <ReadMore>Read more</ReadMore>
+                  </PostLink>
+                </li>
+              ))}
+            </Ul>
+          </ThemeProvider>
         )
       }}
     />
@@ -86,7 +89,7 @@ const Ul = styled.ul`
 
 export const Categories = styled.ul`
   list-style: none;
-  margin: 0 0 var(--base-gap) 0;
+  margin: 0 0 var(--base-gap) 3px;
   padding: 0;
   display: flex;
 
@@ -94,22 +97,28 @@ export const Categories = styled.ul`
     font-size: var(--font-x-small);
     font-weight: var(--bold);
     font-family: var(--ss-font2);
-    color: var(--color-dark-2);
+    color: ${props =>
+      props.theme.dark ? 'var(--color-dark-3)' : 'var(--color-dark-2)'};
     text-transform: uppercase;
   }
 
   > li:not(:last-of-type) {
     padding-right: 10px;
   }
+
+  ${mq[1]} {
+    margin: 0 0 var(--base-gap) 0;
+  }
 `
 
 const Title = styled.h1`
-  margin: 0 0 0 -3px;
+  margin: 0;
   font-weight: var(--bold);
   font-size: var(--font-x-large);
   font-family: var(--ss-font2);
   font-weight: var(--regular);
-  color: var(--color-dark-0);
+  color: ${props =>
+    props.theme.dark ? 'var(--color-light)' : 'var(--color-dark-0)'};
   opacity: 1;
   transition: opacity 250ms ease;
 `
@@ -118,7 +127,7 @@ const Preview = styled.p`
   position: relative;
   margin: var(--base-gap) 0 0 0;
   font-size: var(--font-small);
-  line-height: var(--font-medium);
+  line-height: calc(var(--font-medium) + 0.25rem);
   color: var(--color-dark-1);
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -134,11 +143,20 @@ const Preview = styled.p`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
+    background: ${props =>
+      props.theme.dark
+        ? `
+    linear-gradient(
+      to bottom,
+      rgba(18, 21, 25, 0) 60%,
+      rgba(18, 21, 25, .7)
+    )
+    `
+        : `linear-gradient(
       to bottom,
       rgba(255, 255, 255, 0) 60%,
       rgba(255, 255, 255, 0.7)
-    );
+    )`};
   }
 `
 
@@ -149,7 +167,8 @@ const ReadMore: any = styled.span`
   margin: calc(var(--base-gap) * 2) 0 0 0;
   font-family: var(--ss-font2);
   font-size: var(--font-x-small);
-  color: var(--color-dark);
+  color: ${props =>
+    props.theme.dark ? 'var(--color-light-2)' : 'var(--color-dark)'};
   text-transform: uppercase;
   padding-right: calc(var(--arrow-width) + 8px);
   overflow: hidden;
@@ -161,7 +180,8 @@ const ReadMore: any = styled.span`
     right: 8px;
     height: 7px;
     width: var(--arrow-width);
-    background: var(--color-dark);
+    background: ${props =>
+      props.theme.dark ? 'var(--color-light)' : 'var(--color-dark)'};
     mask: url(${arrow}) center bottom / contain no-repeat;
     transform: translate(8px, -60%);
     transition: transform 250ms var(--cubic);
@@ -194,7 +214,6 @@ const PostLink = styled(Link)`
   ${rmq[1]} {
     &:hover {
       ${ReadMore} {
-        opacity: 0.8;
         &::after {
           animation: ${animateLink} 400ms ease-in;
         }

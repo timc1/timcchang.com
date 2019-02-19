@@ -2,7 +2,7 @@ code[class*='language-'],
 pre[class*='language-'] {
   color: #d6deeb;
   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  font-size: 0.85rem;
+  font-size: var(--font-small);
   text-align: left;
   white-space: pre;
   word-spacing: normal;
@@ -17,6 +17,7 @@ pre[class*='language-'] {
   -ms-hyphens: none;
   hyphens: none;
 }
+
 code[class*='language-'] ::-moz-selection,
 code[class*='language-']::-moz-selection,
 pre[class*='language-'] ::-moz-selection,
@@ -53,7 +54,7 @@ pre {
 
 :not(pre) > code,
 pre {
-  background: #011627;
+  background: var(--color-black);
 }
 :not(pre) > code {
   padding: 0.1em;

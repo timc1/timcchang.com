@@ -34,5 +34,7 @@ export default function useIntersectionObserver({
     }, options)
 
     targets.forEach(target => observer.current.observe(target.current))
+
+    return () => observer.current.disconnect()
   }, [])
 }

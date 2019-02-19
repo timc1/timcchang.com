@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { HighlightedLink } from '../components/shared/global-styles'
 import PostsIndex from '../components/posts/index'
 import InfoLinks from '../components/shared/info-links'
+import { mq } from '../components/shared/global-styles'
 
 export default function Index() {
   return (
@@ -33,7 +34,7 @@ export default function Index() {
         </InfoLinksContainer>
       </Container>
       <PostsSection>
-        <PostsIndex />
+        <PostsIndex dark />
       </PostsSection>
     </>
   )
@@ -47,21 +48,35 @@ const Header = styled.p`
   color: var(--color-dark-0);
 `
 
-const Container = styled.section`
-  min-height: 100vh;
-  padding: 5%;
-  max-width: 700px;
-
-  ${Header}:not(:last-of-type) {
-    margin-bottom: 10px;
-  }
-`
-
 const InfoLinksContainer = styled.div`
   margin-top: 80px;
 `
 
+const Container = styled.section`
+  min-height: 100vh;
+  padding: 5%;
+
+  ${Header}, ${InfoLinksContainer} {
+    max-width: 650px;
+  }
+
+  // prettier-ignore
+  ${Header}:not(:last-of-type) {
+    margin-bottom: 10px;
+  }
+
+  ${mq[1]} {
+    padding: 10% 5%;
+  }
+`
+
 const PostsSection = styled.section`
   padding: 5% 5% 100px 5%;
-  max-width: 750px;
+  background: var(--color-black);
+  > ul {
+    max-width: 700px;
+  }
+  ${mq[1]} {
+    padding: 10%;
+  }
 `
