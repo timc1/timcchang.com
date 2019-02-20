@@ -10,6 +10,7 @@ import { Categories } from '../components/posts/index'
 import { mq } from '../components/shared/global-styles'
 import { css } from '@emotion/core'
 import InfoLinks from '../components/shared/info-links'
+import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
 
 // FIXME: Typescript seeming to not work with gastby-node when building pages.
 //type PageTemplateType = {
@@ -36,6 +37,16 @@ export default function PageTemplate(data) {
     pageContext: { previous, next },
     data: { mdx },
   } = data
+
+  useIntersectionObserver({
+    targetName: '.illustration',
+    base: null,
+    callback: ({ isIntersecting, target, observer }) => {
+      if (isIntersecting) {
+        target.classList.add('show')
+      }
+    },
+  })
 
   return (
     <PostLayout>
@@ -139,6 +150,10 @@ const Header = styled.section`
   max-width: 1300px;
   margin: auto;
   padding: calc(var(--padding) / 2) 0;
+
+  ${mq[1]} {
+    padding: calc(var(--padding) / 4) 0;
+  }
 `
 
 const Title = styled.h1`

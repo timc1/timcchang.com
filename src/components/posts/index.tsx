@@ -8,6 +8,8 @@ import { rmq, mq } from '../../components/shared/global-styles'
 import arrow from '../../assets/images/arrow.svg'
 import { ThemeProvider } from 'emotion-theming'
 
+import useIntersectionObserver from '../shared/hooks/useIntersectionObserver'
+
 type PostType = {
   node: {
     id: string
@@ -25,6 +27,18 @@ type PostType = {
 }
 
 export default function PostIndex({ dark }: { dark?: boolean }) {
+  const container = React.useRef<HTMLUListElement>(null)
+
+  useIntersectionObserver({
+    targetName: '.post',
+    base: null,
+    callback: ({ isIntersecting, target, observer }) => {
+      if (isIntersecting) {
+        target.classList.add('show')
+      }
+    },
+  })
+
   return (
     <StaticQuery
       query={graphql`
@@ -53,9 +67,9 @@ export default function PostIndex({ dark }: { dark?: boolean }) {
         const posts = data.allMdx.edges
         return (
           <ThemeProvider theme={{ dark: dark }}>
-            <Ul>
+            <Ul ref={container}>
               {posts.map((post: PostType, index: number) => (
-                <li key={post.node.id}>
+                <li key={post.node.id} className="post">
                   <PostLink to={post.node.fields.slug}>
                     <Categories>
                       <li>{index + 1 < 10 ? `0${index + 1}` : index + 1}.</li>
@@ -81,6 +95,17 @@ const Ul = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
+
+  > .post {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: transform 800ms ease 100ms, opacity 400ms 150ms;
+  }
+
+  > .post.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   > li:not(:last-of-type) {
     margin-bottom: 80px;

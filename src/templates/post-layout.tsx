@@ -16,7 +16,7 @@ export default function PostLayout({
 
   useIntersectionObserver({
     base: null,
-    targets: [header],
+    refs: [header],
     callback: ({ isIntersecting, target }) => {
       if (isIntersecting) {
         setAnimate(prev => false)
@@ -75,7 +75,8 @@ const Logo: any = styled(Link)`
   text-decoration: none;
   color: var(--color-dark);
   position: fixed;
-  top: 20px;
+  top: calc(var(--base-gap) * 5);
+  left: calc(var(--base-gap) * 5);
   outline: none;
   z-index: 3;
 
@@ -85,6 +86,11 @@ const Logo: any = styled(Link)`
     position: absolute;
     top: 0;
     left: 0;
+  }
+
+  ${mq[1]} {
+    top: calc(var(--base-gap) * 3);
+    left: 5%;
   }
 `
 

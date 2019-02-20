@@ -112,6 +112,7 @@ const DashboardContainer = ({ children }: { children: React.ReactNode }) => (
 const Container = styled.div`
   position: relative;
   margin: auto;
+  width: 100%;
 `
 
 const bounceInOut = keyframes`

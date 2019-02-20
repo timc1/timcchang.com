@@ -1,8 +1,12 @@
+pre,
+code,
+.token {
+  font-family: Input !important;
+}
 code[class*='language-'],
 pre[class*='language-'] {
   color: #d6deeb;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  font-size: var(--font-small);
+  font-size: var(--font-x-small);
   text-align: left;
   white-space: pre;
   word-spacing: normal;

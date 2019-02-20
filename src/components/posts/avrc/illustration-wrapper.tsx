@@ -8,16 +8,28 @@ export default function IllustrationWrapper({
 }) {
   return (
     <Container>
-      {illustrations.map((Illustration, index) => (
-        <Illustration key={index} />
-      ))}
+      <Transition className="illustration">
+        {illustrations.map((Illustration: any, index: number) => (
+          <Illustration key={index} />
+        ))}
+      </Transition>
     </Container>
   )
 }
 
-const Container = styled.div`
+const Transition = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   grid-gap: var(--base-gap);
   margin: 80px 0;
+  opacity: 0;
+  transform: translateY(25px);
+  transition: transform 800ms ease, opacity 400ms 100ms;
+`
+
+const Container = styled.div`
+  > .illustration.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `

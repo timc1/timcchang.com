@@ -45,7 +45,7 @@ const Header = styled.p`
   font-size: var(--font-medium);
   line-height: calc(var(--font-medium) + 1rem);
   font-weight: var(--medium);
-  color: var(--color-dark-0);
+  color: var(--color-dark);
 `
 
 const InfoLinksContainer = styled.div`
@@ -54,7 +54,7 @@ const InfoLinksContainer = styled.div`
 
 const Container = styled.section`
   min-height: 100vh;
-  padding: 5%;
+  padding: 7% 5%;
 
   ${Header}, ${InfoLinksContainer} {
     max-width: 650px;

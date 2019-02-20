@@ -40,6 +40,18 @@
   font-weight: 800;
 }
 
+@font-face {
+  font-family: 'Input';
+  src: url('../../assets/fonts/InputMono-Regular.ttf');
+  font-weight: 100 400;
+}
+
+@font-face {
+  font-family: 'Input';
+  src: url('../../assets/fonts/InputMono-Bold.ttf');
+  font-weight: 500 800;
+}
+
 :root {
   --post-content-margin: 40px;
   --base-gap: 10px;
@@ -72,7 +84,7 @@
   --font-x-large: 3.5rem;
   --font-large: 2rem;
   --font-medium: 1.5rem;
-  --font-small: 1rem;
+  --font-small: 1.1rem;
   --font-x-small: 0.85rem;
 
   --ss-font: InterUI;
@@ -81,12 +93,12 @@
   --illustrationavfont: Arial;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 568px) {
   :root {
     --font-x-large: 6vw;
-    --font-medium: 3.5vw;
-    --font-small: 3vw;
-    --font-x-small: 3vw;
+    --font-medium: 3.6vw;
+    --font-small: 3.2vw;
+    --font-x-small: 3.2vw;
   }
 }
 

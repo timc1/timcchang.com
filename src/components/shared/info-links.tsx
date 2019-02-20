@@ -25,6 +25,7 @@ const ListItems: any = styled.ul`
   display: grid;
   grid-gap: calc(var(--base-gap) * 2);
   font-size: var(--font-small);
+  font-weight: var(--medium);
 
   ${BasicLink} {
     padding: var(--base-gap);
