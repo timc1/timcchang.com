@@ -13,6 +13,7 @@ type IntersectionObserverProps = {
     target: any
     observer: any
   }) => void
+  autoDisconnect?: boolean
 }
 
 export default function useIntersectionObserver({
@@ -20,6 +21,7 @@ export default function useIntersectionObserver({
   refs = [],
   targetName = '',
   callback,
+  autoDisconnect,
 }: IntersectionObserverProps) {
   const observer = React.useRef<any>(null)
   const options = {
@@ -32,12 +34,10 @@ export default function useIntersectionObserver({
 
     observer.current = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && autoDisconnect) {
           // Disconnect observer when all elements have been intersected.
           count++
-          if (count === elements.length) {
-            observer.current.disconnect()
-          }
+          if (count === elements.length) observer.current.disconnect()
         }
         callback({
           isIntersecting: entry.isIntersecting,
@@ -60,9 +60,6 @@ export default function useIntersectionObserver({
     if (!elements.length) observer.current.disconnect()
 
     // Cleanup
-    return () => {
-      console.log('unmount', elements)
-      observer.current.disconnect()
-    }
+    return () => observer.current.disconnect()
   }, [])
 }

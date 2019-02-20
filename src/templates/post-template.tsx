@@ -46,6 +46,7 @@ export default function PageTemplate(data) {
         target.classList.add('show')
       }
     },
+    autoDisconnect: true,
   })
 
   return (

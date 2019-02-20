@@ -236,6 +236,7 @@ const EventImage = styled.div`
 const Date = styled.div`
   font-size: 8px;
   text-align: center;
+  line-height: 1.2;
   span {
     display: block;
   }
@@ -261,7 +262,7 @@ const Title = styled.h5`
   font-size: ${props => (props.theme.isSinglePage ? '18px' : '10px')};
   font-weight: var(--bold);
   font-family: var(--illustrationavfont);
-  margin: 10px 0;
+  margin: 0 0 10px 0;
 `
 
 const TextContent = styled.div`

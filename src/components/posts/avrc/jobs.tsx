@@ -16,7 +16,7 @@ const Jobs = React.memo(() => (
       </BannerText>
       <BannerLaptop>
         <ThemeProvider theme={{ small: true }}>
-          <Laptop text="https://avresources.co/services/jobs">
+          <Laptop text="https://avresources.co/services/jobs" noheader>
             <Header>
               <MyApps>
                 {Array.from(Array(3)).map((i, index) => (

@@ -24,7 +24,7 @@ const Transition = styled.div`
   margin: 80px 0;
   opacity: 0;
   transform: translateY(25px);
-  transition: transform 800ms ease, opacity 400ms 100ms;
+  transition: transform 1000ms ease, opacity 400ms 100ms;
 `
 
 const Container = styled.div`

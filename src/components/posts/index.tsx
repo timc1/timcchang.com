@@ -37,6 +37,7 @@ export default function PostIndex({ dark }: { dark?: boolean }) {
         target.classList.add('show')
       }
     },
+    autoDisconnect: true,
   })
 
   return (
@@ -99,7 +100,7 @@ const Ul = styled.ul`
   > .post {
     opacity: 0;
     transform: translateY(40px);
-    transition: transform 800ms ease 100ms, opacity 400ms 150ms;
+    transition: transform 1000ms ease 100ms, opacity 400ms 150ms;
   }
 
   > .post.show {
@@ -217,14 +218,14 @@ const animateLink = keyframes`
   0% {
     transform: translate(8px, -60%);
   }
-  60% {
+  50% {
     transform: translate(30px, -60%); 
   }
-  65% {
+  55% {
     opacity: 0;
     transform: translate(30px, -60%); 
   }
-  70% {
+  60% {
     transform: translate(0px, -60%); 
   }
   100% {
@@ -240,7 +241,7 @@ const PostLink = styled(Link)`
     &:hover {
       ${ReadMore} {
         &::after {
-          animation: ${animateLink} 400ms ease-in;
+          animation: ${animateLink} 500ms var(--cubic-2);
         }
       }
     }

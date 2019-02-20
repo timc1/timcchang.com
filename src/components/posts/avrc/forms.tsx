@@ -16,7 +16,7 @@ const Forms = React.memo(() => (
       </BannerText>
       <BannerLaptop>
         <ThemeProvider theme={{ small: true }}>
-          <Laptop text="https://avresources.co/services/forms">
+          <Laptop text="https://avresources.co/services/forms" noheader>
             <TopNav />
             <Layout>
               <MyTags>
