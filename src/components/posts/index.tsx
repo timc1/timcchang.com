@@ -96,16 +96,17 @@ const Ul = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
+  perspective: 2000px;
 
   > .post {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(40px) skewY(-1deg) rotateY(1deg);
     transition: transform 1000ms ease 100ms, opacity 400ms 150ms;
   }
 
   > .post.show {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) skewY(0) rotateY(0);
   }
 
   > li:not(:last-of-type) {

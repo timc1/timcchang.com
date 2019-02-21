@@ -33,11 +33,18 @@ export default function useIntersectionObserver({
     let elements: any = []
 
     observer.current = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && autoDisconnect) {
+      entries.forEach((entry: any) => {
+        let notAnimatedYet = !entry.target
+          .getAttribute('class')
+          .includes('show')
+
+        if (entry.isIntersecting && autoDisconnect && notAnimatedYet) {
           // Disconnect observer when all elements have been intersected.
           count++
-          if (count === elements.length) observer.current.disconnect()
+          if (count === elements.length) {
+            console.log('disconnect')
+            observer.current.disconnect()
+          }
         }
         callback({
           isIntersecting: entry.isIntersecting,

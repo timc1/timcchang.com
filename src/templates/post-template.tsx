@@ -7,7 +7,7 @@ import SEO from '../components/shared/seo'
 import PostLayout from './post-layout'
 import { graphql, Link } from 'gatsby'
 import { Categories } from '../components/posts/index'
-import { mq } from '../components/shared/global-styles'
+import { mq, GoBackLink } from '../components/shared/global-styles'
 import { css } from '@emotion/core'
 import InfoLinks from '../components/shared/info-links'
 import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
@@ -57,6 +57,21 @@ export default function PageTemplate(data) {
         keywords={mdx.frontmatter.keywords}
       />
       <Header>
+        <GoBackLink
+          to="/"
+          css={css`
+            color: var(--color-dark-0);
+            margin-bottom: 45px;
+            > span {
+              &::before,
+              &::after {
+                background: var(--color-dark-0);
+              }
+            }
+          `}
+        >
+          <span>Home</span>
+        </GoBackLink>
         <Title>{mdx.frontmatter.title}</Title>
         <Subtitle>{mdx.frontmatter.subtitle}</Subtitle>
         <Breadcrumbs>
@@ -151,18 +166,14 @@ const Header = styled.section`
   max-width: 1300px;
   margin: auto;
   padding: calc(var(--padding) / 2) 0;
-
-  ${mq[1]} {
-    padding: calc(var(--padding) / 4) 0;
-  }
 `
 
 const Title = styled.h1`
   margin: 0;
-  font-size: var(--font-x-large);
+  font-size: var(--font-xx-large);
   font-family: var(--ss-font2);
-  font-weight: var(--regular);
-  color: var(--color-dark-0);
+  font-weight: var(--bold);
+  color: var(--color-black);
   max-width: 750px;
 `
 
@@ -171,7 +182,7 @@ const Subtitle = styled.p`
   font-size: var(--font-medium);
   font-family: var(--ss-font);
   font-weight: var(--regular);
-  color: var(--color-dark);
+  color: var(--color-dark-1);
   max-width: 750px;
 `
 
@@ -243,6 +254,11 @@ const Content = styled.section`
     font-family: var(--ss-font2);
     font-weight: var(--bold);
     color: var(--color-black);
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--color-dark);
   }
 `
 
