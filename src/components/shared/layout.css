@@ -53,8 +53,9 @@
 }
 
 :root {
+  --line-height: 1.6;
   --post-content-margin: 40px;
-  --base-gap: 10px;
+  --base-gap: 15px;
   --base-radius: 3px;
   --base-box-shadow: 0 1px 3px rgba(188, 193, 217, 0.12),
     0 5px 12px rgba(188, 193, 217, 0.25);
@@ -63,6 +64,7 @@
   --cubic-2: cubic-bezier(0.74, -0.21, 0.51, 1.39);
 
   --yellow: #fffbda;
+  --light-blue: #D9F9FF;
   --blue: #354eff;
   --forest-green: #013540;
   --color-black: #121519;
@@ -84,7 +86,7 @@
   --font-xx-large: 3.5rem;
   --font-x-large: 3.5rem;
   --font-large: 2rem;
-  --font-medium: 1.5rem;
+  --font-medium: 1.3rem;
   --font-small: 1.1rem;
   --font-x-small: 0.85rem;
 

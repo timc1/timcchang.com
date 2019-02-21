@@ -43,7 +43,7 @@ export default function Index() {
 const Header = styled.p`
   margin: 0;
   font-size: var(--font-medium);
-  line-height: calc(var(--font-medium) + 1rem);
+  line-height: var(--line-height);
   font-weight: var(--medium);
   color: var(--color-dark);
 `
@@ -77,6 +77,6 @@ const PostsSection = styled.section`
     max-width: 700px;
   }
   ${mq[1]} {
-    padding: 10%;
+    padding: 10% 5%;
   }
 `

@@ -75,7 +75,15 @@ export default function PostIndex({ dark }: { dark?: boolean }) {
                     <Categories>
                       <li>{index + 1 < 10 ? `0${index + 1}` : index + 1}.</li>
                       {post.node.frontmatter.breadcrumbs.map((bc: string) => (
-                        <li key={bc}>{bc}</li>
+                        <li
+                          key={bc}
+                          className={bc
+                            .split(' ')
+                            .join('-')
+                            .toLowerCase()}
+                        >
+                          {bc}
+                        </li>
                       ))}
                     </Categories>
                     <Title>{post.node.frontmatter.title}</Title>
@@ -133,6 +141,14 @@ export const Categories = styled.ul`
     padding-right: 10px;
   }
 
+  li.case-study {
+    color: var(--yellow);
+  }
+
+  li.post {
+    color: var(--light-blue);
+  }
+
   ${mq[1]} {
     margin: 0 0 var(--base-gap) 0;
   }
@@ -140,10 +156,9 @@ export const Categories = styled.ul`
 
 const Title = styled.h1`
   margin: 0;
-  font-weight: var(--bold);
-  font-size: var(--font-x-large);
-  font-family: var(--ss-font2);
-  font-weight: var(--regular);
+  font-size: var(--font-large);
+  font-family: var(--ss-font);
+  font-weight: var(--medium);
   color: ${props =>
     props.theme.dark ? 'var(--color-light)' : 'var(--color-dark-0)'};
   opacity: 1;
@@ -154,7 +169,7 @@ const Preview = styled.p`
   position: relative;
   margin: var(--base-gap) 0 0 0;
   font-size: var(--font-small);
-  line-height: calc(var(--font-medium) + 0.25rem);
+  line-height: var(--line-height);
   color: var(--color-dark-1);
   text-overflow: ellipsis;
   display: -webkit-box;

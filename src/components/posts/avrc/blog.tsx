@@ -137,7 +137,7 @@ const Banner = styled.div`
     display: flex;
     place-content: center;
     align-items: center;
-    font-size: 6px;
+    font-size: 6px !important;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont) !important;
     text-transform: uppercase;
@@ -171,7 +171,7 @@ const Body = styled.div`
 `
 
 const Title = styled.h5`
-  font-size: ${props => (props.theme.isOverlay ? '10px' : '18px')};
+  font-size: ${props => (props.theme.isOverlay ? '10px' : '18px')} !important;
   font-family: var(--illustrationavfont) !important;
   font-weight: var(--bold);
   text-align: ${props => (props.theme.isOverlay ? 'left' : 'center')};
@@ -179,7 +179,7 @@ const Title = styled.h5`
 `
 
 const Author = styled.p`
-  font-size: 6px;
+  font-size: 6px !important;
   text-transform: uppercase;
   color: rgb(0, 122, 255);
   letter-spacing: 1px;
@@ -235,7 +235,7 @@ const FooterColumn = styled.div`
   .logo {
     width: 80%;
     background: none !important;
-    font-size: 10px;
+    font-size: 10px !important;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont) !important;
     color: #fff;

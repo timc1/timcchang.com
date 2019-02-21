@@ -37,7 +37,7 @@ export const GoBackLink = styled(Link)`
   text-decoration: none;
   display: inline-block;
   padding: var(--base-gap);
-  padding-left: calc(var(--base-gap) * 3);
+  padding-left: calc(var(--base-gap) * 2);
   font-size: var(--font-small);
   > span {
     &::before {

@@ -189,7 +189,7 @@ const Content = styled.section`
   ul {
     max-width: 650px;
     width: 100%;
-    line-height: 1.4;
+    line-height: var(--line-height);
   }
 
   h1 {
