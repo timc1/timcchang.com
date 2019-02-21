@@ -13,6 +13,10 @@ export default function BaseLayout({
 }: {
   children: React.ReactNode
 }) {
+  React.useEffect(() => {
+    document.body.setAttribute('data-url', window.location.pathname)
+  }, [window.location.pathname])
+
   return (
     <Location>
       {({ location }) => (

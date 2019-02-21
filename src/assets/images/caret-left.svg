@@ -1,11 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="181px" height="308px" viewBox="0 0 181 308" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
-    <title>caret-symbol</title>
-    <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="caret-symbol" transform="translate(90.749907, 153.933932) rotate(-90.000000) translate(-90.749907, -153.933932) translate(-63.250093, 63.433932)" fill="#000000" fill-rule="nonzero">
-            <path d="M302.445,142.788 L164.63,4.959 C158.494,-1.171 148.556,-1.171 142.427,4.959 L4.597,142.788 C-1.532,148.92 -1.532,158.857 4.597,164.989 L15.698,176.09 C21.827,182.226 31.774,182.226 37.907,176.09 L153.527,60.464 L269.151,176.09 C275.279,182.226 285.221,182.226 291.352,176.09 L302.453,164.989 C308.589,158.85 308.589,148.92 302.445,142.788 Z" id="Path"></path>
-        </g>
-    </g>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 492 492" style="enable-background:new 0 0 492 492;" xml:space="preserve">
+<g>
+	<g>
+		<path d="M198.608,246.104L382.664,62.04c5.068-5.056,7.856-11.816,7.856-19.024c0-7.212-2.788-13.968-7.856-19.032l-16.128-16.12
+			C361.476,2.792,354.712,0,347.504,0s-13.964,2.792-19.028,7.864L109.328,227.008c-5.084,5.08-7.868,11.868-7.848,19.084
+			c-0.02,7.248,2.76,14.028,7.848,19.112l218.944,218.932c5.064,5.072,11.82,7.864,19.032,7.864c7.208,0,13.964-2.792,19.032-7.864
+			l16.124-16.12c10.492-10.492,10.492-27.572,0-38.06L198.608,246.104z"/>
+	</g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
 </svg>

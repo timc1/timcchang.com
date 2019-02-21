@@ -56,6 +56,7 @@
   --line-height: 1.6;
   --post-content-margin: 40px;
   --base-gap: 15px;
+  --base-padding: 100px;
   --base-radius: 3px;
   --base-box-shadow: 0 1px 3px rgba(188, 193, 217, 0.12),
     0 5px 12px rgba(188, 193, 217, 0.25);
@@ -63,8 +64,8 @@
   --cubic: cubic-bezier(0.19, 1, 0.22, 1);
   --cubic-2: cubic-bezier(0.74, -0.21, 0.51, 1.39);
 
-  --yellow: #fffbda;
-  --light-blue: #D9F9FF;
+  --yellow: rgb(255, 248, 217);
+  --light-blue: #d9f9ff;
   --blue: #354eff;
   --forest-green: #013540;
   --color-black: #121519;
@@ -77,6 +78,7 @@
   --color-light: #fff;
   --color-light-2: #e6ebf1;
   --color-light-3: #f5f6f7;
+  --color-light-4: #f6f9fc;
 
   --light: 300;
   --medium: 600;
@@ -152,6 +154,7 @@ label {
 body {
   margin: 0;
   padding: 0;
+  transition: background 250ms ease-in;
 }
 
 header,
@@ -160,4 +163,14 @@ footer {
   max-width: 2000px;
   width: 100%;
   margin: auto;
+}
+
+body[data-url='/case-studies/'],
+body[data-url='/case-studies'] {
+  background: var(--color-light-4);
+}
+
+body[data-url='/blog/'],
+body[data-url='/blog'] {
+  background: var(--color-light-4);
 }

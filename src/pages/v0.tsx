@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { HighlightedLink } from '../components/shared/global-styles'
-
-import PageLayout from '../components/shared/page-layout'
-import Footer from '../components/shared/footer'
+import PostsIndex from '../components/posts/index'
+import InfoLinks from '../components/shared/info-links'
+import { mq } from '../components/shared/global-styles'
 
 export default function Index() {
   return (
-    <PageLayout footerComponent={<Footer />}>
+    <>
       <Container>
         <Header>
           Hello, I am <HighlightedLink to="/">Tim Chang</HighlightedLink>, a
@@ -29,8 +29,14 @@ export default function Index() {
           <HighlightedLink to="/">documenting</HighlightedLink> the process of
           my work.
         </Header>
+        <InfoLinksContainer>
+          <InfoLinks />
+        </InfoLinksContainer>
       </Container>
-    </PageLayout>
+      <PostsSection>
+        <PostsIndex dark />
+      </PostsSection>
+    </>
   )
 }
 
@@ -42,15 +48,35 @@ const Header = styled.p`
   color: var(--color-dark);
 `
 
-const Container = styled.section`
-  padding: var(--base-padding);
+const InfoLinksContainer = styled.div`
+  margin-top: 80px;
+`
 
-  ${Header} {
+const Container = styled.section`
+  min-height: 100vh;
+  padding: 7% 5%;
+
+  ${Header}, ${InfoLinksContainer} {
     max-width: 650px;
   }
 
   // prettier-ignore
   ${Header}:not(:last-of-type) {
     margin-bottom: 10px;
+  }
+
+  ${mq[1]} {
+    padding: 10% 5%;
+  }
+`
+
+const PostsSection = styled.section`
+  padding: 5% 5% 100px 5%;
+  background: var(--color-black);
+  > ul {
+    max-width: 700px;
+  }
+  ${mq[1]} {
+    padding: 10% 5%;
   }
 `

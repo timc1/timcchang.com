@@ -36,6 +36,13 @@ module.exports = {
     {
       resolve: 'gatsby-source-filesystem',
       options: {
+        name: 'case-studies',
+        path: `${__dirname}/content/case-studies/`,
+      },
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
         name: 'posts-images',
         path: `${__dirname}/content/images/`,
       },
@@ -50,7 +57,9 @@ module.exports = {
     {
       resolve: `gatsby-plugin-layout`,
       options: {
-        component: require.resolve(`./src/components/shared/base-layout.tsx`),
+        component: require.resolve(
+          `./src/components/shared/page-transition-layout.tsx`
+        ),
       },
     },
     {

@@ -18,14 +18,15 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   // `File` node here:q
   if (node.internal.type === 'Mdx') {
     const value = createFilePath({ node, getNode })
+    const path =
+      node.frontmatter.type === 'case-study' ? 'case-studies' : 'blog'
 
     createNodeField({
       // Name of the field you are adding
       name: 'slug',
       // Individual MDX node
       node,
-      // Generated value based on filepath with "blog" prefix
-      value: `${value}`,
+      value: `${path}${value}`,
     })
   }
 }

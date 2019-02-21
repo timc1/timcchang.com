@@ -25,30 +25,45 @@ export const HighlightedLink = styled(Link)`
   }
 `
 
-export const BasicLink = styled(Link)`
+export const BasicLink: any = styled(Link)`
   position: relative;
-  color: var(--color-dark-0);
+  color: ${(props: any) =>
+    props.active === 'true' ? 'var(--color-black)' : 'var(--color-dark-1)'};
+  font-weight: var(--regular);
+  text-decoration: none;
+  width: max-content;
+`
+
+export const BasicNativeLink: any = styled.a`
+  position: relative;
+  color: ${(props: any) =>
+    props.active === 'true' ? 'var(--color-black)' : 'var(--color-dark-1)'};
+  font-weight: var(--regular);
   text-decoration: none;
 `
 
 export const GoBackLink = styled(Link)`
   position: relative;
-  color: var(--color-light);
+  color: ${props =>
+    props.color === 'dark' ? 'var(--color-black)' : 'var(--color-light)'};
   text-decoration: none;
   display: inline-block;
   padding: var(--base-gap);
   padding-left: calc(var(--base-gap) * 2);
   font-size: var(--font-small);
+  font-weight: var(--medium);
+  width: max-content;
   > span {
     &::before {
       content: '';
       position: absolute;
-      height: var(--font-small);
+      height: var(--font-medium);
       width: 15px;
       top: 50%;
       left: 0;
       transform: translateY(-50%);
-      background: var(--color-light);
+      background: ${props =>
+        props.color === 'dark' ? 'var(--color-black)' : 'var(--color-light)'};
       mask: url(${caret}) center no-repeat / contain;
     }
   }
