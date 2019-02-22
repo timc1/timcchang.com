@@ -52,6 +52,7 @@ const Container = styled.section`
 
   ${mq[2]} {
     grid-template-columns: 1fr;
+    padding-bottom: 80px;
   }
 `
 

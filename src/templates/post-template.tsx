@@ -5,7 +5,7 @@ import styled from '@emotion/styled'
 import { css } from '@emotion/core'
 import Img from 'gatsby-image'
 import SEO from '../components/shared/seo'
-import { graphql } from 'gatsby'
+import { graphql, Link } from 'gatsby'
 import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
 
 import PageLayout from '../components/shared/page-layout'
@@ -103,6 +103,32 @@ export default function PageTemplate(data) {
       <Content>
         <MDXRenderer>{mdx.code.body}</MDXRenderer>
       </Content>
+      - {/* 
+         // @ts-ignore */}
+      <ReadNext>
+        <Suggestion to={previous.node.fields.slug}>
+          <Direction>Previous</Direction>
+          <Breadcrumbs>
+            {/* 
+               // @ts-ignore */}
+            {previous.node.frontmatter.breadcrumbs.map(bc => (
+              <li key={bc}>{bc}</li>
+            ))}
+          </Breadcrumbs>
+          <p>{previous.node.frontmatter.title}</p>
+        </Suggestion>
+        <Suggestion to={next.node.fields.slug}>
+          <Direction>Up Next</Direction>
+          <Breadcrumbs>
+            {/* 
+               // @ts-ignore */}
+            {next.node.frontmatter.breadcrumbs.map(bc => (
+              <li key={bc}>{bc}</li>
+            ))}
+          </Breadcrumbs>
+          <p>{next.node.frontmatter.title}</p>
+        </Suggestion>
+      </ReadNext>
     </PageLayout>
   )
 }
@@ -239,4 +265,54 @@ const Content = styled.section`
   h3 {
     color: var(--color-dark-0);
   }
+`
+
+const Suggestion = styled(Link)`
+  padding: var(--base-padding) var(--base-gap);
+  display: flex;
+  flex-direction: column;
+  place-content: center start;
+  text-decoration: none;
+  color: var(--color-dark);
+  background: none;
+  border-radius: var(--base-radius);
+
+  font-size: var(--font-medium);
+
+  ${mq[2]} {
+    padding: 40px var(--base-padding);
+  }
+`
+
+const ReadNext = styled.section`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: var(--base-gap);
+  max-width: 1000px;
+  margin: auto;
+  border-top: 1px solid var(--color-light-2);
+  padding: var(--base-padding) 0;
+
+  ${mq[1]} {
+    grid-template-columns: 1fr;
+
+    ${Suggestion}:last-of-type {
+      grid-row: 1;
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+`
+
+const Direction = styled.span`
+  text-align: center;
+  margin-bottom: calc(var(--base-gap) * 2);
+  margin-top: calc(var(--base-gap) * -1.5);
+  color: var(--color-dark-1);
+  font-size: var(--font-x-small);
+  font-family: var(--ss-font2);
+  font-weight: var(--medium);
+  text-transform: uppercase;
 `

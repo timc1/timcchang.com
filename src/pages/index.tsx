@@ -5,6 +5,8 @@ import { HighlightedLink } from '../components/shared/global-styles'
 import PageLayout from '../components/shared/page-layout'
 import Footer from '../components/shared/footer'
 
+import { mq } from '../components/shared/global-styles'
+
 export default function Index() {
   return (
     <PageLayout footerComponent={<Footer />}>
@@ -52,5 +54,9 @@ const Container = styled.section`
   // prettier-ignore
   ${Header}:not(:last-of-type) {
     margin-bottom: 10px;
+  }
+
+  ${mq[2]} {
+    padding: 40px var(--base-padding);
   }
 `

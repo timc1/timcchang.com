@@ -23,7 +23,6 @@ const FooterStyle = styled.footer`
 
   ${mq[2]} {
     grid-template-columns: 1fr;
-    padding: 80px var(--base-padding);
 
     ul {
       grid-column: 1;
