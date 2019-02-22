@@ -154,7 +154,7 @@ const Banner = styled.div`
 
   > h5 {
     margin: 0;
-    font-size: 18px;
+    font-size: 18px !important;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont);
     line-height: 1.2;
@@ -202,7 +202,7 @@ const Body = styled.div`
 `
 
 const Header = styled.h5`
-  font-size: 8px;
+  font-size: 8px !important;
   font-weight: var(--bold);
   font-family: var(--illustrationavfont);
   color: rgb(66, 71, 112);
@@ -234,7 +234,7 @@ const EventImage = styled.div`
 `
 
 const Date = styled.div`
-  font-size: 8px;
+  font-size: 8px !important;
   text-align: center;
   line-height: 1.2;
   span {
@@ -245,7 +245,7 @@ const Date = styled.div`
     color: rgb(232, 54, 48);
   }
   .day {
-    font-size: 18px;
+    font-size: 18px !important;
     font-weight: var(--bold);
   }
 `
@@ -259,7 +259,8 @@ const Location = styled.div`
 `
 
 const Title = styled.h5`
-  font-size: ${props => (props.theme.isSinglePage ? '18px' : '10px')};
+  font-size: ${props =>
+    props.theme.isSinglePage ? '18px' : '10px'} !important;
   font-weight: var(--bold);
   font-family: var(--illustrationavfont);
   margin: 0 0 10px 0;
@@ -324,7 +325,7 @@ const Navbar = styled.div`
 `
 
 const BackButton = styled.span`
-  font-size: 8px;
+  font-size: 8px !important;
   &::before {
     content: '〈';
     margin-right: 8px;

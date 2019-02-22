@@ -12,16 +12,16 @@ export default function CaseStudiesIndex(data: any) {
         {studies.map((study: any, index: number) => (
           <CaseStudy key={study.id} className="text">
             <Link to={study.fields.slug}>
-              <Number>
-                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
-              </Number>
+              <Title>{study.frontmatter.title}</Title>
+              <Subtitle>{study.frontmatter.subtitle}</Subtitle>
               <Breadcrumbs>
                 {study.frontmatter.breadcrumbs.map((bc: string) => (
                   <li key={bc}>{bc}</li>
                 ))}
               </Breadcrumbs>
-              <Title>{study.frontmatter.title}</Title>
-              <Subtitle>{study.frontmatter.subtitle}</Subtitle>
+              <Number>
+                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
+              </Number>
             </Link>
           </CaseStudy>
         ))}
@@ -115,14 +115,23 @@ const CaseStudy = styled.li`
     > a {
       grid-template-columns: 1fr;
     }
+    ${Number} {
+      grid-row: 1;
+      margin-left: 0.125rem;
+    }
+
+    ${Breadcrumbs} {
+      grid-row: 2; 
+    }
+    ${Title} {
+      grid-row: 3; 
+    }
+    ${Subtitle}{
+      grid-row: 4; 
+    } 
 
     ${Number}, ${Title}, ${Subtitle}, ${Breadcrumbs} {
       grid-column: unset; 
-      grid-row: unset;
-    }
-
-    ${Number} {
-      margin-left: 2px; 
     }
   }
 `

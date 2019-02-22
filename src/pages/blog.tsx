@@ -16,17 +16,17 @@ export default function BlogIndex(data: any) {
         {posts.map((post: any, index: number) => (
           <Post key={post.id}>
             <Link to={post.fields.slug} className="text">
-              <Number>
-                {' '}
-                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
-              </Number>
+              <Title>{post.frontmatter.title}</Title>
+              <Subtitle>{post.excerpt}</Subtitle>
               <Breadcrumbs>
                 {post.frontmatter.breadcrumbs.map((bc: string) => (
                   <li key={bc}>{bc}</li>
                 ))}
               </Breadcrumbs>
-              <Title>{post.frontmatter.title}</Title>
-              <Subtitle>{post.excerpt}</Subtitle>
+              <Number>
+                {' '}
+                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
+              </Number>
               <ReadMore>Read more</ReadMore>
             </Link>
           </Post>
@@ -182,9 +182,24 @@ const Post: any = styled.li`
       grid-template-columns: 1fr;
     }
 
+    ${Number} {
+      grid-row: 1;
+      margin-left: 0.125rem;
+    }
+
+    ${Breadcrumbs} {
+      grid-row: 2; 
+    }
+    ${Title} {
+      grid-row: 3; 
+    }
+    ${Subtitle}{
+      grid-row: 4; 
+    } 
+
+
     ${Number}, ${Title}, ${Subtitle}, ${Breadcrumbs}, ${ReadMore} {
       grid-column: unset; 
-      grid-row: unset;
     }
 
     ${Number} {

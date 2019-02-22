@@ -60,10 +60,9 @@ const Content = styled.div``
 
 const Title = styled.h1`
   margin: var(--base-padding) 0;
-  font-size: var(--font-medium);
-  font-family: var(--ss-font2);
-  font-weight: var(--bold);
-  color: var(--color-dark-3);
+  font-size: var(--font-small);
+  font-weight: var(--medium);
+  color: var(--color-dark-1);
 
   ${mq[2]} {
     margin: 40px 0 80px 0;

@@ -10,7 +10,7 @@ import useIntersectionObserver from '../components/shared/hooks/useIntersectionO
 
 import PageLayout from '../components/shared/page-layout'
 import Footer from '../components/shared/footer'
-import { GoBackLink, mq } from '../components/shared/global-styles'
+import { GoBackLink, mq, rmq } from '../components/shared/global-styles'
 
 // FIXME: Typescript seeming to not work with gastby-node when building pages.
 //type PageTemplateType = {
@@ -69,19 +69,21 @@ export default function PageTemplate(data) {
           <span>Back</span>
         </GoBackLink>
       </PageNav>
-      <BannerPhoto>
-        <Img
-          fluid={mdx.frontmatter.image.childImageSharp.fluid}
-          css={css`
-            position: absolute !important;
-            top: 0;
-            left: var(--base-padding);
-            right: var(--base-padding);
-            border-radius: var(--base-radius);
-            bottom: 0;
-          `}
-        />
-      </BannerPhoto>
+      {mdx.frontmatter.image && (
+        <BannerPhoto>
+          <Img
+            fluid={mdx.frontmatter.image.childImageSharp.fluid}
+            css={css`
+              position: absolute !important;
+              top: 0;
+              left: var(--base-padding);
+              right: var(--base-padding);
+              border-radius: var(--base-radius);
+              bottom: 0;
+            `}
+          />
+        </BannerPhoto>
+      )}
       <Header>
         <div
           css={{
@@ -234,6 +236,7 @@ const Content = styled.section`
   padding: calc(var(--base-padding) / 2) var(--base-padding);
   margin: auto;
   line-height: 1.6;
+  perspective: 2000px;
 
   a,
   p,
@@ -250,25 +253,22 @@ const Content = styled.section`
   h4,
   h5 {
     font-weight: var(--medium);
-    color: var(--color-dark-0);
+    font-size: var(--font-medium);
+    color: var(--color-black);
   }
 
   h1 {
     font-size: var(--font-large);
   }
 
-  h2,
-  h3 {
-    font-size: var(--font-medium);
-  }
-
-  h3 {
-    color: var(--color-dark-0);
+  li {
+    list-style: circle;
+    margin-left: var(--font-medium);
   }
 `
 
 const Suggestion = styled(Link)`
-  padding: var(--base-padding) var(--base-gap);
+  padding: calc(var(--base-padding) / 2) var(--base-gap);
   display: flex;
   flex-direction: column;
   place-content: center start;
@@ -286,16 +286,18 @@ const Suggestion = styled(Link)`
 
 const ReadNext = styled.section`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));
   grid-gap: var(--base-gap);
   max-width: 1000px;
   margin: auto;
   border-top: 1px solid var(--color-light-2);
   padding: var(--base-padding) 0;
 
-  ${mq[1]} {
+  ${mq[2]} {
     grid-template-columns: 1fr;
+  }
 
+  ${mq[1]} {
     ${Suggestion}:last-of-type {
       grid-row: 1;
     }
@@ -304,13 +306,23 @@ const ReadNext = styled.section`
   p {
     margin: 0;
   }
+
+  ${rmq[2]} {
+  // prettier-ignore
+  ${Suggestion}:last-of-type {
+    text-align: end;
+    ${Breadcrumbs} {
+      justify-content: flex-end; 
+    }
+  }
+  }
 `
 
 const Direction = styled.span`
   text-align: center;
   margin-bottom: calc(var(--base-gap) * 2);
-  margin-top: calc(var(--base-gap) * -1.5);
-  color: var(--color-dark-1);
+  margin-top: 0;
+  color: var(--color-dark-3);
   font-size: var(--font-x-small);
   font-family: var(--ss-font2);
   font-weight: var(--medium);
