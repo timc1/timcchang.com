@@ -87,7 +87,7 @@
 
   --font-xx-large: 3.5rem;
   --font-x-large: 3.5rem;
-  --font-large: 2rem;
+  --font-large: 2.3rem;
   --font-medium: 1.3rem;
   --font-small: 1.1rem;
   --font-x-small: 0.85rem;
@@ -98,11 +98,17 @@
   --illustrationavfont: Arial;
 }
 
+@media (max-width: 767px) {
+  :root {
+    --base-padding: 20px;
+  }
+}
+
 @media (max-width: 568px) {
   :root {
     --font-xx-large: 10vw;
     --font-x-large: 6vw;
-    --font-large: 4.5vw;
+    --font-large: 5.5vw;
     --font-medium: 4vw;
     --font-small: 3.5vw;
     --font-x-small: 3.2vw;
@@ -154,7 +160,7 @@ label {
 body {
   margin: 0;
   padding: 0;
-  transition: background 250ms ease-in;
+  transition: background 200ms ease-in 150ms;
 }
 
 header,
@@ -170,7 +176,46 @@ body[data-url='/case-studies'] {
   background: var(--color-light-4);
 }
 
-body[data-url='/blog/'],
-body[data-url='/blog'] {
+body[data-url*='/blog/'],
+body[data-url*='/blog'] {
   background: var(--color-light-4);
+}
+
+body[data-url*='/process/'],
+body[data-url*='/process'] {
+  background: var(--color-black);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.text {
+  opacity: 0;
+  transform: translateY(25px) skewY(-1deg) rotateX(-1deg);
+  transition: transform 1000ms 100ms, opacity 450ms 150ms;
+}
+
+.text.show {
+  opacity: 1;
+  transform: translateY(0) skewY(0) rotateX(0);
+}
+
+.fade-cover {
+  background: linear-gradient(
+    to left,
+    rgba(246, 249, 252, 0.9) 30%,
+    rgba(246, 249, 252, 0)
+  );
+}
+
+body[data-url*='/case-studies/'] span.fade-cover,
+body[data-url*='/case-studies'] span.fade-cover {
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0.9) 30%,
+    rgba(255, 255, 255, 0)
+  );
 }

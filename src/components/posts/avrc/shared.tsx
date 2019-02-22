@@ -252,7 +252,7 @@ const SiteHeader = styled.div`
 
 const Logo = styled.span`
   font-weight: 800;
-  font-size: 15px;
+  font-size: 15px !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
   color: ${props => (props.theme.color ? props.theme.color : '#fff')};
@@ -310,17 +310,18 @@ const LaptopBrowserSearchBar = styled.div`
   height: ${props => (props.theme.small ? '8px' : '12px')};
   background: #fff;
   border-radius: 2px;
-  font-size: ${props => (props.theme.small ? '5px' : '8px')};
+  font-size: ${props => (props.theme.small ? '5px' : '8px')} !important;
   display: grid;
   align-items: center;
   padding-left: ${props => (props.theme.small ? '20px' : '25px')};
   overflow: hidden;
   a {
-    color: rgb(107, 124, 147);
+    color: rgb(107, 124, 147) !important;
     cursor: ne-resize;
     outline: none;
     line-height: 0;
     text-decoration: none;
+    font-size: inherit !important;
     &:hover,
     &:active,
     &:focus {

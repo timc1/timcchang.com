@@ -51,7 +51,8 @@ pre {
 
 @media (max-width: 767px) {
   pre {
-    margin: 0.5em calc(var(--base-gap) * -1);
+    margin-left: calc(var(--base-padding) * -1);
+    margin-right: calc(var(--base-padding) * -1);
     border-radius: 0;
   }
 }

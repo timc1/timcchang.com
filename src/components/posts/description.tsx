@@ -21,12 +21,13 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: var(--post-content-margin) 1fr;
   grid-gap: var(--base-gap);
+  align-items: center;
   margin: var(--post-content-margin) 0;
 `
 
 const SectionText = styled.span`
-  font-weight: var(--medium);
-  font-size: var(--font-x-small);
+  font-weight: var(--medium) !important;
+  font-size: var(--font-x-small) !important;
   color: var(--color-dark-1);
 `
 
@@ -34,8 +35,9 @@ const Title = styled.h2`
   margin: 0;
   grid-column: 2;
   grid-row: 1;
-  font-size: var(--font-small);
-  font-weight: var(--medium);
+  font-size: var(--font-small) !important;
+  font-weight: var(--medium) !important;
+  font-family: var(--ss-font2);
   text-transform: uppercase;
 `
 

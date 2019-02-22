@@ -223,13 +223,14 @@ const FooterContent = styled.div`
 
 const FooterColumn = styled.div`
   display: grid;
-  grid-gap: 5px;
+  grid-gap: 4px;
   padding: 20px 0;
   > span {
-    background: rgba(231, 236, 243, 0.4);
+    display: block;
+    background: rgba(231, 236, 243, 0.4) !important;
   }
   > span:first-of-type {
-    background: rgb(107, 124, 147);
+    background: rgb(107, 124, 147) !important;
   }
 
   .logo {

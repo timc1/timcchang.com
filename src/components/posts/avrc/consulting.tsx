@@ -114,7 +114,7 @@ const Header = styled.div`
   & > h3 {
     margin: 0;
     text-align: center;
-    color: #fff;
+    color: #fff !important;
     text-shadow: rgba(0, 0, 0, 0.1) 2px 2px;
     font-family: var(--illustrationavfont);
     font-weight: var(--regular);

@@ -1,65 +1,54 @@
 import React from 'react'
 import SectionIndexLayout from '../components/shared/section-index-layout'
 import styled from '@emotion/styled'
+import { graphql, Link } from 'gatsby'
+import { mq } from '../components/shared/global-styles'
 
-export default function CaseStudiesIndex() {
+export default function CaseStudiesIndex(data: any) {
+  const studies = data.data.allMdx.edges.map((edge: any) => edge.node)
   return (
     <SectionIndexLayout title="Case Studies">
       <CaseStudies>
-        <CaseStudy>
-          <Number>01.</Number>
-          <Breadcrumbs>
-            <li>AVRC</li>
-            <li>2018</li>
-          </Breadcrumbs>
-          <Title>Reimagining Healthcare Consulting</Title>
-          <Subtitle>
-            Reimagining and building AVRC's website and CMS from the ground up.
-          </Subtitle>
-        </CaseStudy>
-        <CaseStudy>
-          <Number>02.</Number>
-          <Breadcrumbs>
-            <li>Avrek</li>
-            <li>2019</li>
-          </Breadcrumbs>
-          <Title>Design-First Websites & Modern Law</Title>
-          <Subtitle>
-            Designing & developing ground up, individual attorney websites for
-            Avrek Law.
-          </Subtitle>
-        </CaseStudy>
-        <CaseStudy>
-          <Number>03.</Number>
-          <Breadcrumbs>
-            <li>Independent</li>
-            <li>2019</li>
-          </Breadcrumbs>
-          <Title>Storytelling Through Animation</Title>
-          <Subtitle>
-            Developing an animation portfolio website for designer, Alex Carey.
-          </Subtitle>
-        </CaseStudy>
+        {studies.map((study: any, index: number) => (
+          <CaseStudy key={study.id} className="text">
+            <Link to={study.fields.slug}>
+              <Number>
+                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
+              </Number>
+              <Breadcrumbs>
+                {study.frontmatter.breadcrumbs.map((bc: string) => (
+                  <li key={bc}>{bc}</li>
+                ))}
+              </Breadcrumbs>
+              <Title>{study.frontmatter.title}</Title>
+              <Subtitle>{study.frontmatter.subtitle}</Subtitle>
+            </Link>
+          </CaseStudy>
+        ))}
       </CaseStudies>
     </SectionIndexLayout>
   )
 }
 
-const CaseStudy = styled.li`
-  display: grid;
-  grid-template-columns: var(--font-large) 1fr;
-  align-items: center;
-  grid-gap: var(--base-gap);
-`
-
-const CaseStudies = styled.ul`
-  margin: 0 0 0 calc((var(--font-large) * -1) - var(--base-gap));
-  padding: 0;
-  list-style: none;
-  max-width: 850px;
-
-  ${CaseStudy}:not(:first-of-type) {
-    margin-top: var(--base-padding);
+export const query = graphql`
+  {
+    allMdx(filter: { frontmatter: { type: { regex: "/case-study/" } } }) {
+      edges {
+        node {
+          id
+          excerpt(pruneLength: 280)
+          frontmatter {
+            title
+            subtitle
+            breadcrumbs
+            type
+          }
+          fields {
+            slug
+          }
+        }
+      }
+    }
   }
 `
 
@@ -87,8 +76,7 @@ const Subtitle = styled.p`
   grid-row: 3;
   grid-column: 2;
   font-size: var(--font-medium);
-  font-family: var(--ss-font2);
-  color: var(--color-black);
+  color: var(--color-dark-1);
 `
 
 const Breadcrumbs = styled.ul`
@@ -101,19 +89,59 @@ const Breadcrumbs = styled.ul`
   flex-direction: row;
   font-size: var(--font-x-small);
   font-weight: var(--medium);
-  color: var(--color-black);
+  color: var(--color-dark-1);
   text-transform: uppercase;
 
   > li {
     font-family: var(--ss-font2);
-  }
-
-  > li:first-of-type {
-    color: var(--color-dark-1);
-    font-weight: var(--medium);
+    color: var(--color-dark-0);
   }
 
   > li:not(:last-of-type) {
     padding-right: var(--base-gap);
+  }
+`
+
+const CaseStudy = styled.li`
+  > a {
+    display: grid;
+    grid-template-columns: var(--font-large) 1fr;
+    align-items: center;
+    grid-gap: var(--base-gap);
+    text-decoration: none;
+  }
+
+  ${mq[2]} {
+    > a {
+      grid-template-columns: 1fr;
+    }
+
+    ${Number}, ${Title}, ${Subtitle}, ${Breadcrumbs} {
+      grid-column: unset; 
+      grid-row: unset;
+    }
+
+    ${Number} {
+      margin-left: 2px; 
+    }
+  }
+`
+
+export const CaseStudies = styled.ul`
+  margin: 0 0 0 calc((var(--font-large) * -1) - var(--base-gap));
+  padding: 0;
+  list-style: none;
+  max-width: 850px;
+
+  ${CaseStudy}:not(:first-of-type) {
+    margin-top: var(--base-padding);
+  }
+
+  ${mq[2]} {
+    margin-left: 0;
+
+    ${CaseStudy}:not(:first-of-type) {
+      margin-top: 80px;
+    }
   }
 `

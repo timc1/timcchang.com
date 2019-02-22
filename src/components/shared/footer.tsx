@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import InfoLinks from './info-links'
+import { mq } from '../../components/shared/global-styles'
 
 export default function Footer({ offset }: { offset?: any }) {
   return (
@@ -18,5 +19,14 @@ const FooterStyle = styled.footer`
   ul {
     grid-column: ${(props: { offset: 'true' | 'false' }) =>
       props.offset === 'true' ? 2 : 1};
+  }
+
+  ${mq[2]} {
+    grid-template-columns: 1fr;
+    padding: 80px var(--base-padding);
+
+    ul {
+      grid-column: 1;
+    }
   }
 `

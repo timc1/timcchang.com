@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { mq, GoBackLink } from '../components/shared/global-styles'
-import InfoLinks from '../components/shared/info-links'
+import PageLayout from '../components/shared/page-layout'
+import Footer from '../components/shared/footer'
 
 import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
 
@@ -18,7 +19,7 @@ const Component = () => {
   })
 
   return (
-    <>
+    <PageLayout footerComponent={<Footer />}>
       <Content>
         <GoBackLink to="/">
           <span>Home</span>
@@ -147,10 +148,7 @@ const Component = () => {
           iteration, and improve upon the things that could've been better.{' '}
         </p>
       </Content>
-      <Footer>
-        <InfoLinks />
-      </Footer>
-    </>
+    </PageLayout>
   )
 }
 
@@ -160,8 +158,7 @@ const Content = styled.section`
   --gap-small: 40px;
   --gap-medium: 80px;
   --gap-large: 120px;
-  padding: 7% 5%;
-  background: var(--color-black);
+  padding: var(--base-padding);
   perspective: 1000px;
   overflow: hidden;
 
@@ -171,29 +168,18 @@ const Content = styled.section`
     --gap-large: 80px;
   }
 
-  .text {
-    opacity: 0;
-    transform: translateY(25px) skewY(-1deg) rotateX(-1deg);
-    transition: transform 1000ms 100ms, opacity 450ms 150ms;
-  }
-
-  .text.show {
-    opacity: 1;
-    transform: translateY(0) skewY(0) rotateX(0);
-  }
-
   h1,
   h2,
   h3,
   p,
   ul {
-    max-width: 650px;
+    max-width: 750px;
     width: 100%;
     line-height: var(--line-height);
   }
 
   h1 {
-    margin: var(--gap-large) 0;
+    margin: var(--base-padding) 0;
     font-size: var(--font-xx-large);
     font-weight: var(--medium);
     font-family: var(--ss-font2);
@@ -230,8 +216,4 @@ const Content = styled.section`
   li {
     font-size: var(--font-medium);
   }
-`
-
-const Footer = styled.footer`
-  padding: 5%;
 `

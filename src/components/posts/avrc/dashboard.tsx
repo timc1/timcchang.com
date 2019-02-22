@@ -161,7 +161,7 @@ const ModalHeader = styled.div`
   grid-template-columns: auto auto;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
+  font-size: 10px !important;
   font-weight: var(--bold);
   border-bottom: 1px solid #eee;
   line-height: 0;
@@ -237,13 +237,13 @@ const Sidebar = styled.div`
   > h5 {
     padding: 8px 10px;
     margin: 0;
-    font-size: 10px;
+    font-size: 10px !important;
     font-weight: var(--bold);
     color: rgb(34, 34, 49);
     line-height: 1.2;
   }
   > .menu-items {
-    font-size: 8px;
+    font-size: 8px !important;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -251,6 +251,7 @@ const Sidebar = styled.div`
       position: relative;
       padding: 5px 10px;
       border-bottom: 1px solid #f7f7f7;
+      font-size: inherit !important;
     }
 
     > li:first-of-type {
@@ -290,7 +291,7 @@ const Body = styled.div`
   overflow: hidden;
 
   > h5 {
-    font-size: 8px;
+    font-size: 8px !important;
     font-weight: var(--bold);
     padding: 5px 10px;
     margin-top: 10px;
@@ -308,7 +309,7 @@ const Searchbar = styled.div`
 
   > span {
     padding: 5px 8px;
-    font-size: 8px;
+    font-size: 8px !important;
     opacity: 0.1;
   }
 `
@@ -362,7 +363,7 @@ const Profile = styled.div`
   grid-gap: 5px;
   align-items: center;
   > span {
-    font-size: 5px;
+    font-size: 5px !important;
     opacity: 0.8;
   }
   > span:first-of-type {

@@ -1,96 +1,63 @@
 import React from 'react'
 import SectionIndexLayout from '../components/shared/section-index-layout'
 import styled from '@emotion/styled'
+import { keyframes } from '@emotion/core'
 // @ts-ignore
 import arrow from '../assets/images/arrow.svg'
+import { Link, graphql } from 'gatsby'
+import { rmq, mq } from '../components/shared/global-styles'
 
-export default function BlogIndex() {
+export default function BlogIndex(data: any) {
+  const posts = data.data.allMdx.edges.map((edge: any) => edge.node)
+  console.log(posts)
   return (
     <SectionIndexLayout title="Blog">
-      <CaseStudies>
-        <CaseStudy>
-          <Number>01.</Number>
-          <Breadcrumbs>
-            <li>2018</li>
-            <li>Topic</li>
-            <li>Topic</li>
-            <li>Topic</li>
-          </Breadcrumbs>
-          <Title>User Scrolling Animations With React</Title>
-          <Subtitle>
-            Curabitur lobortis condimentum nisi eu gravida. Mauris ut finibus
-            ante. Fusce pharetra scelerisque lorem non blandit. Nullam malesuada
-            laoreet varius. Nullam tristique sed leo ac laoreet. Maecenas sem
-            urna, dapibus sit amet posuere ut, tempus sit amet urna. Cras in
-            nisi eros. Nam odio neque, pretium sit amet nunc tincidunt, vehicula
-            pharetra augue. Nam at lobortis diam. Fusce sit amet fringilla nisl.
-            Morbi rhoncus lacus in lorem condimentum, ac lobortis ante
-            tincidunt.
-          </Subtitle>
-          <ReadMore>Read more</ReadMore>
-        </CaseStudy>
-        <CaseStudy>
-          <Number>02.</Number>
-          <Breadcrumbs>
-            <li>Avrek</li>
-            <li>2019</li>
-          </Breadcrumbs>
-          <Title>Design-First Websites & Modern Law</Title>
-          <Subtitle>
-            Curabitur lobortis condimentum nisi eu gravida. Mauris ut finibus
-            ante. Fusce pharetra scelerisque lorem non blandit. Nullam malesuada
-            laoreet varius. Nullam tristique sed leo ac laoreet. Maecenas sem
-            urna, dapibus sit amet posuere ut, tempus sit amet urna. Cras in
-            nisi eros. Nam odio neque, pretium sit amet nunc tincidunt, vehicula
-            pharetra augue. Nam at lobortis diam. Fusce sit amet fringilla nisl.
-            Morbi rhoncus lacus in lorem condimentum, ac lobortis ante
-            tincidunt. g & developing ground up, individual attorney websites
-            for Avrek Law.
-          </Subtitle>
-        </CaseStudy>
-        <CaseStudy>
-          <Number>03.</Number>
-          <Breadcrumbs>
-            <li>Independent</li>
-            <li>2019</li>
-          </Breadcrumbs>
-          <Title>Storytelling Through Animation</Title>
-          <Subtitle>
-            Curabitur lobortis condimentum nisi eu gravida. Mauris ut finibus
-            ante. Fusce pharetra scelerisque lorem non blandit. Nullam malesuada
-            laoreet varius. Nullam tristique sed leo ac laoreet. Maecenas sem
-            urna, dapibus sit amet posuere ut, tempus sit amet urna. Cras in
-            nisi eros. Nam odio neque, pretium sit amet nunc tincidunt, vehicula
-            pharetra augue. Nam at lobortis diam. Fusce sit amet fringilla nisl.
-            Morbi rhoncus lacus in lorem condimentum, ac lobortis ante
-            tincidunt. g & developing ground up, individual attorney websites
-            for Avrek Law.
-          </Subtitle>
-        </CaseStudy>
-      </CaseStudies>
+      <Posts>
+        {posts.map((post: any, index: number) => (
+          <Post key={post.id}>
+            <Link to={post.fields.slug} className="text">
+              <Number>
+                {' '}
+                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
+              </Number>
+              <Breadcrumbs>
+                {post.frontmatter.breadcrumbs.map((bc: string) => (
+                  <li key={bc}>{bc}</li>
+                ))}
+              </Breadcrumbs>
+              <Title>{post.frontmatter.title}</Title>
+              <Subtitle>{post.excerpt}</Subtitle>
+              <ReadMore>Read more</ReadMore>
+            </Link>
+          </Post>
+        ))}
+      </Posts>
     </SectionIndexLayout>
   )
 }
 
-const CaseStudy = styled.li`
-  display: grid;
-  grid-template-columns: var(--font-large) 1fr;
-  align-items: center;
-  grid-gap: var(--base-gap);
-`
-
-const CaseStudies = styled.ul`
-  margin: 0 0 0 calc((var(--font-large) * -1) - var(--base-gap));
-  padding: 0;
-  list-style: none;
-  max-width: 850px;
-
-  ${CaseStudy}:not(:first-of-type) {
-    margin-top: var(--base-padding);
+export const query = graphql`
+  {
+    allMdx(filter: { frontmatter: { type: { regex: "/post/" } } }) {
+      edges {
+        node {
+          id
+          excerpt(pruneLength: 280)
+          frontmatter {
+            title
+            breadcrumbs
+            type
+          }
+          fields {
+            slug
+          }
+        }
+      }
+    }
   }
 `
 
-const Number = styled.p`
+export const Number = styled.p`
   margin: 0;
   grid-column: 1;
   grid-row: 2;
@@ -124,7 +91,7 @@ const Subtitle = styled.p`
   overflow: hidden;
 `
 
-const Breadcrumbs = styled.ul`
+export const Breadcrumbs = styled.ul`
   margin: 0 0 0 2px;
   padding: 0;
   list-style: none;
@@ -139,11 +106,7 @@ const Breadcrumbs = styled.ul`
 
   > li {
     font-family: var(--ss-font2);
-  }
-
-  > li:first-of-type {
     color: var(--color-dark-1);
-    font-weight: var(--medium);
   }
 
   > li:not(:last-of-type) {
@@ -176,5 +139,76 @@ const ReadMore = styled.span`
     mask: url(${arrow}) center bottom / contain no-repeat;
     transform: translate(8px, -60%);
     transition: transform 250ms var(--cubic);
+  }
+`
+
+const animateLink = keyframes`
+  0% {
+    transform: translate(8px, -60%);
+  }
+  50% {
+    transform: translate(30px, -60%); 
+  }
+  55% {
+    opacity: 0;
+    transform: translate(30px, -60%); 
+  }
+  60% {
+    transform: translate(0px, -60%); 
+  }
+  100% {
+    transform: translate(8px, -60%); 
+  }
+`
+
+const Post: any = styled.li`
+  > a {
+    display: grid;
+    grid-template-columns: var(--font-large) 1fr;
+    align-items: center;
+    grid-gap: var(--base-gap);
+    text-decoration: none;
+    ${rmq[1]} {
+      &:hover {
+        ${ReadMore}::after {
+          animation: ${animateLink} 500ms var(--cubic-2);
+        }
+      }
+    }
+  }
+
+  ${mq[2]} {
+   > a {
+      grid-template-columns: 1fr;
+    }
+
+    ${Number}, ${Title}, ${Subtitle}, ${Breadcrumbs}, ${ReadMore} {
+      grid-column: unset; 
+      grid-row: unset;
+    }
+
+    ${Number} {
+      margin-left: 2px; 
+    }
+  }
+
+`
+
+export const Posts = styled.ul`
+  margin: 0 0 0 calc((var(--font-large) * -1) - var(--base-gap));
+  padding: 0;
+  list-style: none;
+  max-width: 850px;
+
+  ${Post}:not(:first-of-type) {
+    margin-top: var(--base-padding);
+  }
+
+  ${mq[2]} {
+    margin-left: 0;
+
+    ${Post}:not(:first-of-type) {
+      margin-top: 80px;
+    }
   }
 `

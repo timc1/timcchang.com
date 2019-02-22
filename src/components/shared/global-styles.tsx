@@ -28,7 +28,7 @@ export const HighlightedLink = styled(Link)`
 export const BasicLink: any = styled(Link)`
   position: relative;
   color: ${(props: any) =>
-    props.active === 'true' ? 'var(--color-black)' : 'var(--color-dark-1)'};
+    props.active === 'true' ? 'var(--color-dark-2)' : 'var(--color-dark-1)'};
   font-weight: var(--regular);
   text-decoration: none;
   width: max-content;
@@ -37,7 +37,7 @@ export const BasicLink: any = styled(Link)`
 export const BasicNativeLink: any = styled.a`
   position: relative;
   color: ${(props: any) =>
-    props.active === 'true' ? 'var(--color-black)' : 'var(--color-dark-1)'};
+    props.active === 'true' ? 'var(--color-dark-2)' : 'var(--color-dark-1)'};
   font-weight: var(--regular);
   text-decoration: none;
 `

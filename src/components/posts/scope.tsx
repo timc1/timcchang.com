@@ -23,7 +23,8 @@ export default function Scope({ background, scope }: ScopeProps) {
 
 const Header = styled.h2`
   margin: 0;
-  font-size: var(--font-small);
+  font-size: var(--font-small) !important;
+  font-family: var(--ss-font2);
 `
 
 const Container = styled.div`
@@ -45,11 +46,9 @@ const Container = styled.div`
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: var(--font-small);
   }
 
   p {
-    font-size: var(--font-small);
     margin: 0;
   }
 `

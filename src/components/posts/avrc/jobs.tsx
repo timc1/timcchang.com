@@ -100,7 +100,7 @@ const BannerText = styled.div`
     font-weight: var(--bold);
     font-size: 15px;
     font-family: var(--illustrationavfont);
-    color: #fff;
+    color: #fff !important;
   }
   > span {
     height: 5px;
@@ -110,7 +110,7 @@ const BannerText = styled.div`
 
   > span:first-of-type {
     width: 30%;
-    background: #fff;
+    background: #fff !important;
   }
 
   > span:nth-of-type(4) {

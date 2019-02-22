@@ -250,7 +250,7 @@ const ExitContainer = styled.div`
 const StepsContainer = styled.div`
   position: absolute;
   left: 50%;
-  font-size: 10px;
+  font-size: 10px !important;
   font-weight: var(--bold);
   font-family: var(--illustrationavfont);
   height: inherit;
@@ -288,7 +288,7 @@ const Steps = styled.div`
 
   .step {
     position: relative;
-    font-size: 6px;
+    font-size: 6px !important;
     font-weight: var(--bold);
     text-transform: uppercase;
     color: var(--color-dark);
@@ -385,7 +385,7 @@ const TagsBody = styled.div`
 `
 
 const TagTitle = styled.p`
-  font-size: 6px;
+  font-size: 6px !important;
   font-weight: var(--bold);
   color: rgb(66, 71, 112);
   font-family: var(--illustrationavfont);
@@ -395,7 +395,7 @@ const TagTitle = styled.p`
 
 const Button = styled.div`
   position: relative;
-  font-size: 6px;
+  font-size: 6px !important;
   box-shadow: rgba(188, 193, 217, 0.12) 0px 1px 3px,
     rgba(164, 169, 175, 0.16) 0px 5px 12px;
   background: #fff;
@@ -443,7 +443,7 @@ const SearchBar = styled.div`
   padding: 0 10px;
 
   > span {
-    font-size: 8px;
+    font-size: 8px !important;
     font-family: var(--illustrationavfont);
   }
 `
@@ -457,7 +457,7 @@ const Overview = styled.div`
   > .title {
     position: relative;
     padding-left: 13px;
-    font-size: 8px;
+    font-size: 8px !important;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont);
     &::before {
@@ -497,7 +497,7 @@ const QuestionContainer = styled.div`
 
   .question {
     grid-column: span 2;
-    font-size: 6px;
+    font-size: 6px !important;
     font-family: var(--illustrationavfont);
     color: rgb(66, 71, 112);
   }
@@ -532,7 +532,7 @@ const PaymentContainer = styled.div`
 
 const PaymentText = styled.div`
   .title {
-    font-size: 12px;
+    font-size: 12px !important;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont);
   }
@@ -555,7 +555,7 @@ const FtagContainer = styled.div`
   .price {
     background: #fff;
     padding: 0 5px;
-    font-size: 14px;
+    font-size: 14px !important;
     z-index: 1;
   }
   .ftag {
