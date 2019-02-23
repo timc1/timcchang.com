@@ -58,7 +58,11 @@ export default function PageTemplate(data) {
       />
       <PageNav>
         <GoBackLink
-          to="/blog"
+          to=""
+          onClick={e => {
+            e.preventDefault()
+            window.history.back()
+          }}
           css={css`
             color: var(--color-dark-1);
             > span::before {

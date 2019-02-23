@@ -101,7 +101,11 @@ const ResumeIndex = () => {
                   <h4>This Next Year (thisnextyear.com)</h4>
                   <p>
                     I teamed up with{' '}
-                    <a href="https://instagram.com/alexcarey.s" target="_blank">
+                    <a
+                      href="https://instagram.com/alexcarey.s"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       @alexcarey.s
                     </a>{' '}
                     in building a holiday project, which ended up receiving #2
@@ -226,9 +230,9 @@ const ResumeIndex = () => {
           </Skills>
 
           <SectionTitle className="text">
-            But all these are just words.
+            But these are just words.
           </SectionTitle>
-          <PlainText className="text">
+          <PlainText className="text" css={{ marginBottom: '100px' }}>
             I enjoy working on problems with others. If you think our
             backgrounds, personalities, or skills may work well together, let's{' '}
             <BasicNativeLink href="mailto:timchang.tcc@gmail.com?subject=hi!">

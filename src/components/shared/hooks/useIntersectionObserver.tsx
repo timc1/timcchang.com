@@ -68,5 +68,5 @@ export default function useIntersectionObserver({
 
     // Cleanup
     return () => observer.current.disconnect()
-  }, [])
+  })
 }

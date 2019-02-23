@@ -169,7 +169,7 @@ export default Component
 const Header = styled.div`
   height: 100vh;
   > h1 {
-    margin: calc(var(--base-padding) * 2) 0 0 0;
+    margin: 100px 0;
     font-weight: var(--light);
   }
   > p {

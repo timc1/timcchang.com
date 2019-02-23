@@ -104,7 +104,7 @@ const Breadcrumbs = styled.ul`
 
   > li {
     font-family: var(--ss-font2);
-    color: var(--color-dark-0);
+    color: var(--color-dark-1);
   }
 
   > li:not(:last-of-type) {

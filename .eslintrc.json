@@ -10,5 +10,10 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "extends": ["react-app", "plugin:jsx-a11y/recommended", "prettier"]
+  "extends": ["react-app", "plugin:jsx-a11y/recommended", "prettier"],
+  "plugins": ["react-hooks"],
+  "rules": {
+    "react-hooks/rules-of-hooks": 2,
+    "react-hooks/exhaustive-deps": 2
+  }
 }
