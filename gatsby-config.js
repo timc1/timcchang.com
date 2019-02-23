@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
-    title: `Tim Chang`,
-    description: `Helloooo!`,
+    title: `Product Designer and Developer in Los Angeles — Tim Chang`,
+    description: `Home to my independent work and experiments. It features essays on web design, development, client work, and growth. Currently, I am a product designer & developer specializing in frontend/UI web development (React, HTML/CSS, Javascript)`,
     author: `@timcchang`,
   },
   plugins: [

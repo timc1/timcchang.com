@@ -6,39 +6,49 @@ import { keyframes } from '@emotion/core'
 import arrow from '../assets/images/arrow.svg'
 import { Link, graphql } from 'gatsby'
 import { rmq, mq } from '../components/shared/global-styles'
+import SEO from '../components/shared/seo'
 
 export default function BlogIndex(data: any) {
   const posts = data.data.allMdx.edges.map((edge: any) => edge.node)
-  console.log(posts)
+
   return (
-    <SectionIndexLayout title="Blog">
-      <Posts>
-        {posts.map((post: any, index: number) => (
-          <Post key={post.id}>
-            <Link to={post.fields.slug} className="text">
-              <Title>{post.frontmatter.title}</Title>
-              <Subtitle>{post.excerpt}</Subtitle>
-              <Breadcrumbs>
-                {post.frontmatter.breadcrumbs.map((bc: string) => (
-                  <li key={bc}>{bc}</li>
-                ))}
-              </Breadcrumbs>
-              <Number>
-                {' '}
-                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
-              </Number>
-              <ReadMore>Read more</ReadMore>
-            </Link>
-          </Post>
-        ))}
-      </Posts>
-    </SectionIndexLayout>
+    <>
+      <SEO
+        title="Blog — Tim Chang"
+        description="Essays on digital design, software development, personal and professional growth at timcchang.com."
+      />
+      <SectionIndexLayout title="Blog">
+        <Posts>
+          {posts.map((post: any, index: number) => (
+            <Post key={post.id}>
+              <Link to={post.fields.slug} className="text">
+                <Title>{post.frontmatter.title}</Title>
+                <Subtitle>{post.excerpt}</Subtitle>
+                <Breadcrumbs>
+                  {post.frontmatter.breadcrumbs.map((bc: string) => (
+                    <li key={bc}>{bc}</li>
+                  ))}
+                </Breadcrumbs>
+                <Number>
+                  {' '}
+                  {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
+                </Number>
+                <ReadMore>Read more</ReadMore>
+              </Link>
+            </Post>
+          ))}
+        </Posts>
+      </SectionIndexLayout>
+    </>
   )
 }
 
 export const query = graphql`
   {
-    allMdx(filter: { frontmatter: { type: { regex: "/post/" } } }) {
+    allMdx(
+      filter: { frontmatter: { type: { regex: "/post/" } } }
+      sort: { fields: [frontmatter___date], order: DESC }
+    ) {
       edges {
         node {
           id

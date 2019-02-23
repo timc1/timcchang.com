@@ -3,36 +3,46 @@ import SectionIndexLayout from '../components/shared/section-index-layout'
 import styled from '@emotion/styled'
 import { graphql, Link } from 'gatsby'
 import { mq } from '../components/shared/global-styles'
+import SEO from '../components/shared/seo'
 
 export default function CaseStudiesIndex(data: any) {
   const studies = data.data.allMdx.edges.map((edge: any) => edge.node)
   return (
-    <SectionIndexLayout title="Case Studies">
-      <CaseStudies>
-        {studies.map((study: any, index: number) => (
-          <CaseStudy key={study.id} className="text">
-            <Link to={study.fields.slug}>
-              <Title>{study.frontmatter.title}</Title>
-              <Subtitle>{study.frontmatter.subtitle}</Subtitle>
-              <Breadcrumbs>
-                {study.frontmatter.breadcrumbs.map((bc: string) => (
-                  <li key={bc}>{bc}</li>
-                ))}
-              </Breadcrumbs>
-              <Number>
-                {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
-              </Number>
-            </Link>
-          </CaseStudy>
-        ))}
-      </CaseStudies>
-    </SectionIndexLayout>
+    <>
+      <SEO
+        title="Case Studies — Tim Chang"
+        description="Overview and retrospective of independent client work at timcchang.com."
+      />
+      <SectionIndexLayout title="Case Studies">
+        <CaseStudies>
+          {studies.map((study: any, index: number) => (
+            <CaseStudy key={study.id} className="text">
+              <Link to={study.fields.slug}>
+                <Title>{study.frontmatter.title}</Title>
+                <Subtitle>{study.frontmatter.subtitle}</Subtitle>
+                <Breadcrumbs>
+                  {study.frontmatter.breadcrumbs.map((bc: string) => (
+                    <li key={bc}>{bc}</li>
+                  ))}
+                </Breadcrumbs>
+                <Number>
+                  {index + 1 < 10 ? `0${index + 1}` : `${index + 1}`}.
+                </Number>
+              </Link>
+            </CaseStudy>
+          ))}
+        </CaseStudies>
+      </SectionIndexLayout>
+    </>
   )
 }
 
 export const query = graphql`
   {
-    allMdx(filter: { frontmatter: { type: { regex: "/case-study/" } } }) {
+    allMdx(
+      filter: { frontmatter: { type: { regex: "/case-study/" } } }
+      sort: { fields: [frontmatter___date], order: DESC }
+    ) {
       edges {
         node {
           id

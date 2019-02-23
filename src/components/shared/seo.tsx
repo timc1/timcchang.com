@@ -1,29 +1,37 @@
-import React from "react"
-import Helmet from "react-helmet"
-import { StaticQuery, graphql } from "gatsby"
+import React from 'react'
+import Helmet from 'react-helmet'
+import { StaticQuery, graphql } from 'gatsby'
 
 type SEOProps = {
-  title?: string,
-  description?: string,
-  lang?: string,
-  keywords?: Array<string>,
-  meta?: Array<any>, 
+  title?: string
+  description?: string
+  lang?: string
+  keywords?: Array<string>
+  meta?: Array<any>
 }
 
-export default function SEO({ description, lang, meta = [], keywords = [], title }: SEOProps) {
+export default function SEO({
+  description,
+  lang,
+  meta = [],
+  keywords = [],
+  title,
+}: SEOProps) {
   return (
     <StaticQuery
       query={detailsQuery}
       render={data => {
+        const metaTitle = title || data.site.siteMetadata.title
         const metaDescription =
           description || data.site.siteMetadata.description
+
         return (
           <Helmet
             htmlAttributes={{
               lang,
             }}
-            title={title}
-            titleTemplate={`%s | ${data.site.siteMetadata.title}`}
+            title={metaTitle}
+            titleTemplate={`%s`}
             meta={[
               {
                 name: `description`,

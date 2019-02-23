@@ -177,7 +177,9 @@ body[data-url='/case-studies'] {
 }
 
 body[data-url*='/blog/'],
-body[data-url*='/blog'] {
+body[data-url*='/blog'],
+body[data-url*='/resume/'],
+body[data-url*='/resume'] {
   background: var(--color-light-4);
 }
 

@@ -5,6 +5,7 @@ import {
   Transition as ReactTransition,
   // @ts-ignore
 } from 'react-transition-group'
+import SEO from './seo'
 
 import { Location } from '@reach/router'
 
@@ -52,26 +53,29 @@ type TransitionProps = {
 const Transition = React.memo(
   ({ children, transitionKey, delay = 240 }: TransitionProps) => {
     return (
-      <TransitionGroup component={null} appear={true}>
-        <ReactTransition
-          key={transitionKey}
-          timeout={{
-            enter: delay,
-            exit: delay,
-          }}
-          style={{ position: 'relative' }}
-        >
-          {(status: string) => (
-            <div
-              style={{
-                ...getBaseStyles({ delay })[status],
-              }}
-            >
-              {children}
-            </div>
-          )}
-        </ReactTransition>
-      </TransitionGroup>
+      <>
+        <SEO />
+        <TransitionGroup component={null} appear={true}>
+          <ReactTransition
+            key={transitionKey}
+            timeout={{
+              enter: delay,
+              exit: delay,
+            }}
+            style={{ position: 'relative' }}
+          >
+            {(status: string) => (
+              <div
+                style={{
+                  ...getBaseStyles({ delay })[status],
+                }}
+              >
+                {children}
+              </div>
+            )}
+          </ReactTransition>
+        </TransitionGroup>
+      </>
     )
   }
 )
