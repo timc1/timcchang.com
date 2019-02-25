@@ -36,6 +36,8 @@
     "develop": "gatsby develop",
     "start": "npm run develop",
     "serve": "gatsby serve",
+    "deploy": "yarn build --prefix-paths && s3-deploy './public/**' --cwd './public/' --bucket v1.timcchang.com  --deleteRemoved --gzip && yarn clear",
+    "clear": "aws-cloudfront-invalidate E13QRRXLCD7671",
     "test": "echo \"Write tests! -> https://gatsby.app/unit-testing\""
   },
   "repository": {

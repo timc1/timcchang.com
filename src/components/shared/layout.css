@@ -64,7 +64,7 @@
   --cubic: cubic-bezier(0.19, 1, 0.22, 1);
   --cubic-2: cubic-bezier(0.74, -0.21, 0.51, 1.39);
 
-  --yellow: rgb(255, 248, 217);
+  --yellow: #fff8d9;
   --light-blue: #d9f9ff;
   --blue: #354eff;
   --forest-green: #013540;
