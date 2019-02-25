@@ -109,7 +109,7 @@ export default function PageTemplate(data) {
       <Content>
         <MDXRenderer>{mdx.code.body}</MDXRenderer>
       </Content>
-      - {/* 
+      {/* 
          // @ts-ignore */}
       <ReadNext>
         <Suggestion to={previous.node.fields.slug}>
@@ -171,11 +171,7 @@ const PageNav = styled.nav`
 
 const BannerPhoto = styled.div`
   position: relative;
-  padding-top: 25%;
-
-  ${mq[2]} {
-    padding-top: 35%;
-  }
+  padding-top: 35%;
 `
 
 const Title = styled.h1`

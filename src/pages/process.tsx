@@ -7,7 +7,7 @@ import SEO from '../components/shared/seo'
 
 import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
 
-const Component = () => {
+export default function ProcessIndex() {
   useIntersectionObserver({
     base: null,
     targetName: '.text',
@@ -37,13 +37,13 @@ const Component = () => {
               The way we work, think about problems, and create solutions
               change. Each problem will be approached in slightly different
               ways, but this is a simple, high level framework for how I
-              approach developing new products.
+              approach thinking about and developing new ideas.
             </p>
           </Header>
           <h2 className="text">Discovery</h2>
           <p className="text">
             The discovery phase allows us to pave a clear direction for a
-            project. This is the time where we define, discuss and question the
+            project. This is the time where we define, discuss and question a
             problem.
           </p>
           <p className="text">Our goal is to</p>
@@ -69,8 +69,8 @@ const Component = () => {
             We ask who is affected by our defined problem.
           </p>
           <p className="text">
-            This is when we look at public data, competitive products, create
-            user profiles to categorize different types of customers, and
+            Now's a good time to look at public data, competitive products,
+            create user profiles to categorize different types of customers, and
             interview current and potential customers. During this phase we
             might even create a quick prototype of an idea and share it with a
             selective group for suggestions and feedback.
@@ -101,11 +101,11 @@ const Component = () => {
           </p>
           <h3 className="text">a. Information Architecture</h3>
           <p className="text">
-            Define and structure the different sections based on our assumption
-            of a user's journey through the application. We ask ourselves what
-            questions the user may have during this time, and create a
-            structured flow of moving through the application based on these
-            questions.
+            Define and structure the different sections/modules of an idea based
+            on our assumption of a user's journey through the application. We
+            ask ourselves what questions the user may have during this time, and
+            create a structured flow of moving through the application based on
+            these questions.
           </p>
           <h3 className="text">b. Sketch & Wireframe</h3>
           <p className="text">
@@ -116,13 +116,13 @@ const Component = () => {
           </p>
           <h3 className="text">c. High Fidelity Prototype</h3>
           <p className="text">
-            I personally code ideas right away. Depending on the application,
-            it's easy to spin up a React or plain HTML/CSS/JS app and get
-            something up and running in minutes. I use Sketch for pretty basic
-            shapes and image alterations, but love to code things from scratch
-            and have 100% full control of every minute detail. It's also really
-            simple to share demos with customers for them to interact and use
-            the prototype.
+            I personally take sketches and go directly to code. Depending on the
+            application, it's easy to spin up a React or plain Javascript app
+            and get something up and running in minutes. I use Sketch for pretty
+            basic shapes and image alterations, but love to code things from
+            scratch and have 100% full control of every minute detail. It's also
+            really simple to share demos with customers for them to interact and
+            use the prototype.
           </p>
           <p className="text">
             We take note of and iterate our final product based on customer
@@ -150,7 +150,7 @@ const Component = () => {
           </p>
           <h3 className="text">c. Repeat</h3>
           <p className="text">
-            Product development is an ongoing process— we always need to
+            Product development is an ongoing process — we always need to
             reflect, iterate, and update our approach in order to become better
             problem solvers.
           </p>
@@ -163,8 +163,6 @@ const Component = () => {
     </>
   )
 }
-
-export default Component
 
 const Header = styled.div`
   height: 100vh;

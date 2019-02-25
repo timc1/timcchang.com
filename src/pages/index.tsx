@@ -18,18 +18,18 @@ export default function Index() {
         </Header>
         <Header>
           I design and build digital{' '}
-          <HighlightedLink to="/">products</HighlightedLink> that are
-          accessible, performant, and focus on fine, minute detail.
+          <HighlightedLink to="/case-studies/">products</HighlightedLink> that
+          are accessible, performant, and focus on fine, minute detail.
         </Header>
         <Header>
           Over the past few years I have{' '}
-          <HighlightedLink to="/">work</HighlightedLink>ed with startups to
-          ideate products, define goals, and solve business problems.
+          <HighlightedLink to="/resume/">work</HighlightedLink>ed with startups
+          to ideate products, define goals, and solve business problems.
         </Header>
         <Header>
           I enjoy sharing and{' '}
-          <HighlightedLink to="/">documenting</HighlightedLink> the process of
-          my work.
+          <HighlightedLink to="/blog/">documenting</HighlightedLink> the process
+          of my work.
         </Header>
       </Container>
     </PageLayout>

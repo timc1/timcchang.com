@@ -12,7 +12,6 @@ export default function Image({ src, alt }: ImageProps) {
 
 const Img = styled.img`
   width: 100%;
-  max-height: 500px;
   object-fit: cover;
   border-radius: 3px;
 `

@@ -188,6 +188,11 @@ body[data-url*='/process'] {
   background: var(--color-black);
 }
 
+body[data-url*='/archive/'],
+body[data-url*='/archive'] {
+  background: var(--yellow);
+}
+
 ul {
   margin: 0;
   padding: 0;

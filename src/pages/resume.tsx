@@ -75,7 +75,7 @@ const ResumeIndex = () => {
                 I've ventured into contracted client work in order to... live.
                 Recently:
               </p>
-              <ul>
+              <ul className="text">
                 <li>
                   <h4>Avrek Law Firm Attorney Micro Site</h4>
                   <p>
@@ -96,7 +96,7 @@ const ResumeIndex = () => {
                 </li>
               </ul>
               <p>Some recent side projects:</p>
-              <ul>
+              <ul className="text">
                 <li>
                   <h4>This Next Year (thisnextyear.com)</h4>
                   <p>
@@ -147,7 +147,7 @@ const ResumeIndex = () => {
                 from a B2C marketplace website towards a B2B SaaS company.
               </p>
               <p>Some milestones:</p>
-              <ul>
+              <ul className="text">
                 <li>
                   <h4>Acquiring 25% of the company's overall revenue</h4>
                   <p>
@@ -279,11 +279,11 @@ const SectionTitle = styled.h2`
 
 const Section = styled.section`
   display: grid;
-  grid-template-columns: 60px 1fr;
+  grid-template-columns: 40px 1fr;
   grid-gap: var(--base-gap);
   align-items: start;
   margin-bottom: 100px;
-  margin-left: calc((60px + var(--base-gap)) * -1);
+  margin-left: calc((40px + var(--base-gap)) * -1);
   max-width: 750px;
   width: 100%;
 
@@ -313,7 +313,7 @@ const Section = styled.section`
 
 const Date = styled.h2`
   margin: 0.6rem 0 !important;
-  justify-self: start;
+  justify-self: end;
   font-size: var(--font-x-small);
   font-weight: var(--medium);
   font-family: var(--ss-font2);
@@ -324,6 +324,7 @@ const Date = styled.h2`
   ${mq[1]} {
     writing-mode: unset;
     transform: none;
+    justify-self: start;
   }
 `
 
