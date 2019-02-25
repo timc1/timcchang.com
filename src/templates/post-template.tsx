@@ -242,7 +242,7 @@ const Content = styled.section`
   p,
   ul,
   li {
-    color: var(--color-dark-0);
+    color: var(--color-dark-1);
     font-weight: var(--medium);
     font-size: var(--font-medium);
   }
