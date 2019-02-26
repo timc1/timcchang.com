@@ -12,7 +12,7 @@ type SEOProps = {
 
 export default function SEO({
   description,
-  lang,
+  lang = 'en',
   meta = [],
   keywords = [],
   title,
