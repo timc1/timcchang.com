@@ -1,11 +1,10 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { HighlightedLink } from '../components/shared/global-styles'
 
 import PageLayout from '../components/shared/page-layout'
 import Footer from '../components/shared/footer'
 
-import { mq } from '../components/shared/global-styles'
+import { HighlightedLink, mq } from '../components/shared/global-styles'
 
 export default function Index() {
   return (
@@ -17,20 +16,14 @@ export default function Index() {
           CA working on selective client and independent projects.
         </Header>
         <Header>
-          I design and build digital{' '}
-          <HighlightedLink to="/case-studies/">products</HighlightedLink> that
-          are accessible, performant, and focus on fine, minute detail.
+          I design and build digital products that are accessible, performant,
+          and focus on fine, minute detail.
         </Header>
         <Header>
-          Over the past few years I have{' '}
-          <HighlightedLink to="/resume/">work</HighlightedLink>ed with startups
-          to ideate products, define goals, and solve business problems.
+          Over the past few years I have worked with startups to ideate
+          products, define goals, and solve business problems.
         </Header>
-        <Header>
-          I enjoy sharing and{' '}
-          <HighlightedLink to="/blog/">documenting</HighlightedLink> the process
-          of my work.
-        </Header>
+        <Header>I enjoy sharing and documenting the process of my work.</Header>
       </Container>
     </PageLayout>
   )
@@ -41,7 +34,7 @@ const Header = styled.p`
   font-size: var(--font-medium);
   line-height: var(--line-height);
   font-weight: var(--medium);
-  color: var(--color-dark);
+  color: var(--color-dark-0);
 `
 
 const Container = styled.section`

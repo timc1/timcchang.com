@@ -73,4 +73,11 @@ const ListItems: any = styled.ul`
   ${BasicLink}, ${BasicNativeLink} {
     padding: var(--base-gap);
   }
+
+  // prettier-ignore
+  > li:nth-of-type(n + 4) {
+    a {
+    color: var(--color-dark-2);
+    }
+  }
 `

@@ -305,6 +305,10 @@ const Section = styled.section`
     margin: calc(var(--base-gap) * 1.5) 0;
   }
 
+  a {
+    color: var(--blue);
+  }
+
   ${mq[1]} {
     grid-template-columns: 1fr;
     margin-left: 0;

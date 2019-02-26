@@ -2,12 +2,25 @@ const { createFilePath } = require('gatsby-source-filesystem')
 const componentWithMDXScope = require('gatsby-mdx/component-with-mdx-scope')
 const path = require('path')
 
-exports.onCreateWebpackConfig = ({ actions }) => {
+exports.onCreateWebpackConfig = ({ actions, loaders, stage }) => {
   actions.setWebpackConfig({
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     },
   })
+
+  if (stage === 'build-html') {
+    actions.setWebpackConfig({
+      module: {
+        rules: [
+          {
+            test: /intersection-observer/,
+            use: loaders.null(),
+          },
+        ],
+      },
+    })
+  }
 }
 
 exports.onCreateNode = ({ node, actions, getNode }) => {

@@ -14,9 +14,14 @@ export default function BaseLayout({
 }: {
   children: React.ReactNode
 }) {
-  React.useEffect(() => {
-    document.body.setAttribute('data-url', window.location.pathname)
-  }, [window.location.pathname])
+  /*eslint-disable */
+  React.useEffect(
+    () => {
+      document.body.setAttribute('data-url', window.location.pathname)
+    },
+    typeof window === 'object' ? [window.location.pathname] : []
+  )
+  /*eslint-enable */
 
   return (
     <Location>
@@ -52,6 +57,10 @@ type TransitionProps = {
 
 const Transition = React.memo(
   ({ children, transitionKey, delay = 240 }: TransitionProps) => {
+    React.useEffect(() => {
+      document.body.style.opacity = '1'
+    }, [])
+
     return (
       <>
         <SEO />
