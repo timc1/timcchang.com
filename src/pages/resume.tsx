@@ -37,13 +37,13 @@ const ResumeIndex = () => {
           <Title className="text">Resume</Title>
           <PlainText className="text">
             My name is Tim Chang. Over the past few years I have been on a
-            continuous journey to figure out where I stand in my professional
-            career. I question myself a lot.
+            mission to figure out where I stand in my professional career — I
+            question myself quite often.
           </PlainText>
           <PlainText className="text">
-            In the last 2 years I have learned what I know about software
+            Over the last 2 years I have learned what I know about software
             development solely through resources online. Through this, I have
-            found a huge interest in building user interfaces.{' '}
+            found a large interest in building user interfaces.{' '}
           </PlainText>
           <PlainText className="text">
             I believe in the fine, minute details in design and development —
@@ -62,19 +62,15 @@ const ResumeIndex = () => {
               <RoleTitle>Independent Product Developer</RoleTitle>
               <p>
                 In mid 2017 I made a decision to put full attention toward
-                learning software development, particularly in developing user
-                interfaces. It is something that's always been of interest, but
-                with many things creative, we always have an internal question
-                of whether or not we are even capable. I bit the bullet, moved
-                down to LA, and started learning and making things. Today I have
-                learned that this is an ever learning process that never stops.
-                We have to get through build shitty things in order to get
-                better.
+                learning software development, particularly in building UIs. It
+                is something that's always been of interest, but with many
+                things creative, we always have an internal question of whether
+                or not we are capable. I bit the bullet, moved down to LA, and
+                started learning and making things. Today I have learned that
+                this is a learning process that never stops. We have to get
+                build many, many things in order to improve.
               </p>
-              <p>
-                I've ventured into contracted client work in order to... live.
-                Recently:
-              </p>
+              <p>I've also ventured into contracted client work. Recently:</p>
               <ul className="text">
                 <li>
                   <h4>Avrek Law Firm Attorney Micro Site</h4>
