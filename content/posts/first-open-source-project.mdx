@@ -1,0 +1,80 @@
+---
+title: 'React Hooks: Draggable Elements'
+subtitle: 'A light weight (10kb) and efficient Hook that make DOM elements draggable & reorganizable.'
+keywords: ['React', 'Animations', 'Open Source', 'Drag and Drop']
+breadcrumbs: ['Javascript', 'React', 'Open Source']
+date: '2019-03-01'
+type: 'post'
+---
+
+import Image from 'components/shared/img'
+import demo from 'assets/videos/react-drag-elements-demo.gif'
+
+Over the past week I worked on my first npm package, and today just published [react-drag-elements](https://www.npmjs.com/package/react-drag-elements)!
+
+<Image src={demo} alt="React Drag Element API demo" />
+
+I wanted to create a simple API which takes a list of items provided by a user, and returns
+an new list of items for the user to render, updating every time the user drags an item into a new position.
+
+To do this, I needed to:
+
+- Build a custom drag and drop mechanism that works both with touch/mobile & pointer/mouse events
+- Figure out the logic that calculates which elements need to move, and the position in which they
+  need to move to.
+
+After a few days of trial and error, we have a working API!
+
+Using it is super simple.
+
+```
+yarn add react-drag-elements
+```
+
+```tsx
+import useDragElements from 'react-drag-elements'
+
+// Create a list of items, adding a unique id for each.
+// The unique id is what will be used for properly ordering elements.
+const initialItems = [
+  { id: 0, text: 'One', color: '#616AFF' },
+  { id: 1, text: 'Two', color: '#2DBAE7' },
+  { id: 2, text: 'Three', color: '#fd4e4e' },
+]
+
+export default function App() {
+  // This is it!
+  // ===========
+  // Our hook returns two values:
+  // items: the items for you to render
+  // getItemProps: the props to spread onto each rendered element
+  const { items, getItemProps } = useDragElements({
+    initialItems,
+    delay: 200, // optional
+    debounceMs: 200, // optional
+    easeFunction: `ease-out`, // optional
+  })
+
+  return (
+    <ul>
+      {items.map((item: any) => (
+        <li key={item.id}>
+          <button
+            {...getItemProps(item.id)} // Spread the prop getter onto the element
+            style={{ background: item.color }}
+          >
+            <span>{item.text}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+### Questions?
+
+Shoot me an email if you have any questions or suggestions!
+
+- Full Repository: [Github](https://github.com/timc1/react-drag-elements) / [npm](https://www.npmjs.com/package/react-drag-elements)
+- Live Demo: [CodeSandbox](https://codesandbox.io/s/j480w1z58v)

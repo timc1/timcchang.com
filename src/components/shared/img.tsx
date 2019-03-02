@@ -14,4 +14,5 @@ const Img = styled.img`
   width: 100%;
   object-fit: cover;
   border-radius: 3px;
+  box-shadow: var(--base-box-shadow);
 `

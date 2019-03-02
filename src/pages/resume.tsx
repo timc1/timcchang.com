@@ -38,7 +38,7 @@ const ResumeIndex = () => {
           <PlainText className="text">
             My name is Tim Chang. Over the past few years I have been on a
             mission to figure out where I stand in my professional career — I
-            question myself quite often.
+            question a lot.
           </PlainText>
           <PlainText className="text">
             Over the last 2 years I have learned what I know about software
@@ -136,11 +136,11 @@ const ResumeIndex = () => {
               <RoleTitle>Business Development & Product, Verlocal</RoleTitle>
               <p>
                 I joined Verlocal after coming back from my year long venture in
-                Asia. My role at Verlocal, like any startup, was a juggle
-                between developing our Pro product pipeline, maintaining Pro
-                client relations, and acquiring more Pro users. Pro is an online
-                booking & events management software. We built Pro as a pivot
-                from a B2C marketplace website towards a B2B SaaS company.
+                Asia. My role at Verlocal was a juggle between developing our
+                Pro product pipeline, maintaining Pro client relations, and
+                acquiring more Pro users. Pro is an online booking & events
+                management software. We built Pro as a pivot from a B2C
+                marketplace website towards a B2B SaaS company.
               </p>
               <p>Some milestones:</p>
               <ul className="text">
