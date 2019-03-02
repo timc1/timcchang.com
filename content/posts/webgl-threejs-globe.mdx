@@ -204,7 +204,7 @@ We want to create a projection of the earth programatically using dots to
 represent the land. One way this can be done is to overlay a mercator projection
 image with dots using Sketch/Photoshop.
 
-<Image src={globeJpg} alt="Mercator globe projection" />
+<Image src={globeJpg} alt="Mercator globe projection" shadow={true} />
 
 We then use [this](https://github.com/timc1/svg-to-coordinates) script to
 convert each dot into its respective (x,y) coordinates. See the resulting JSON
@@ -276,7 +276,7 @@ function addPoints() {
 
 You should see this:
 
-<Image src={globeSphere} alt="Globe" />
+<Image src={globeSphere} alt="Globe" shadow={true} />
 
 ### Implement orbital controls
 
@@ -387,7 +387,7 @@ function animateGlobeToNextLocation() {
 And there we go! An dynamically rendered globe that rotates to a specific
 latitude and longitude!
 
-<Image src={globeGif} alt="Animated globe gif" />
+<Image src={globeGif} alt="Animated globe gif" shadow={true} />
 
 ### Next steps
 

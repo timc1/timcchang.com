@@ -198,7 +198,7 @@ const NavLink = styled.a`
 
 With these styles, we should see this now:
 
-<Image src={video1} alt="" />
+<Image src={video1} alt="" shadow={true} />
 
 ### Using IntersectionObserver to track when elements intersect with the viewport or another element
 
@@ -426,14 +426,14 @@ const Aside = styled.aside`
 
 Now, we'll see our `<Nav />` hide and showing like so:
 
-<Image src={video3} src="" />
+<Image src={video3} src="" shadow={true} />
 
 ### Keeping track of the currently focused section
 
 As we scroll past each individual section, we want to have the sticky navbar
 update the color of the current section that we're on, like so:
 
-<Image src={video2} alt="" />
+<Image src={video2} alt="" shadow={true} />
 
 In order to create this, just like with the `<Banner />` earlier, we need to
 create `refs` to pass along to each `section`. They will be the reference for
@@ -609,7 +609,7 @@ const Item = styled.li`
 
 We're almost done! Here's how things should be looking:
 
-<Image src={video4} alt="" />
+<Image src={video4} alt="" shadow={true} />
 
 ### Animating a scaling progress bar
 
@@ -669,48 +669,51 @@ Then, we'll add an effect which triggers only on mount, unmount, and each time
 
 ```js
 // ...
-useEffect(() => {
-  const {
-    top: topOfBeginning,
-    bottom: bottomOfTop,
-  } = beginningContent.current.getBoundingClientRect()
-  const { bottom: bottomOfEnd } = endContent.current.getBoundingClientRect()
+useEffect(
+  () => {
+    const {
+      top: topOfBeginning,
+      bottom: bottomOfTop,
+    } = beginningContent.current.getBoundingClientRect()
+    const { bottom: bottomOfEnd } = endContent.current.getBoundingClientRect()
 
-  // We will be using totalHeight to calculate how much content is left to scroll
-  const totalHeight = bottomOfEnd - topOfBeginning
-  // Use animationId to cancel animation on unmount
-  let animationId
+    // We will be using totalHeight to calculate how much content is left to scroll
+    const totalHeight = bottomOfEnd - topOfBeginning
+    // Use animationId to cancel animation on unmount
+    let animationId
 
-  const calculateScroll = () => {
-    if (topOfBeginning <= window.scrollY) {
-      const percentage = (window.scrollY / totalHeight).toFixed(2)
-      scalerRef.current.style.transform = `scaleY(${percentage})`
+    const calculateScroll = () => {
+      if (topOfBeginning <= window.scrollY) {
+        const percentage = (window.scrollY / totalHeight).toFixed(2)
+        scalerRef.current.style.transform = `scaleY(${percentage})`
+      } else {
+        scalerRef.current.style.transform = `scaleY(0)`
+      }
+    }
+
+    const animate = () => {
+      calculateScroll()
+      animationId = requestAnimationFrame(animate)
+    }
+
+    if (isShowing) {
+      animate()
     } else {
+      cancelAnimationFrame(animationId)
+      // Reset scroller to 0
       scalerRef.current.style.transform = `scaleY(0)`
     }
-  }
 
-  const animate = () => {
-    calculateScroll()
-    animationId = requestAnimationFrame(animate)
-  }
-
-  if (isShowing) {
-    animate()
-  } else {
-    cancelAnimationFrame(animationId)
-    // Reset scroller to 0
-    scalerRef.current.style.transform = `scaleY(0)`
-  }
-
-  // Cleanup before unmount
-  return () => cancelAnimationFrame(animationId)
-}, [isShowing])
+    // Cleanup before unmount
+    return () => cancelAnimationFrame(animationId)
+  },
+  [isShowing]
+)
 ```
 
 And there we have it!
 
-<Image src={video5} alt="" />
+<Image src={video5} alt="" shadow={true} />
 
 Wrapping our heads around Hooks and this way of building React apps may be
 confusing at first, but after working with Hooks for a bit, you'll realize how
