@@ -95,6 +95,7 @@ export default function PageTemplate(data) {
           }}
         >
           <Breadcrumbs>
+            <Date>{mdx.frontmatter.date}</Date>
             {/*
               // @ts-ignore */}
             {mdx.frontmatter.breadcrumbs.map(bc => (
@@ -148,6 +149,7 @@ export const pageQuery = graphql`
         subtitle
         keywords
         breadcrumbs
+        date
         image {
           childImageSharp {
             fluid(maxWidth: 1920) {
@@ -207,6 +209,7 @@ const Breadcrumbs = styled.ul`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  align-items: center;
   margin-bottom: var(--base-gap);
   overflow: auto;
   &::-webkit-scrollbar {
@@ -228,6 +231,14 @@ const Breadcrumbs = styled.ul`
     top: 0;
     bottom: 0;
     left: 70%;
+  }
+`
+
+const Date = styled.li`
+  color: var(--color-dark-3) !important;
+  &::after {
+    content: '·';
+    padding-left: var(--base-gap);
   }
 `
 
