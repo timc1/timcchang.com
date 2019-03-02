@@ -1,11 +1,11 @@
 # timcchang.com
 
-Portfolio & blog using Gatsby.js! 🍦 (https://timcchang.com/)
+Portfolio & blog using Gatsby.js! (https://timcchang.com/)
 
 Previously,
 
-[Version 0](https://v0.timcchang.com)
+[First Version](https://v0.timcchang.com)
 
-[Version 1](https://v1.timcchang.com)
+[Second Version](https://v1.timcchang.com)
 
 🕺
