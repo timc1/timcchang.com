@@ -39,7 +39,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
       name: 'slug',
       // Individual MDX node
       node,
-      value: `${path}${value}`,
+      value: `/${path}${value}`,
     })
   }
 }
