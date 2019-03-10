@@ -12,7 +12,7 @@ pre[class*='language-'] {
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
-  line-height: 1.5;
+  line-height: var(--line-height);
   -moz-tab-size: 4;
   -o-tab-size: 4;
   tab-size: 4;
@@ -20,6 +20,11 @@ pre[class*='language-'] {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+}
+
+code[class*='language-'] {
+  word-break: break-all;
+  vertical-align: middle;
 }
 
 code[class*='language-'] ::-moz-selection,
@@ -44,7 +49,7 @@ pre[class*='language-']::selection {
 }
 pre {
   padding: 1em;
-  margin: 0.5em 0;
+  margin: 1.5em 0;
   border-radius: 3px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -67,7 +72,7 @@ pre {
   background: var(--color-black);
 }
 :not(pre) > code {
-  padding: 0.1em;
+  padding: 0.3em;
   border-radius: 0.3em;
   white-space: normal;
   background: #eee;

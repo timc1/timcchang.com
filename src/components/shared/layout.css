@@ -193,7 +193,8 @@ body[data-url*='/archive'] {
   background: var(--yellow);
 }
 
-ul {
+ul,
+ol {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -208,21 +209,4 @@ ul {
 .text.show {
   opacity: 1;
   transform: translateY(0) skewY(0) rotateX(0);
-}
-
-.fade-cover {
-  background: linear-gradient(
-    to left,
-    rgba(246, 249, 252, 0.9) 30%,
-    rgba(246, 249, 252, 0)
-  );
-}
-
-body[data-url*='/case-studies/'] span.fade-cover,
-body[data-url*='/case-studies'] span.fade-cover {
-  background: linear-gradient(
-    to left,
-    rgba(255, 255, 255, 0.9) 30%,
-    rgba(255, 255, 255, 0)
-  );
 }

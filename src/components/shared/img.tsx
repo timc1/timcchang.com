@@ -17,4 +17,5 @@ const Img = styled.img`
   border-radius: 3px;
   box-shadow: ${(props: { shadow?: boolean }) =>
     props.shadow ? 'var(--base-box-shadow)' : 'none'};
+  margin-bottom: 1em;
 `

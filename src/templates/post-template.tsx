@@ -58,7 +58,7 @@ export default function PageTemplate(data) {
       />
       <PageNav>
         <GoBackLink
-          to=""
+          to="/posts/"
           onClick={e => {
             e.preventDefault()
             window.history.back()
@@ -88,28 +88,29 @@ export default function PageTemplate(data) {
           />
         </BannerPhoto>
       )}
-      <Header>
-        <div
-          css={{
-            position: 'relative',
-          }}
-        >
-          <Breadcrumbs>
-            <Date>{mdx.frontmatter.date}</Date>
-            {/*
+      <article>
+        <Header>
+          <div
+            css={{
+              position: 'relative',
+            }}
+          >
+            <Breadcrumbs>
+              <Date>{mdx.frontmatter.date}</Date>
+              {/*
               // @ts-ignore */}
-            {mdx.frontmatter.breadcrumbs.map(bc => (
-              <li key={bc}>{bc}</li>
-            ))}
-          </Breadcrumbs>
-          <span className="fade-cover" />
-        </div>
-        <Title>{mdx.frontmatter.title}</Title>
-        <Subtitle>{mdx.frontmatter.subtitle}</Subtitle>
-      </Header>
-      <Content>
-        <MDXRenderer>{mdx.code.body}</MDXRenderer>
-      </Content>
+              {mdx.frontmatter.breadcrumbs.map(bc => (
+                <li key={bc}>{bc}</li>
+              ))}
+            </Breadcrumbs>
+          </div>
+          <Title>{mdx.frontmatter.title}</Title>
+          <Subtitle>{mdx.frontmatter.subtitle}</Subtitle>
+        </Header>
+        <Content>
+          <MDXRenderer>{mdx.code.body}</MDXRenderer>
+        </Content>
+      </article>
       {/* 
          // @ts-ignore */}
       <ReadNext>
@@ -252,10 +253,16 @@ const Content = styled.section`
   a,
   p,
   ul,
+  ol,
   li {
     color: var(--color-dark-1);
     font-weight: var(--medium);
     font-size: var(--font-medium);
+  }
+
+  ul,
+  ol {
+    margin: 1.5em 0;
   }
 
   h1,
@@ -263,13 +270,18 @@ const Content = styled.section`
   h3,
   h4,
   h5 {
-    font-weight: var(--medium);
+    font-weight: var(--bold);
     font-size: var(--font-medium);
     color: var(--color-black);
   }
 
   h1 {
     font-size: var(--font-large);
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 1em;
   }
 
   li {

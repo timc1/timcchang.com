@@ -1,10 +1,401 @@
 ---
-title: 'Building a Custom Google Autocomplete UI'
-subtitle: 'Part 1 of 2: '
+title: 'Building a Custom Google Autocomplete UI: Part 1 of 2'
+subtitle: "Creating a reusable hook to fetch data from Google's Places REST API."
 keywords: ['React', 'Animations', 'Open Source', 'Drag and Drop']
 breadcrumbs: ['Javascript', 'React', 'Open Source']
 date: '2019-03-08'
 type: 'post'
 ---
 
-hi
+import Image from 'components/shared/img'
+import image1 from 'assets/videos/autocomplete-1.gif'
+import image2 from 'assets/images/autocomplete-2.png'
+import image3 from 'assets/videos/autocomplete-3.gif'
+
+At some point as a developer, we'll need to create a location selector.
+Google makes this super easy with their Javascript SDK, where when we instantiate a new
+Autocomplete, Google automatically creates an accessible dropdown that handles everything for us.
+From hiding and showing the menu, returning the user's selected option, and additional data such as
+latitude and longitude, the API is very functional.
+
+```js
+const input = document.getElementById('location-input')
+
+const autocomplete = new google.maps.places.Autocomplete(input)
+```
+
+<Image src={image1} alt="Google Autocomplete default UI" shadow={true} />
+
+But if we want to create a custom experience, we'll have to use Google's Autocomplete
+REST endpoint to return the suggestions, and pass that along to our custom rendered component. (We
+will build our custom component in part 2 of this blog post)
+
+Here's a sample call to get autocomplete predictions for cities that start with "san fr":
+
+```js
+const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=san%20fr&types=(cities)&key=<API_KEY>`
+
+fetch(url)
+  .then(data => data.json())
+  .then(data => console.log(data))
+```
+
+With that, we'll get a response that includes an array of `predictions`:
+
+<Image src={image2} alt="Google Autocomplete API response" shadow={true} />
+
+Pretty simple!
+
+We're going to take this logic and create a reusable React Hook that handles all the querying and
+returning of predictions automatically.
+
+This hook will need to accomplish a few things in addition to returning predictions:
+
+1. Handle updating [session
+   tokens](https://developers.google.com/places/web-service/autocomplete#session_tokens).
+2. Debouncing so we don't send an http call on every keystroke.
+3. Exposing an additional function to allow users to fetch more data (such as geolocation) once
+   they've selected a prediction. (More on why later)
+
+## How we want to use our custom API
+
+Before we actually begin writing the API, we'll design how we'd like to use it. In our case,
+
+```js
+const { results, isLoading, error, getPlaceDetails } = useGoogleAutocomplete({
+  apiKey: '',
+  query: '',
+  type: '',
+  options: {
+    types: '(cities)',
+  },
+})
+```
+
+Here's what is going on:
+
+We pass `useGoogleAutocomplete`:
+
+- our `apiKey` from Google.
+- a `query` string (the user's input).
+- a `type` string of either "places" or "query", which will specify the type of predictions we want.
+- an `options` object that allows us to construct the `url` from earlier.
+
+What the hook will return is:
+
+- an array of `results`. This will always return an array, empty or not.
+- an `isLoading` state, which will allow us to render a loading UI appropriately.
+- an `error` message, if there was an error fetching predictions.
+- an additional `getPlaceDetails`, which will return additional information about a specific
+  prediction that the user selected. We are exposing this function because that will allow us to
+  use the same `sessiontoken` that we used to fetch the predictions. Google requires this for billing purposes.
+
+Let's start building the hook.
+
+```js
+import React from 'react'
+
+const initialState = {
+  results: [],
+  isLoading: false,
+  error: null,
+}
+
+export default function useGoogleAutocomplete({
+  apiKey,
+  query,
+  type = 'places',
+  options = {},
+}) {
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+}
+```
+
+To manage state we'll be using `React.useReducer` hook. The type passed to the
+reducer, apart from 'LOADING', is the `status` property we'll get back from Google's REST API. Based
+on the status, we'll return the proper state.
+
+```js
+const reducer = (
+  state: any,
+  action: {
+    type: string
+    payload?: any
+  }
+) => {
+  // All cases, beside 'LOADING', are status codes provided from Google Autocomplete API's response.
+  switch (action.type) {
+    case 'LOADING':
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case 'OK':
+      return {
+        ...state,
+        results: action.payload.data,
+        isLoading: false,
+        error: null,
+      }
+    case 'ZERO_RESULTS':
+      return {
+        ...state,
+        results: [],
+        isLoading: false,
+        error: null,
+      }
+    case 'INVALID_REQUEST':
+      return {
+        ...state,
+        isLoading: false,
+        error: null,
+      }
+    case 'REQUEST_DENIED':
+      return {
+        ...state,
+        isLoading: false,
+        error: `Invalid 'key' parameter`,
+      }
+    case 'UNKNOWN_ERROR':
+      return {
+        ...state,
+        isLoading: false,
+        error: `Unknown error, refresh and try again.`,
+      }
+    default:
+      return state
+  }
+}
+```
+
+When our hook initially mounts, we need to set up a few things:
+
+- Create a unique uuid4 token that expires every 180000ms (3 minutes) to pass as `sessiontoken` to
+  Google's REST API.
+- Setup an `AbortController` instance so when our component unmounts, we can cancel any http calls
+  happening.
+
+```
+yarn add uuid
+
+or
+
+npm i uuid
+```
+
+```js
+// Refs for unique session_tokens, for billing purposes.
+// Reference: https://developers.google.com/places/web-service/autocomplete
+const sessionToken = React.useRef<string>(uuid4())
+const sessionTokenTimeout = React.useRef<number>()
+
+// AbortController to cancel window.fetch requests if component unmounts.
+const abortController = React.useRef<any>()
+const abortSignal = React.useRef<any>()
+
+React.useEffect(() => {
+  // Setup a timer to reset our session_token every 3 minutes.
+  // Reference: (https://stackoverflow.com/questions/50398801/how-long-do-the-new-places-api-session-tokens-last/50452233#50452233)
+  sessionTokenTimeout.current = window.setInterval(resetSessionToken, 180000)
+  // Setup an AbortController to cancel all http requests on unmount.
+  abortController.current = new AbortController()
+  abortSignal.current = abortController.current.signal
+
+  // Cleanup clearInterval and abort any http calls on unmount.
+  return () => {
+    clearInterval(sessionTokenTimeout.current)
+    abortController.current.abort()
+  }
+}, [])
+
+const resetSessionToken = () => {
+  sessionToken.current = uuid4()
+}
+```
+
+Next, every time our hook receives an updated `query` prop, we'll want to send a request to Google.
+In order for us to not send a request on every single keystroke, we'll
+[debounce](https://davidwalsh.name/javascript-debounce-function) the function that
+performs the call.
+
+Here's the debounce function we'll use, taken from David Walsh's implementation with a slight
+adjustment by exposing a `clear` function:
+
+```js
+function debounce(func: () => any, wait: number, immediate?: boolean) {
+  let timeout: any
+
+  const executedFunction = function(this: any) {
+    let context = this
+    let args: any = arguments
+
+    let later = function() {
+      timeout = null
+      if (!immediate) func.apply(context, args)
+    }
+
+    let callNow = immediate && !timeout
+
+    clearTimeout(timeout)
+
+    timeout = setTimeout(later, wait)
+
+    if (callNow) func.apply(context, args)
+  }
+
+  executedFunction.clear = function() {
+    clearTimeout(timeout)
+    timeout = null
+  }
+
+  return executedFunction
+}
+```
+
+And we'll write our implementation within another `React.useEffect`.
+
+```js
+// Flag to make sure our useEffect does not run on initial render.
+const initialRender = React.useRef<boolean>(false)
+// Debounce our search to only trigger an API call when user stops typing after (n)ms.
+const debouncedFn = React.useRef<any>()
+
+// Effect triggers on every query change.
+React.useEffect(() => {
+  if (initialRender.current === false) {
+    initialRender.current = true
+    return
+  }
+
+  // Cancel previous debounced call.
+  if (debouncedFn.current) debouncedFn.current.clear()
+
+  if (!state.isLoading) {
+    dispatch({
+      type: 'LOADING',
+    })
+  }
+
+  debouncedFn.current = debounce(() => {
+    const types =
+      options.types && type === 'places' ? `&types=${options.types}` : ''
+    const strictbounds =
+      options.strictbounds && types === 'places' ? `&strictbounds` : ''
+    const offset =
+      options.offset && type === 'query' ? `&offset=${options.offset}` : ''
+    const language = options.language ? `&language=${options.language}` : ''
+    const location = options.location ? `&location=${options.location}` : ''
+    const radius = options.radius ? `&radius=${options.radius}` : ''
+
+    const url = `${cors}https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}${types}${language}${location}${radius}${strictbounds}${offset}&key=${apiKey}&sessiontoken=${
+      sessionToken.current
+    }`
+
+    fetch(url, { signal: abortSignal.current })
+      .then(data => data.json())
+      .then(data => {
+        dispatch({
+          type: data.status,
+          payload: {
+            data,
+          },
+        })
+      })
+      .catch(() => {
+        // Our AbortController was cancelled on unmount and API call was cancelled.
+      })
+  }, 400)
+
+  debouncedFn.current()
+}, [
+  query,
+  apiKey,
+  options.types,
+  options.language,
+  options.location,
+  options.radius,
+  options.strictbounds,
+  options.offset,
+  type,
+])
+```
+
+At this point, everything should work and we should get something like this:
+
+<Image src={image3} alt="Google Autocomplete API response" shadow={true} />
+
+But there is one caveat! Typically, once a user clicks on a prediction, we'll want to fetch a bit
+more information about the place, such as the latitude and longitude.
+
+I had thought Google would return the geolocation data alongside the predictions, but they don't.
+They do, however, have another API endpoint that we can call to fetch more information about the
+place. We would take the `placeid` returned from the predictions, and pass it along to this new url
+and make another request.
+
+The reason we need to create a function wrapping this implementation is because we need to pass the
+same `sessiontoken` we passed to our previous query. This allows Google to group the queries
+together. So an Autocomplete query and Place Details query will use the same token.
+
+Once we make a Place Query, however, we'll need to refresh our `sessiontoken`.
+
+Here's our implementation:
+
+```js
+const getPlaceDetails = (
+  placeId: string,
+  placeDetailOptions: {
+    fields?: string[]
+    region?: string
+    language?: string
+  } = {}
+) => {
+  const fields = placeDetailOptions.fields
+    ? `&fields=${placeDetailOptions.fields.join(',')}`
+    : ''
+  const region = placeDetailOptions.region
+    ? `&region=${placeDetailOptions.region}`
+    : ''
+  // If no options are passed, we'll default to closured language option.
+  const language = placeDetailOptions.language
+    ? `&language=${placeDetailOptions.language}`
+    : options.language
+    ? `&language=${options.language}}`
+    : ''
+
+  const url = `${cors}https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}${fields}${region}${language}&key=${apiKey}&sessiontoken=${
+    sessionToken.current
+  }`
+
+  return fetch(url, { signal: abortSignal.current })
+    .then(data => data.json())
+    .then(data => {
+      // Reset session token after we make a Place Details query.
+      resetSessionToken()
+      return data
+    })
+    .catch(() => {
+      // Component unmounted and API call cancelled.
+    })
+}
+```
+
+Now, if we want to fetch more information regarding a place, we'll just call `getPlaceDetails`,
+passing the `placeId` from our predictions, and optional options.
+
+Wrapping the hook up, we'll return an object with the properties that our hook user will need:
+
+```js
+return {
+  results: state.results,
+  isLoading: state.isLoading,
+  error: state.error,
+  getPlaceDetails,
+}
+```
+
+And there we have it! A Google Autocomplete hook that manages session tokens and encapsulates the
+logic for querying autocomplete predictions. All information, including the 180000ms timeout of
+session tokens and needing to refresh session tokens after fetching Place details are purely through
+reading through Google's [documentation](https://developers.google.com/places/web-service/autocomplete) and answers from the [community](https://stackoverflow.com/a/50452233).
+
+In Part 2 of this blog, we'll be using the hook to support building our custom dropdown list UI.
