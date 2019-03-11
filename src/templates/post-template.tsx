@@ -281,12 +281,17 @@ const Content = styled.section`
 
   p {
     margin-top: 0;
-    margin-bottom: 1em;
+    margin-bottom: 1.75em;
   }
 
   li {
     list-style: circle;
     margin-left: var(--font-medium);
+  }
+
+  ${mq[1]} {
+    padding-top: 1.75em;
+    padding-bottom: 1.75em;
   }
 `
 

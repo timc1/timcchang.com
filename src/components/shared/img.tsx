@@ -8,7 +8,11 @@ type ImageProps = {
 }
 
 export default function Image({ src, alt, shadow = false }: ImageProps) {
-  return <Img src={src} alt={alt} shadow={shadow} />
+  return (
+    <p>
+      <Img src={src} alt={alt} shadow={shadow} />
+    </p>
+  )
 }
 
 const Img = styled.img`
@@ -17,5 +21,4 @@ const Img = styled.img`
   border-radius: 3px;
   box-shadow: ${(props: { shadow?: boolean }) =>
     props.shadow ? 'var(--base-box-shadow)' : 'none'};
-  margin-bottom: 1em;
 `
