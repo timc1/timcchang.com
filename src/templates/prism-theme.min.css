@@ -32,14 +32,14 @@ code[class*='language-']::-moz-selection,
 pre[class*='language-'] ::-moz-selection,
 pre[class*='language-']::-moz-selection {
   text-shadow: none;
-  background: #011627;
+  background: #222229;
 }
 code[class*='language-'] ::selection,
 code[class*='language-']::selection,
 pre[class*='language-'] ::selection,
 pre[class*='language-']::selection {
   text-shadow: none;
-  background: #011627;
+  background: #222229;
 }
 @media print {
   code[class*='language-'],
@@ -49,7 +49,8 @@ pre[class*='language-']::selection {
 }
 pre {
   padding: 1em;
-  margin: 1.75em 0;
+  margin-top: 0;
+  margin-bottom: 2.75em;
   border-radius: 3px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -76,7 +77,7 @@ pre {
   border-radius: 0.3em;
   white-space: normal;
   background: #eee;
-  color: var(--color-dark) !important;
+  color: var(--color-dark-0) !important;
 }
 .token.cdata,
 .token.comment,

@@ -11,6 +11,7 @@ import Image from 'components/shared/img'
 import image1 from 'assets/videos/autocomplete-1.gif'
 import image2 from 'assets/images/autocomplete-2.png'
 import image3 from 'assets/videos/autocomplete-3.gif'
+import image4 from 'assets/videos/autocomplete-4.gif'
 
 At some point as a developer, we'll need to create a location selector.
 Google makes this super easy with their Javascript SDK, where when we instantiate a new
@@ -26,8 +27,11 @@ const autocomplete = new google.maps.places.Autocomplete(input)
 
 <Image src={image1} alt="Google Autocomplete default UI" shadow={true} />
 
-But if we want to create a custom experience, we'll have to use Google's Autocomplete
-REST endpoint to return the suggestions, and pass that along to our custom rendered component. (We
+But if we want to create a custom experience? Something like this:
+
+<Image src={image4} alt="Google Autocomplete custom UI" shadow={true} />
+
+We'll have to use Google's Autocomplete REST endpoint to return the suggestions, and pass that along to our custom rendered component. (We
 will build our custom component in part 2 of this blog post)
 
 Here's a sample call to get autocomplete predictions for cities that start with "san fr":
