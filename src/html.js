@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import favicon from './assets/images/favicon.png'
 
 export default function HTML(props) {
   return (
@@ -12,6 +13,7 @@ export default function HTML(props) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         {props.headComponents}
+        <link rel="shortcut icon" href={favicon} />
       </head>
       <body {...props.bodyAttributes} style={{ opacity: 0 }}>
         {props.preBodyComponents}
