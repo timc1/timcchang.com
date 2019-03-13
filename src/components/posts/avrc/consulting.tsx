@@ -192,6 +192,7 @@ const Animation = styled.div`
 
     &::before {
       top: 64%;
+      left: 0;
       transform: rotate(-218deg) scale(0.6);
     }
   }
@@ -202,6 +203,7 @@ const Animation = styled.div`
     background: linear-gradient(90deg, rgb(112, 176, 255), rgb(149, 236, 255));
 
     &::before {
+      top: 50%;
       left: -26px;
       transform: rotate(-90deg) scale(0.6);
     }
