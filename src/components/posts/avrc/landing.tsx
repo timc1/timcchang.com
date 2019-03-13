@@ -214,4 +214,10 @@ const BannerArrows = styled.div`
     transform: translate(46px, 46px) scale(0.9);
     background: linear-gradient(90deg, rgb(133, 216, 255), rgb(79, 239, 255));
   }
+
+  @media (max-width: 568px) {
+    height: 300px;
+    width: 300px;
+    right: 0%;
+  }
 `

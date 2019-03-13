@@ -252,6 +252,8 @@ const Sidebar = styled.div`
       padding: 5px 10px;
       border-bottom: 1px solid #f7f7f7;
       font-size: inherit !important;
+      list-style: none !important;
+      margin: 0 !important;
     }
 
     > li:first-of-type {
