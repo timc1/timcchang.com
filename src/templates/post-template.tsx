@@ -194,7 +194,7 @@ const Subtitle = styled.p`
 
 const Header = styled.section`
   padding: calc(var(--base-padding) / 2) var(--base-padding);
-  max-width: 950px;
+  max-width: 900px;
   width: 100%;
   margin: auto;
   border-bottom: 1px solid var(--color-light-2);
@@ -244,7 +244,7 @@ const Date = styled.li`
 `
 
 const Content = styled.section`
-  max-width: 950px;
+  max-width: 900px;
   padding: calc(var(--base-padding) / 2) var(--base-padding);
   margin: auto;
   line-height: 1.6;
@@ -257,7 +257,7 @@ const Content = styled.section`
   li {
     color: var(--color-dark-1);
     font-weight: var(--medium);
-    font-size: var(--font-medium);
+    font-size: var(--font-small);
   }
 
   ul,
@@ -273,6 +273,7 @@ const Content = styled.section`
     font-weight: var(--bold);
     font-size: var(--font-medium);
     color: var(--color-black);
+    margin: 1.5em 0;
   }
 
   h1 {
@@ -281,7 +282,7 @@ const Content = styled.section`
 
   p {
     margin-top: 0;
-    margin-bottom: 1.75em;
+    margin-bottom: 1.5em;
   }
 
   li {
@@ -290,8 +291,8 @@ const Content = styled.section`
   }
 
   ${mq[1]} {
-    padding-top: 1.75em;
-    padding-bottom: 1.75em;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
   }
 `
 

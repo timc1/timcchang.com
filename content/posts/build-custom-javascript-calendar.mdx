@@ -1,0 +1,577 @@
+---
+title: 'Create a Ground Up React Calendar Using Native Web APIs'
+subtitle: 'A guide to using native web APIs to build a custom and performant React calendar.'
+keywords: ['Javascript', 'Typescript', 'React']
+breadcrumbs: ['React', 'Typescript', 'Tutorial']
+date: '2019-03-16'
+type: 'post'
+---
+
+import Image from 'components/shared/img'
+import calendar1 from 'assets/images/calendar-example1.jpg'
+
+I recently came across the need to build a datepicker for a side project. Since I had always used
+some type of datepicker library, I figured it would be fun to build one from scratch, using native
+web APIs to handle data specific to a calendar.
+
+In this post we will build a custom React hook, `useCalendar`, that returns all the data we will
+need to build a custom calendar UI.
+
+Our goal is to be able to call the hook like this:
+
+```tsx
+const {
+  // an array of dates for the current month, the trailing dates from the
+  // previous month, and the beginning dates of the next month.
+  dates,
+  // a prop getter to add `onClick` functionality to each date we render.
+  getToggleProps,
+  // function to toggle previous month.
+  togglePrevious,
+  // function to toggle previous month.
+  toggleNext,
+  // function to check if a current day is in focus.
+  isActive,
+  // function that returns information regarding the current month.
+  getInfo,
+} = useCalendar()
+```
+
+And to use it like this:
+
+```tsx
+// ...
+
+return (
+  <CalendarContainer>
+    <Header>
+      <Toggle onClick={togglePrevious}>Previous</Toggle>
+      <Toggle onClick={toggleNext}>Next</Toggle>
+    </Header>
+    <CalendarGrid>
+      {dates.map(date => (
+        <Day id={date.id}>
+          <DayToggle
+            {...getToggleProps({
+              date,
+              onClick: value => {
+                // value will be a formatted string of the current date selected (Tue Apr 28, 2020)
+              },
+            })}
+            isActive={isActive(date)}
+          >
+            {date.day}
+          </DayToggle>
+        </Day>
+      ))}
+    </CalendarGrid>
+  </CalendarContainer>
+)
+```
+
+We will be using Typescript in this project. My usage is really basic — I'm trying to incorporate
+it into my projects as a way to learn, so please feel free to send me suggestions and tips. :)
+
+A live demo of this can be found on [CodeSandbox](https://codesandbox.io/s/23k7wojv7p).
+
+## Let's get started
+
+We'll work in a file named `use-calendar.tsx`.
+
+In the file, we'll create the types that we will be using to describe our data:
+
+```tsx
+import React from 'react'
+
+type CalendarDayType = {
+  id?: string
+  year: string
+  month: string
+  day: string
+}
+
+type CalendarStateType = {
+  dates: CalendarDayType[]
+  currentlyFocusedDay: CalendarDayType | null
+  currentCalendar: {
+    year: string
+    month: string
+  }
+}
+```
+
+Each `CalendarDay` will consist of four properties: `id`, `year`, `month`, and `day` and they will be of
+type `string`.
+
+`id` is optional (We'll be creating unique ids so users can set them as they `key` property when
+they map over `dates`. More on this later).
+
+Our hook's entire state is described by `CalendarStateType`, where:
+
+- `date` represents an array of `CalendarDayType`s
+- `currentlyFocusedDay` is either a `CalendarDayType` or `null`. It is `null` when we don't have a date selected.
+- `currentCalendar` is an object which has two `string` properties, `year` and `month`, which represent the current calendar in view.
+
+Next, we'll set up our function:
+
+```tsx
+// ...
+
+export default function useCalendar({
+  initialDay,
+}: { initialDay?: CalendarDayType } = {}) {}
+```
+
+We want to allow users to initialize the hook with an optional day. We type the optional
+`initialDay` prop as a `CalendarDayType`. So if a user passes an initial day that does not match our
+`CalendarDayType`, Typescript will throw an error.
+
+## Managing State
+
+To manage the state of our hook, we will use `useReducer`. I use this hook really often — the
+API allows us to manage state in a very clear and succinct way.
+
+```tsx
+const [state, dispatch] = React.useReducer(reducer, initialState)
+```
+
+`useReducer` will return the current state and a dispatch function, which we call whenever we
+need to make a state update. It takes a `reducer` function, as well as an `initialState` object.
+Let's define them:
+
+We'll declare `initialState` before our `useReducer`
+
+```tsx
+const today = new Date()
+let initialState: CalendarStateType
+
+if (initialDay) {
+  initialState = {
+    dates: getCalendarDates(initialDay.year, initialDay.month),
+    currentlyFocusedDay: initialDay,
+    currentCalendar: {
+      year: initialDay.year,
+      month: initialDay.month,
+    },
+  }
+} else {
+  const year = format(today.getFullYear())
+  const month = format(today.getMonth() + 1)
+  initialState = {
+    dates: getCalendarDates(year, month),
+    currentlyFocusedDay: null,
+    currentCalendar: {
+      year,
+      month,
+    },
+  }
+}
+
+// const [state, dispatch] = React.useReducer(reducer, initialState)
+```
+
+And create our `reducer` function outside of our hook:
+
+```tsx
+// export default function useCalendar(...) {...}
+
+const reducer = (
+  state: CalendarStateType,
+  action: {
+    type: string
+    payload?: any
+  }
+) => {
+  switch (action.type) {
+    case 'TOGGLE_DAY':
+      return state
+    case 'TOGGLE_NEXT_MONTH':
+      return state
+    case 'TOGGLE_PREVIOUS_MONTH':
+      return state
+    default:
+      return state
+  }
+}
+```
+
+We will define the logic within each case later. But for now know that our `reducer` function will
+manipulate and update our state depending on the `type`, always giving us the most up to date state.
+
+Let's take a look at our `initialState` object and dissect what is happening.
+
+`initialState` is of `CalendarStateType`, so it must contain:
+
+- an array of `dates`
+- the `currentlyFocusedDay`
+- a `currentCalendar` object.
+
+Let's think about how to get an array of `dates`. A calendar is represented by a grid of seven
+columns, starting from Sunday, ending at Saturday:
+
+<Image src={calendar1} alt="calendar" />
+
+We'll need to:
+
+1. Calculate the number of days in the current month
+2. Calculate the index of the first day of the month
+3. If index > 0, that is how many days we need to show from the previous month
+4. Calculate the index of last day of month
+5. If index < 6, subtract the index from 6 and that is how many days we need to show from the next month
+6. Prepend previous month's trailing dates (if any)
+7. Append next month's starting dates (if any)
+
+Here is that in code:
+
+```tsx
+const getCalendarDates = (year: string, month: string) => {
+  const calcNumberOfDays = (year: string, month: string) =>
+    new Date(Number(year), Number(month), 0).getDate()
+
+  const calcFirstDayIndex = (year: string, month: string) =>
+    new Date(`${year}-${month}-01T03:24:00`).getDay()
+  const calcLastDayIndex = (year: string, month: string, lastDay: number) =>
+    new Date(`${year}-${month}-${lastDay}T03:24:00`).getDay()
+
+  const previousMonthDates = []
+  const currentMonthDates = []
+  const nextMonthDates = []
+
+  const numDaysInCurrentMonth = calcNumberOfDays(year, month)
+  const indexOfDayOne = calcFirstDayIndex(year, month)
+  const indexOfLastDay = calcLastDayIndex(year, month, numDaysInCurrentMonth)
+
+  // Setup up previous month's dates.
+  if (indexOfDayOne > 0) {
+    const previousMonth =
+      Number(month) - 1 === 0 ? format(12) : format(Number(month) - 1)
+    const previousYear =
+      previousMonth === format(12)
+        ? format(Number(year) - 1)
+        : format(Number(year))
+    const numDaysInPreviousMonth = calcNumberOfDays(previousYear, previousMonth)
+
+    let day = numDaysInPreviousMonth - indexOfDayOne
+    for (let i = 0; i < Array(indexOfDayOne).length; i++) {
+      day++
+      previousMonthDates.push({
+        id: `${previousYear}${previousMonth}${day}`,
+        year: previousYear,
+        month: previousMonth,
+        day: format(day),
+      })
+    }
+  }
+
+  // Setup current months' dates.
+  for (let i = 0; i < Array(numDaysInCurrentMonth).length; i++) {
+    let day = format(i + 1)
+    currentMonthDates.push({
+      id: `${year}${month}${day}`,
+      year,
+      month,
+      day,
+    })
+  }
+
+  // Setup next month's dates.
+  if (indexOfLastDay !== 6) {
+    const nextMonth =
+      Number(month) + 1 !== 13 ? format(Number(month) + 1) : format(1)
+    const nextYear =
+      nextMonth === format(1) ? format(Number(year) + 1) : format(year)
+
+    for (let i = 0; i < Array(6 - indexOfLastDay).length; i++) {
+      let day = format(i + 1)
+      nextMonthDates.push({
+        id: `${nextYear}${nextMonth}${day}`,
+        year: nextYear,
+        month: nextMonth,
+        day,
+      })
+    }
+  }
+
+  return [...previousMonthDates, ...currentMonthDates, ...nextMonthDates]
+}
+```
+
+The `currentlyFocusedDay` is just the `initialDay` passed by the user or we just set it to
+`null`.
+
+And lastly `currentCalendar` is defined by the user's `initialDay` or we take the current month from
+the browser and set that as the value.
+
+You may notice the `format()` function. This helper function takes a value and returns
+that value as a string, prepending a '0' if the number value is less than 10. So, a value of 1 will
+be returned as "01", 2 will be "02", and so on.
+
+```tsx
+const format = (value: string | number): string =>
+  Number(value) < 10 ? `0${Number(value)}` : `${value}`
+```
+
+Okay, at this point, on load, our hook returns dates that we can render. Next, we will begin creating the
+functions that we expose to the user which manipulates state to make their calendar dynamic and interactive.
+
+## Functions To Expose
+
+We are going to define the following functions, which will give the hook user full control of the
+calendar:
+
+1. `getToggleProps`: prop getter to attach `onClick` handler to each day
+
+2. `togglePrevious`: function to toggle previous month
+
+3. `toggleNext`: function to toggle next month
+
+4. `isActive`: function to check if a current day is in focus
+
+5. `getInfo`: function that returns information regarding the current month
+
+Let's define `getToggleProps`:
+
+```tsx
+// ...
+const getToggleProps = ({
+  date,
+  onClick,
+  ...rest
+}: {
+  date: CalendarDayType
+  onClick?: any
+}) => ({
+  onClick: () => {
+    if (onClick) {
+      const formattedDate = new Date(
+        `${date.year}-${date.month}-${date.day}T03:24:00`
+      ).toDateString()
+      onClick(formattedDate)
+    }
+
+    dispatch({
+      type: 'TOGGLE_DAY',
+      payload: {
+        date,
+      },
+    })
+  },
+  ...rest,
+})
+```
+
+This function will take a single object with properties `date` and optional `onClick` and return an
+object of properties that will be spread onto an element.
+
+We first check if an `onClick` is provided by the user — if it is, we'll call it with a
+formatted date string of the currently selected date. Then, we'll call our `dispatch` function with
+a type of `TOGGLE_DAY`.
+
+Let's go back to our `reducer` function and define the state for `TOGGLE_DAY`:
+
+```tsx
+// ...
+
+case 'TOGGLE_DAY':
+  const { date } = action.payload
+  return {
+    ...state,
+    currentlyFocusedDay: date,
+    currentCalendar: {
+      year: date.year,
+      month: date.month,
+    },
+    dates:
+      state.currentCalendar.month !== date.month ||
+      state.currentCalendar.year !== date.year
+        ? getCalendarDates(date.year, date.month)
+        : state.dates,
+  }
+
+// ...
+```
+
+When a user clicks a day, what we want to do is update the `currentlyFocusedDay` to that day. If
+they clicked on one of the previous or next month's day, we'll need to update the `currentCalendar`
+as well as call `getCalendarDates` for the new month's `dates`.
+
+Next, let's look at both `togglePrevious` and `toggleNext`. Both of these functions derive from a
+higher order function, `toggle`:
+
+```tsx
+// ...
+
+const toggle = (direction: 'PREVIOUS' | 'NEXT') => () => {
+  switch (direction) {
+    case 'PREVIOUS':
+      dispatch({
+        type: 'TOGGLE_PREVIOUS_MONTH',
+      })
+      break
+    case 'NEXT':
+      dispatch({
+        type: 'TOGGLE_NEXT_MONTH',
+      })
+      break
+    default:
+      throw Error()
+  }
+}
+
+// ...
+```
+
+Let's look at the dispatch function for both `TOGGLE_PREVIOUS_MONTH` and `TOGGLE_NEXT_MONTH`:
+
+```tsx
+// ...
+
+case 'TOGGLE_NEXT_MONTH':
+  const nextYear = getNext('NEXT_YEAR')(
+    state.currentCalendar.month,
+    state.currentCalendar.year
+  )
+  const nextMonth = getNext('NEXT_MONTH')(state.currentCalendar.month)
+
+  return {
+    ...state,
+    currentCalendar: {
+      year: nextYear,
+      month: nextMonth,
+    },
+    dates: getCalendarDates(nextYear, nextMonth),
+  }
+case 'TOGGLE_PREVIOUS_MONTH':
+  const previousYear = getNext('PREVIOUS_YEAR')(
+    state.currentCalendar.month,
+    state.currentCalendar.year
+  )
+  const previousMonth = getNext('PREVIOUS_MONTH')(
+    state.currentCalendar.month
+  )
+
+  return {
+    ...state,
+    currentCalendar: {
+      year: previousYear,
+      month: previousMonth,
+    },
+    dates: getCalendarDates(previousYear, previousMonth),
+}
+
+// ...
+```
+
+In both these cases, we don't need to update the `currentlyFocusedDay`, since we're just changing
+months. To calculate `nextMonth` and `previousMonth`, we'll also need the `nextYear`, and
+`previousYear`.
+
+Here's the idea:
+
+- For the `previousMonth`, we'll need to check if the previous month's index isn't 0. If it
+  is, we'll loop back to December at index 12.
+- For the `nextMonth`, we implement the same logic but if th next month's index is 13, we'll
+  loop back to January at index 1.
+- For the `previousYear`, we'll need to check if the previous month's index is 0. If it is, that
+  means we'll need to go back a year.
+- For the `nextYear`, we'll need to check if the next month's index isn't 13. If it is, that means
+  we'll need to go forward a year.
+
+I opted for another higher ordered function implementation:
+
+```tsx
+// ...
+
+const getNext = (
+  direction: 'PREVIOUS_YEAR' | 'NEXT_YEAR' | 'PREVIOUS_MONTH' | 'NEXT_MONTH'
+) => (currentMonth: string, currentYear?: string) => {
+  const month = Number(currentMonth)
+  const year = Number(currentYear)
+  switch (direction) {
+    case 'PREVIOUS_MONTH':
+      return month - 1 === 0 ? format(12) : format(month - 1)
+    case 'NEXT_MONTH':
+      return month + 1 === 13 ? format(1) : format(month + 1)
+    case 'PREVIOUS_YEAR':
+      return month - 1 === 0 ? format(year - 1) : format(year)
+    case 'NEXT_YEAR':
+      return month + 1 === 13 ? format(year + 1) : format(year)
+    default:
+      throw Error()
+  }
+}
+
+// ...
+```
+
+By now, our user will be able to navigate their calendar by toggling between months as well as days!
+
+We'll implement a function, `isActive` to check whether a given day is the
+`currentlyFocusedDay`:
+
+```tsx
+// ...
+
+const isActive = (day: CalendarDayType) => {
+  if (!state.currentlyFocusedDay) return false
+  if (
+    state.currentlyFocusedDay.month === day.month &&
+    state.currentlyFocusedDay.day === day.day &&
+    state.currentlyFocusedDay.year === day.year
+  ) {
+    return true
+  }
+}
+
+// ...
+```
+
+We'll also implement a function, `getInfo`, which will return formatted information about the
+calendar:
+
+```tsx
+const months = [
+  { id: '01', full: 'January', shortened: 'Jan' },
+  { id: '02', full: 'February', shortened: 'Feb' },
+  { id: '03', full: 'March', shortened: 'Mar' },
+  { id: '04', full: 'April', shortened: 'Apr' },
+  { id: '05', full: 'May', shortened: 'May' },
+  { id: '06', full: 'June', shortened: 'Jun' },
+  { id: '07', full: 'July', shortened: 'Jul' },
+  { id: '08', full: 'August', shortened: 'Aug' },
+  { id: '09', full: 'September', shortened: 'Sep' },
+  { id: '10', full: 'October', shortened: 'Oct' },
+  { id: '11', full: 'November', shortened: 'Nov' },
+  { id: '12', full: 'December', shortened: 'Dec' },
+]
+
+const getInfo = () => ({
+  currentDate: {
+    month:
+      months[
+        months.findIndex(
+          month => format(month.id) === format(state.currentCalendar.month)
+        )
+      ],
+    year: state.currentCalendar.year,
+  },
+})
+```
+
+And lastly, we expose our state and functions:
+
+```tsx
+// ...
+
+return {
+  dates: state.dates,
+  getToggleProps,
+  togglePrevious: toggle('PREVIOUS'),
+  toggleNext: toggle('NEXT'),
+  isActive,
+  getInfo,
+}
+```
+
+A live demo of this can be found on CodeSandbox [here](https://codesandbox.io/s/23k7wojv7p). If you
+have any questions, please feel free to reach out!
