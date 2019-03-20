@@ -261,6 +261,18 @@ const Content = styled.section`
     margin: 1.5em 0;
   }
 
+  ul > li {
+    list-style: circle;
+  }
+
+  ol > li {
+    list-style: decimal;
+  }
+
+  li {
+    margin-left: var(--font-medium);
+  }
+
   h1,
   h2,
   h3,
@@ -276,14 +288,13 @@ const Content = styled.section`
     font-size: var(--font-large);
   }
 
+  h2 {
+    font-size: var(--font-honestly-dunno);
+  }
+
   p {
     margin-top: 0;
     margin-bottom: 1.5em;
-  }
-
-  li {
-    list-style: circle;
-    margin-left: var(--font-medium);
   }
 
   ${mq[1]} {

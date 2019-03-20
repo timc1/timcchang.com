@@ -88,6 +88,7 @@
   --font-xx-large: 3.5rem;
   --font-x-large: 3.5rem;
   --font-large: 2.3rem;
+  --font-honestly-dunno: 1.6rem;
   --font-medium: 1.3rem;
   --font-small: 1.1rem;
   --font-x-small: 0.85rem;
@@ -109,6 +110,7 @@
     --font-xx-large: 10vw;
     --font-x-large: 6vw;
     --font-large: 5.5vw;
+    --font-honestly-dunno: 5.5vw;
     --font-medium: 4vw;
     --font-small: 3.5vw;
     --font-x-small: 3.2vw;
