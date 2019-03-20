@@ -1,11 +1,34 @@
 ---
-title: 'Using Native Dropdowns On Mobile & Custom Dropdowns On Tablets & Desktops'
+title: 'Native Dropdowns On Mobile With A Custom Implementation On Tablets & Desktops'
 subtitle: "Creating a set of composable Hooks to dynamically switch between native and a custom
 dropdown"
-keywords: ['React', 'Hooks', 'Web Experiment']
-breadcrumbs: ['React', 'Hooks', 'Experiments']
+keywords: ['React Hooks', 'Javascript', 'Web Experiments']
+breadcrumbs: ['React Hooks', 'Javascript', 'Experiments']
 date: '2019-03-19'
 type: 'post'
 ---
 
-hiii
+While building a custom dropdown menu earlier today, I came across an interesting
+solution for switching between a native dropdown menu while on a mobile device, and a custom
+dropdown UI while on anything larger than a tablet.
+
+The mobile experience for dropdowns and menus is quite nice, and the web version, though functional
+and gets the job done, can be furthered customized to the look and feel on the app while maintaining
+accessibility.
+
+In this post I will walk through a process for creating a set of React Hooks that compose together
+to build a timepicker. This timepicker will be able to switch between a custom UI on desktop
+and the native web implementation on mobile.
+
+Here's what we will build:
+
+# Image here
+
+In order to make this we'll need to build a set of hooks that will each take care of and manage
+specific state:
+
+- `useMedia`
+  A media query hook that wraps that returns a higher ordered function, giving us the current
+  screen width.
+- `useDropdown`
+  Manages the visibility of our dropdown container.
