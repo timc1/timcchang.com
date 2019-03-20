@@ -58,11 +58,7 @@ export default function PageTemplate(data) {
       />
       <PageNav>
         <GoBackLink
-          to="/posts/"
-          onClick={e => {
-            e.preventDefault()
-            window.history.back()
-          }}
+          to={`${data.location.pathname.split('/')[1]}/`}
           css={css`
             color: var(--color-dark-1);
             > span::before {

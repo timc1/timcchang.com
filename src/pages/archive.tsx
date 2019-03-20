@@ -32,7 +32,7 @@ export default function BlogIndex() {
       <PageLayout footerComponent={<Footer />}>
         <Content>
           <GoBackLink to="/" color="dark">
-            <span>Back</span>
+            <span>Home</span>
           </GoBackLink>
           <h1 className="text">Archive</h1>
           <p className="text">

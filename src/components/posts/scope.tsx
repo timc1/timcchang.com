@@ -31,7 +31,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr max-content;
   grid-gap: var(--base-gap);
-  margin: var(--post-content-margin) 0;
+  margin-bottom: var(--post-content-margin);
 
   ${Header}:nth-of-type(1) {
     grid-column: 1;

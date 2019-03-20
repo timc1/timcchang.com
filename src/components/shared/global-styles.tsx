@@ -1,11 +1,11 @@
+// @ts-ignore
+import caret from '../../assets/images/caret-left.svg'
 import styled from '@emotion/styled'
 import { Link } from 'gatsby'
 
 const breakpoints = [568, 767, 1023]
 export const mq = breakpoints.map(bp => `@media (max-width: ${bp}px)`)
 export const rmq = breakpoints.map(bp => `@media (min-width: ${bp + 1}px)`)
-// @ts-ignore
-import caret from '../../assets/images/caret-left.svg'
 
 export const HighlightedLink = styled(Link)`
   position: relative;
