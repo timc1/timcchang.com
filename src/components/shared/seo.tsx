@@ -34,6 +34,10 @@ export default function SEO({
             titleTemplate={`%s`}
             meta={[
               {
+                name: 'google-site-verification',
+                content: 'joDHdTdb56PSG3inAa0NTavlVPlKpbJSIZM0OfTfImI',
+              },
+              {
                 name: `description`,
                 content: metaDescription,
               },
