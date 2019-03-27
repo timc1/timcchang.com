@@ -1,0 +1,173 @@
+---
+title: 'Creating a Window.scrollTo Using requestAnimationFrame and CSS Transforms'
+subtitle: 'Making scrollTo work across all browsers with a bit of JS and CSS.'
+keywords: ['Javascript', 'scrollTo', 'dom']
+breadcrumbs: ['Javascript']
+date: '2019-03-26'
+type: 'post'
+---
+
+import Image from 'components/shared/img'
+import demo from 'assets/images/scroll-demo.gif'
+
+Earlier today I finished building the date and timepicker component for a side project. When a user
+navigates to the component, they'll see a list of their upcoming event dates. They'll have the
+option to edit or add a new date. By doing so, an editor will appear, which I want to scroll into
+view, smoothly.
+
+In this post I will walk through my implementation for creating the `scrollTo` effect using a bit of
+Javascript and CSS transforms.
+
+Here's what I want to happen:
+
+<Image src={demo} alt="Scroll animation demo with date and timepicker" shadow />
+
+Using `window.scrollTo` was my first quick, go to solution. Especially since the nav, side menu and preview (black bar for now 😬) are fixed components, a simple `window.scrollTo` will
+only scroll the center section.
+
+```js
+const onClick = () => {
+  // Get the top position of the element we want to scroll to
+  const { top } = document
+    .querySelector('.editor-component')
+    .getBoundingClientRect()
+
+  window.scrollTo({ top, behavior: 'smooth' })
+}
+```
+
+There are two problems with this solution:
+
+1. Safari's `scrollTo` with `behavior: 'smooth'` doesn't scroll
+2. Even if it did, we can't control the speed or easing of the scroll
+
+## Solution
+
+We're going to build a custom `scroll` function that recreates the scrolling effect. Let's begin by
+writing how we'd like to use this function:
+
+```js
+scroll({
+  base: document.querySelector('.element-that-we-want-to-move'),
+  target: document.querySelector('.element-that-we-want-to-move-to'),
+  callback: () => {
+    // Do something after it's done animating.
+  },
+  // offset the scroll amount.
+  // -120 will scroll to 120px before the viewport top.
+  offset: -120,
+})
+```
+
+When we call `scroll`, we need to pass it an object of options:
+
+- `base` is the element that we want to apply a CSS translate to. This can be any DOM element —
+  `document.body`, `document.querySelector('...')`, a React `ref.current`, etc.
+- `target` is the DOM element that we want to scroll to.
+- `callback` is an optional function our `scroll` will call after the animation is complete.
+- `duration` is an optional number for how long the animation will last.
+- `easingFn` is the optional function we will use to calculate animation easing. I just use the ones found
+  [here](https://gist.github.com/gre/1650294).
+- `offset` is an optional number value to offset the end position by a certain amount. For example,
+  an offset of -120 will scroll the `base` 120px from the top of the viewport.
+
+Let's implement the function. First, we add the arguments, applying some defaults values.
+
+```js
+export const scroll = ({
+  base,
+  target,
+  callback,
+  duration = 500,
+  easingFn = t => t * t * t * t,
+  offset = 0,
+}) => {}
+```
+
+When `scroll` is called, we want to define and cache a few variables:
+
+```js
+export const scroll = (/* ... */) => {
+  // Get target's position
+  const target = t.getBoundingClientRect()
+
+  // Cache the position of the target element
+  // relative to the top of the document.
+  const cachePosition = target.top + offset + window.pageYOffset
+
+  // Cache current time in milliseconds
+  const startTime = Date.now()
+
+  // We will be using requestAnimationFrame (rAF) for animating,
+  // so we'll need to keep a reference of the returned rAF id.
+  let animationId
+}
+```
+
+Next, we will write the function that `requestAnimationFrame` will call recursively:
+
+```js
+// ...
+
+const animate = () => {
+  const elapsed = Date.now() - startTime
+
+  if (elapsed < duration) {
+    const ease = easingFn(elapsed / duration)
+
+    // If easingFn returns a value greater than 1,
+    // just return the target.top * -1 to prevent overshooting the element.
+    const translate =
+      ease > 1 ? cachePosition * -1 : ease * (target.top + offset) * -1
+
+    // Apply a transform to the base element
+    base.style.transform = `translateY(${translate}px)`
+
+    animationId = requestAnimationFrame(animate)
+  } else {
+    setTimeout(() => {
+      cancelAnimationFrame(animationId)
+      base.style.transform = 'translateY(0px)'
+      window.scrollTo({ top: cachePosition })
+      callback()
+    }, 0)
+  }
+}
+
+// ...
+```
+
+A few things are happening here:
+
+When `animate` is called, we take the value that `Date.now()` returns and compare it to the cached
+`startTime` value. If we're within the `duration` that we set, we'll calculate an amount to apply a
+CSS transform and apply that amount to the `base` element.
+
+If we've passed the `duration`, we'll cancel the animation as well as do a little trick:
+
+When we animate the `base` element, what we're really doing is just creating an illusion that the
+page is scrolling. Once we've scrolled to the `target` position, we do an immediate switch by
+removing the CSS transform and applying `window.scrollTo({ top: cachePosition })`. The users won't see the switch because the translated position
+of the `base` is exactly where the `window.scrollTo` would go to originally.
+
+I applied a `setTimeout` with a time of 0 because in Safari, we'll get a slight flash when we
+execute the switch between removing the CSS and applying `window.scrollTo`. I believe it has
+something to do with the [event loop](https://www.youtube.com/watch?v=8aGhZQkoFbQ) that causes the
+issue. 🧐
+
+Let's finish the function by actually calling `animate`:
+
+```js
+export const scroll = (/* ... */) => {
+  // ...
+
+  const animate = () => {
+    // ...
+  }
+
+  animate()
+}
+```
+
+And there we have it! A `window.scrollTo` with smooth scrolling alternative that uses CSS transforms and requestAnimationFrame to
+create an illusion of page scrolling that works across all browsers.

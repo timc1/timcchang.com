@@ -59,6 +59,11 @@ export const links = [
     link: 'mailto:timchang.tcc@gmail.com?subject=hi!',
     text: 'Email',
   },
+  {
+    type: 'native',
+    link: 'https://twitter.com/timcchang',
+    text: 'Twitter',
+  },
 ]
 
 const ListItems: any = styled.ul`
