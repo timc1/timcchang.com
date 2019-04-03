@@ -1,0 +1,26 @@
+---
+title: 'Experimenting With Compound Components: React Fullscreen Image'
+subtitle: 'A React compound component that animates images fullscreen.'
+keywords: ['Javascript', 'CSS Animation', 'DOM']
+breadcrumbs: ['React', 'CSS Animations']
+date: '2019-04-02'
+type: 'post'
+---
+
+While helping [@alexcarey.s](https://alexcarey.co/) build a simple portfolio site, we found a need
+to create a full screen view of a few secondary portfolio images. So I thought why not build a
+little library from scratch and try a compositional technique that I haven't before, with [compound
+components](https://kentcdodds.com/blog/compound-components-with-react-hooks?ref=timcchang.com/blog/react-fullscreen-image/).
+
+Here's how it looks with a grid of images:
+
+# Image 1
+
+In this post I will walk through the decisions made and steps taken that got us to the current
+implementation.
+
+We'll cover:
+
+1. The UI/UX requirements
+2. Building the `Image` component, which the user will replace with any `<img />` tags
+3. Building the `ImageGroup` component, which will wrap any number of `Image` components

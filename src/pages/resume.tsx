@@ -36,14 +36,14 @@ const ResumeIndex = () => {
           </GoBackLink>
           <Title className="text">Resume</Title>
           <PlainText className="text">
-            My name is Tim Chang. Over the past few years I have been on a
-            mission to figure out where I stand in my professional career — I
-            question a lot.
+            My name is Tim. I help early stage companies build accessible,
+            robust, and design centered digital products.
           </PlainText>
           <PlainText className="text">
             Over the last 2 years I have learned what I know about software
-            development solely through resources online. Through this, I have
-            found a large interest in building user interfaces.{' '}
+            development solely through resources and people online. Through
+            this, I have found a growing interest in UI focused products paired
+            with sharing the learnings through this site.{' '}
           </PlainText>
           <PlainText className="text">
             I believe in the fine, minute details in design and development —

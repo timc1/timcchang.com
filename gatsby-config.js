@@ -83,8 +83,14 @@ module.exports = {
         include_favicon: false, // Don't include favicon
       },
     },
+    'gatsby-plugin-remove-serviceworker',
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
-    'gatsby-plugin-offline',
+    //{
+    //  resolve: 'gatsby-plugin-offline',
+    //  options: {
+    //    navigateFallbackWhitelist: [],
+    //  },
+    //},
   ],
 }
