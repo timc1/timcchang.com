@@ -1,11 +1,15 @@
 ---
-title: 'Experimenting With Compound Components: React Fullscreen Image'
-subtitle: 'A React compound component that animates images fullscreen.'
+title: 'Experimenting With Compound Components With React Fullscreen Image'
+subtitle: 'Building react-fullscreen-image using compound components, hooks, and CSS
+transforms & opacity.'
 keywords: ['Javascript', 'CSS Animation', 'DOM']
 breadcrumbs: ['React', 'CSS Animations']
 date: '2019-04-02'
 type: 'post'
 ---
+
+import Image from 'components/shared/img'
+import demo from 'assets/images/react-fullscreen-image.gif'
 
 While helping [@alexcarey.s](https://alexcarey.co/) build a simple portfolio site, we found a need
 to create a full screen view of a few secondary portfolio images. So I thought why not build a
@@ -14,13 +18,113 @@ components](https://kentcdodds.com/blog/compound-components-with-react-hooks?ref
 
 Here's how it looks with a grid of images:
 
-# Image 1
+<Image src={demo} alt="alexcarey.co portfolio demo" shadow />
 
-In this post I will walk through the decisions made and steps taken that got us to the current
-implementation.
+In this post I will briefly walk through how I used compound components, hooks, and CSS transforms to get
+the library to where it is currently at. The full repository is on [Github](https://github.com/timc1/react-fullscreen-image) and downloadable on
+[npm](https://www.npmjs.com/package/react-fullscreen-image). A live demo can be found on
+[CodeSandbox](https://codesandbox.io/s/o9m59jj3oq) as well!
 
 We'll cover:
 
-1. The UI/UX requirements
-2. Building the `Image` component, which the user will replace with any `<img />` tags
-3. Building the `ImageGroup` component, which will wrap any number of `Image` components
+1. UI/UX requirements
+2. Why Compound Components
+3. CSS Transform & Opacity For Image Scaling
+
+## UI/UX Requirements
+
+We want to render a list of images, in any order and depth in the component tree.
+
+When an image is clicked, we want that image to scale from its current position to the fullscreen view.
+
+Once it's in its fullscreen view, we want to be able to navigate using keyboard arrows or arrow buttons to the
+previous and next images.
+
+Finally, when we exit out of the image (using the escape key, exit button, or an outerclick) we'd like the current focused image to
+animate down to the position where it is supposed to be.
+
+For how to use the API, I wanted to make the developer experience as easy as possible — a
+simple plug and play idea:
+
+```tsx
+import { ImageGroup, Image } from 'react-fullscreen-image'
+
+function App() {
+  return (
+    {/* Wrap any number of <Image /> inside of an <ImageGroup /> */}
+    <ImageGroup>
+      <ul>
+        {/* Replace any <img /> tags with <Image /> */}
+        {images.map(image => (
+          <li key={image}>
+            <Image src={image.src} alt={image.alt} />
+          </li>
+        ))}
+      </ul>
+    </ImageGroup>
+  )
+}
+```
+
+## Why Compound Components
+
+We want to render any number of images, at any depth level of the component tree, where each each
+Image shares some implicit state. Each Image will need to know a few things:
+
+- Am I currently focused? If I am, then we'll need to determine how we're going to animate in.
+- Are we in fullscreen mode? If we're not, that means we need to animate the image in.
+  If we are, then we'll need to immediately show the image instead, since we've already animated
+  to fullscreen mode.
+
+`ImageGroup` will manage the state for all of this, and pass it down to `Image` components as props.
+By using a recursive implementation of `React.Children.map`, we're be able to capture every `Image`
+component no matter where it's at in the component tree.
+
+The image resizing calculation happens within `Image`. `Image`'s `useEffect` hook will update each
+time its props update. `ImageGroup` will essentially say one of the following:
+
+- "Hey Image, you're currently in focus. You need to animate in."
+- "Hey Image, you're currently in focus, but you don't need to animate in since we're already in
+  fullscreen mode"
+- "Hey Image, you're not in focus, and the user just exited fullscreen mode so you should animate
+  out"
+- "Hey Image, you're not in focus anymore, but since the user just navigated to another image, we're
+  still in fullscreen mode. In this case, just immediately go back to your original position"
+
+Based on these cases, `Image` will handle each appropriately. This brings us to why I decided to
+implement fullscreen using CSS transform and opacity.
+
+## CSS Transform & Opacity For Image Scaling
+
+Currently, what `Image` does is take a native `<img />` tag and
+returns a component that wraps the `<img />` like so:
+
+```tsx
+// ...
+
+return (
+  <div className="fullscreen-container">
+    <button className="fullscreen-btn">
+      <div className="fullscreen-image--original">
+        <img src={src} alt={alt} style={style} />
+      </div>
+      <div className="fullscreen-image--large">
+        <img src={src} alt={alt} style={style} />
+      </div>
+    </button>
+  </div>
+)
+```
+
+You can see that we return two `<img />`s. Initially, the large image will be hidden with `opacity: 0`.
+When `Image` is clicked, we calculate how much to scale the image to fill the viewport, change the
+opacity, and take the large image and scale it to the calculated value.
+
+\*\*I think in the next version of `react-fullscreen-image`, we can add an extra prop to
+`Image` as `hdImgSrc` where the user can specify a higher quality version of the image for the
+fullscreen version.
+
+## Comments and Suggestions?
+
+I'm pretty new to building libraries, working with Typescript, and creating packages. If you have suggestions/tips on
+better implementation methods, testing, or just code in general I'd love to hear from you!

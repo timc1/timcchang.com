@@ -35,12 +35,12 @@ export default function InfoLinks() {
 
 export const links = [
   {
-    link: '/case-studies/',
-    text: 'Case Studies',
-  },
-  {
     link: '/blog/',
     text: 'Blog',
+  },
+  {
+    link: '/case-studies/',
+    text: 'Case Studies',
   },
   {
     link: '/process/',
