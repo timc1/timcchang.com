@@ -120,6 +120,11 @@ You can see that we return two `<img />`s. Initially, the large image will be hi
 When `Image` is clicked, we calculate how much to scale the image to fill the viewport, change the
 opacity, and take the large image and scale it to the calculated value.
 
+Some fullscreen implementation I've seen, like Medium's, animates the image's height/width, butj
+a transform implementation is
+[cheaper](https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/) and I think quite simpler since the browser will handle all the calculations for
+when the image needs to scale down to its original position (with a simple `transform: translate3d(0, 0, 0)`.
+
 \*\*I think in the next version of `react-fullscreen-image`, we can add an extra prop to
 `Image` as `hdImgSrc` where the user can specify a higher quality version of the image for the
 fullscreen version.
