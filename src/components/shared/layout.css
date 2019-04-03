@@ -85,13 +85,13 @@
   --bold: 700;
   --extra-bold: 800;
 
-  --font-xx-large: 3.5rem;
-  --font-x-large: 3.5rem;
-  --font-large: 2.3rem;
-  --font-honestly-dunno: 1.6rem;
-  --font-medium: 1.3rem;
-  --font-small: 1.1rem;
-  --font-x-small: 0.85rem;
+  --font-xx-large: 56px;
+  --font-x-large: 56px;
+  --font-large: 36.8px;
+  --font-honestly-dunno: 25.6px;
+  --font-medium: 20.8px;
+  --font-small: 17.6px;
+  --font-x-small: 13.6px;
 
   --ss-font: InterUI;
   --ss-font2: PXGrotesk;
