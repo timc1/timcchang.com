@@ -1,0 +1,246 @@
+---
+title: 'Building A Modal Window Using React Portal, Higher Ordered Components, and Hooks'
+subtitle: 'Figuring out how to make React.createPortal work when our app is rendered on the server
+🧐. A mix of a Higher Ordered Component and useEffect worked!'
+keywords: ['React', 'Hooks', 'DOM']
+breadcrumbs: ['Javascript', 'React', 'UI']
+date: '2019-04-05'
+type: 'post'
+---
+
+My upcoming side project is built with Next.js, which server side renders each page of the site.
+While building a React modal window using ReactDOM's `createPortal` API, I ran into the problem of
+not being able to create and inject a new `div`, because `document` doesn't exist on the server.
+
+In this post I will go through how I was able to use React Portal through using a Higher
+Orderered Component paired with React's `useEffect` hook.
+
+I will be using Typescript (new to Types, ping me to help 🙂). A live demo of our `<Modal />` component can be found on [CodeSandbox]().
+
+Let's get started!
+
+## Requirements
+
+Our modal will simply be a higher ordered component, where its children is rendered into a separate
+`div` outside of the primary `<div id="app" />`.
+
+Our modal will:
+
+- Be able to go through server rendering without blowing up.
+- Let the user manage the state for when the modal is open or closed.
+- Always render an exit button; which will immediately be focused when the modal opens.
+- Make all focusable/tabbable children elements unfocusable/untabbable when the modal isn't open,
+  and with all focusable elements in our main app when the modal is open.
+- Handle Escape key events when opened, effectively closing the modal.
+- Freeze the overlayed content when the modal is opened, only allowing scroll to happen in the
+  modal.
+
+In a new `index.tsx` file, let's define the types and begin our `Modal` component:
+
+```tsx
+type ModalPropTypes = {
+  children: React.ReactNode
+  isOpen: boolean
+  handleExit: () => any
+  id: string
+  root?: string
+  focusAfterExit?: HTMLElement
+}
+
+export default function Modal({
+  children,
+  isOpen,
+  handleExit,
+  id,
+  root,
+  focusAfterExit,
+}: ModalPropTypes): any {
+  return null
+}
+```
+
+Our `Modal` will take a few props:
+
+- `children` - all the components nested within `Modal`
+- `isOpen` - where ever a user uses `Modal`, they'll manage the state for whether it is open or not.
+- `handleExit` - same with `isOpen`, the user will pass a function to toggle `isOpen` to `false`.
+- `id` - a unique identifier for this specific `Modal` instance.
+- `root` - the id of the root node that our React app is injected to. With create-react-app it's
+  `app`, Next.js `__next`, and Gatsby `__gatsby`.
+
+### Bypassing React Portal During Server Side Rendering
+
+Let's first make sure our modal is only created when we're on the client. To do this, I paired a
+`useRef` and `useEffect` together:
+
+```tsx
+// ...
+const [hasUpdated, forceUpdate] = React.useState(false)
+const modal = React.useRef<HTMLDivElement | null>(null)
+
+React.useEffect(() => {
+  modal.current = document.createElement('div')
+  modal.current.id = id
+
+  if (!document.body.querySelector(`#${id}`)) {
+    document.body.prepend(modal.current)
+  }
+
+  if (!hasUpdated) forceUpdate(true)
+
+  return () => {
+    if (modal.current) document.body.removeChild(modal.current)
+  }
+}, [])
+
+if (modal.current) {
+  return ReactDOM.createPortal(
+    <>
+      <button
+        className="exit-button"
+        isShowing={isOpen}
+        ref={exitButton}
+        onClick={() => handleExit()}
+      >
+        Exit
+      </ExitButton>
+      {children}
+    </>,
+    modal.current
+  )
+}
+return null
+
+// ...
+```
+
+Let's break down what's happening.
+
+`modal` is a reference to either a `div` or `null`. Since `useEffect` runs only after our
+component has already mounted, we can define `modal` in our effect, and call our custom
+`forceUpdate` function to rerender the component. Because `modal` is defined after the rerender,
+we're able to return `ReactDOM.createPortal`.
+
+### Handling Our UI Requirements In a useEffect
+
+We're going to handle all of our defined UI requirements in a single `useEffect` 😏. Let's set
+things up:
+
+```tsx
+// ...
+
+React.useEffect(() => {
+  const rootContainer = document.querySelector(`#${root}`)
+  const modalContainer = document.querySelector(`#${id}`)
+
+  if (isOpen) {
+  } else {
+  }
+
+  return () => {}
+}, [isOpen])
+
+// ...
+```
+
+We'll create two variables, `rootContainer` and `modalContainer`, which will each hold their
+respective DOM elements, and pass `isOpen` to `useEffect`'s dependencies array, so the effect will
+run each time `isOpen` changes. Let's handle what we'll need to do when our modal is opened:
+
+```tsx
+// ...
+if (isOpen) {
+  if (exitButton.current) exitButton.current.focus()
+  if (modalContainer) toggleTabIndex('on', modalContainer)
+  if (rootContainer) toggleTabIndex('off', rootContainer)
+  window.addEventListener('keydown', handleKeyDown)
+  freeze()
+}
+// ...
+```
+
+What's happening here is when our `Modal` component `isOpen`, we:
+
+1. Update the current DOM focus to the exit button that comes with our `Modal`.
+2. Call `toggleTabIndex` (defined below) to enable focusability(? 🤷‍♂️) of focusable elements within our
+   `modalContainer` to `0`
+3. Call `toggleTabIndex` to turn off the focusability of all focusable elements in
+   our `rootContainer`.
+4. Add an event listener to listen of `Escape` key clicks, which will just call the `handleExit`
+   callback our user provides.
+5. Call `freeze` (defined below) to apply a bit of CSS magic to prevent the `document.body` from
+   scrolling since our modal UI is overlaying.
+
+Let's define what happens when `isOpen` is `false`:
+
+```tsx
+if (isOpen) {
+  // ...
+} else {
+  if (modalContainer) toggleTabIndex('off', modalContainer)
+  if (rootContainer) toggleTabIndex('on', rootContainer)
+  window.removeEventListener('keydown', handleKeyDown)
+  unfreeze()
+
+  if (focusAfterExit) focusAfterExit.focus()
+}
+```
+
+Same thing with when our component `isOpen`, we're toggling `tabindex`, removing our keyboard event
+lister, and calling `unfreeze` (defined below) to allow users to scroll the document again.
+
+Let's define `toggleTabIndex`. It'll just be function that applies a `tabindex` to every focusable
+element within a specified DOM element:
+
+```tsx
+// ...
+// const modalContainer = document.querySelector(`#${root}`)
+
+const toggleTabIndex = (type: 'on' | 'off', container: Element) => {
+  const focusableElements = container.querySelectorAll(
+    'button, a, input, textarea, select'
+  )
+  focusableElements.forEach((element: Element) => {
+    if (type === 'on') {
+      element.removeAttribute('tabindex')
+    } else {
+      element.setAttribute('tabindex', '-1')
+    }
+  })
+}
+
+// if (isOpen) {
+// ...
+```
+
+Next, we'll define our `freeze` and `unfreeze` functions, which are actually functions returned from
+a higher ordered function, with the current scroll position at the time the function was called
+wrapped in a closure. This way, both `freeze` and `unfreeze` have access to the same position even
+when they're called at different points in time.
+
+```tsx
+// ...
+// const toggleTabIndex = (type: 'on' | 'off', container: Element) => { ... }
+
+const capturePosition = () => {
+  const cachedPosition = window.pageYOffset
+  return {
+    freeze: () => {
+      // @ts-ignore
+      document.body.style = `position: fixed; top: ${cachedPosition *
+        -1}px; width: 100%;`
+    },
+    unfreeze: () => {
+      document.body.removeAttribute('style')
+      window.scrollTo({
+        top: cachedPosition,
+      })
+    },
+  }
+}
+
+const { freeze, unfreeze } = capturePosition()
+
+// if (isOpen) {
+// ...
+```
