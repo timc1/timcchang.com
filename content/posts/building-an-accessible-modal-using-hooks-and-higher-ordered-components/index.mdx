@@ -1,7 +1,7 @@
 ---
-title: 'Building A Modal Window Using React Portal, Higher Ordered Components, and Hooks'
+title: 'Building A Modal Using React Portal, Higher Ordered Components, and Hooks'
 subtitle: 'Figuring out how to make React.createPortal work when our app is rendered on the server
-🧐. A mix of a Higher Ordered Component and useEffect worked!'
+🧐. A nice pairing of a higher ordered component and hooks did the trick!'
 keywords: ['React', 'Hooks', 'DOM']
 breadcrumbs: ['Javascript', 'React', 'UI']
 date: '2019-04-05'
@@ -10,12 +10,12 @@ type: 'post'
 
 My upcoming side project is built with Next.js, which server side renders each page of the site.
 While building a React modal window using ReactDOM's `createPortal` API, I ran into the problem of
-not being able to create and inject a new `div`, because `document` doesn't exist on the server.
+not being able to create and inject a new `div` since `document` doesn't exist on the server.
 
-In this post I will go through how I was able to use React Portal through using a Higher
-Orderered Component paired with React's `useEffect` hook.
+In this post I will go over how I was able to create a `Modal` higher ordered component with
+React Portal that bypasses server side rendering, plus a few more UI elements.
 
-I will be using Typescript (new to Types, ping me to help 🙂). A live demo of our `<Modal />` component can be found on [CodeSandbox]().
+I will be using Typescript (new to Types, ping me to help 🙂). A live demo of our `Modal` component can be found on [CodeSandbox]().
 
 Let's get started!
 
@@ -171,7 +171,7 @@ What's happening here is when our `Modal` component `isOpen`, we:
 5. Call `freeze` (defined below) to apply a bit of CSS magic to prevent the `document.body` from
    scrolling since our modal UI is overlaying.
 
-Let's define what happens when `isOpen` is `false`:
+Let's define what happens when `isOpen` is `false` as well as what to run on unmount:
 
 ```tsx
 if (isOpen) {
@@ -183,6 +183,13 @@ if (isOpen) {
   unfreeze()
 
   if (focusAfterExit) focusAfterExit.focus()
+}
+
+return () => {
+  if (isOpen) {
+    window.removeEventListener('keydown', handleKeyDown)
+    unfreeze()
+  }
 }
 ```
 
@@ -244,3 +251,87 @@ const { freeze, unfreeze } = capturePosition()
 // if (isOpen) {
 // ...
 ```
+
+Lastly, let's define out keydown event handler:
+
+```tsx
+// const capturePosition = () => {...}
+
+const handleKeyDown = (e: any) => {
+  if (e.key === 'Escape') {
+    handleExit()
+  }
+}
+
+// if (isOpen) {
+// .../
+```
+
+### One last caveat
+
+Sometimes I like a modal's content to transition in and out smoothly. To do so easily, I find the content
+should always be in the DOM and then we apply CSS transforms/opacity to control how things move in
+and out.
+
+Because of this, I want all the content on the initial mount to not be focusable/tabbable. Currently
+our `useEffect`, when run initially, won't capture the `Modal`'s content since there's nothing
+before our `forceUpdate`. So everything in our effect here won't work:
+
+```tsx
+if (isOpen) {
+  // ...
+} else {
+  //❗️On initial mount, this will do nothing since forceUpdate has not updated our component
+  if (modalContainer) toggleTabIndex('off', modalContainer)
+  if (rootContainer) toggleTabIndex('on', rootContainer)
+  window.removeEventListener('keydown', handleKeyDown)
+  unfreeze()
+
+  if (focusAfterExit) focusAfterExit.focus()
+}
+```
+
+An easy hack would be to do something like this to prevent the content
+from being in the DOM at all:
+
+```tsx
+<Modal>{isShowing && <MyModalContent />}</Modal>
+```
+
+I found a way around using `setTimeout` with a delay of `0` ([Event
+Loop](https://www.youtube.com/watch?v=8aGhZQkoFbQ)):
+
+```tsx
+const initialRender = React.useRef(false)
+// React.useEffect(() => {
+// ...
+
+if (isOpen) {
+  // ...
+} else {
+  //if (modalContainer) toggleTabIndex('off', modalContainer)
+  //if (rootContainer) toggleTabIndex('on', rootContainer)
+  //window.removeEventListener('keydown', handleKeyDown)
+  //unfreeze()
+
+  //if (focusAfterExit) focusAfterExit.focus()
+
+  if (!initialRender.current) {
+    initialRender.current = true
+    setTimeout(() => {
+      if (modalContainer) toggleTabIndex('off', modalContainer)
+    }, 0)
+  }
+}
+
+// ...
+```
+
+If you have come across this issue and know of a better solution, please teach me!
+
+With that, our `Modal` component is now functioning; using React's Portal API to
+render our modal content in its own unique `div`, works in a server rendered environment, handles
+keyboard events, focus, and scroll management when our modal is in view.
+
+If you have any questions or comments, feel free to reach out to me. I hope this helps if you run
+into a similar issue with React Portals and SSR or just with hooks in general!
