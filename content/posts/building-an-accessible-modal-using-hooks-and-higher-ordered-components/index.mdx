@@ -1,6 +1,6 @@
 ---
-title: 'Building A Modal Using React Portal, Higher Ordered Components, and Hooks'
-subtitle: 'Figuring out how to make React.createPortal work when our app is rendered on the server
+title: 'Building An Accessible Modal Using React Portal, Higher Ordered Components, and Hooks'
+subtitle: 'Figuring out how to make React Portal work when our app is rendered on the server
 🧐. A nice pairing of a higher ordered component and hooks did the trick!'
 keywords: ['React', 'Hooks', 'DOM']
 breadcrumbs: ['Javascript', 'React', 'UI']
@@ -15,7 +15,7 @@ not being able to create and inject a new `div` since `document` doesn't exist o
 In this post I will go over how I was able to create a `Modal` higher ordered component with
 React Portal that bypasses server side rendering, plus a few more UI elements.
 
-I will be using Typescript (new to Types, ping me to help 🙂). A live demo of our `Modal` component can be found on [CodeSandbox]().
+I will be using Typescript (new to Types, ping me to help 🙂). A live demo of our `Modal` component can be found on [CodeSandbox](https://codesandbox.io/s/4r86m3vqv9).
 
 Let's get started!
 
@@ -29,8 +29,8 @@ Our modal will:
 - Be able to go through server rendering without blowing up.
 - Let the user manage the state for when the modal is open or closed.
 - Always render an exit button; which will immediately be focused when the modal opens.
-- Make all focusable/tabbable children elements unfocusable/untabbable when the modal isn't open,
-  and with all focusable elements in our main app when the modal is open.
+- Make all focusable children elements unfocusable when the modal isn't open,
+  and vice versa with all focusable elements in our main app when the modal is open.
 - Handle Escape key events when opened, effectively closing the modal.
 - Freeze the overlayed content when the modal is opened, only allowing scroll to happen in the
   modal.
@@ -116,10 +116,13 @@ return null
 
 Let's break down what's happening.
 
-`modal` is a reference to either a `div` or `null`. Since `useEffect` runs only after our
-component has already mounted, we can define `modal` in our effect, and call our custom
-`forceUpdate` function to rerender the component. Because `modal` is defined after the rerender,
-we're able to return `ReactDOM.createPortal`.
+`modal` is a reference to either a `div` or `null`. On the initial server render, we'll return null
+since the value of `modal.current` is null.
+
+Since `useEffect` runs after our component has already mounted, we can define `modal` in the effect,
+and then call our custom `forceUpdate` function to rerender the component.
+
+This next time around, `modal.current` is now referencing a DOM node, and we're able to return a `ReactDOM.createPortal`.
 
 ### Handling Our UI Requirements In a useEffect
 
