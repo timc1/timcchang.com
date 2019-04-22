@@ -41,9 +41,9 @@ const ResumeIndex = () => {
           </PlainText>
           <PlainText className="text">
             Over the last 2 years I have learned what I know about software
-            development solely through resources and people online. Through
-            this, I have found a growing interest in UI focused products paired
-            with sharing the learnings through this site.{' '}
+            development through resources and people online. Through this, I
+            have found a growing interest in design focused products paired with
+            sharing the learnings through this site.{' '}
           </PlainText>
           <PlainText className="text">
             I believe in the fine, minute details in design and development —
@@ -62,13 +62,11 @@ const ResumeIndex = () => {
               <RoleTitle>Independent Product Developer</RoleTitle>
               <p>
                 In mid 2017 I made a decision to put full attention toward
-                learning software development, particularly in building UIs. It
-                is something that's always been of interest, but with many
-                things creative, we always have an internal question of whether
-                or not we are capable. I bit the bullet, moved down to LA, and
-                started learning and making things. Today I have learned that
-                this is a learning process that never stops. We have to get
-                build many, many things in order to improve.
+                learning web development. It is something that's always been of
+                interest, but with many things creative, I had imposter
+                syndrome. I bit the bullet, moved down to LA, and started
+                learning and making things. I've learned that we have to build
+                many, many things in order to get good at this.
               </p>
               <p>I've also ventured into contracted client work. Recently:</p>
               <ul className="text">
@@ -78,7 +76,7 @@ const ResumeIndex = () => {
                     I developed an interactive micro landing page for Ryan Blake
                     at Avrek Law to showcase individual attorney services.
                     Because of its single page layout, I opted to build the
-                    entire UI from scratch.
+                    entire UI using html, css, and vanilla js.
                   </p>
                 </li>
                 <li>
@@ -112,19 +110,19 @@ const ResumeIndex = () => {
                   <h4>TodoHQ (todohq.co)</h4>
                   <p>
                     A simple todo list that saves everything locally in the
-                    browser or through authentication. This was really just a
-                    project to play with layout and new React features. Featured
-                    on Product Hunt!
+                    browser or through authentication if a visitor chooses to
+                    sign up. This was a project to play with layout and new
+                    React features. Featured on Product Hunt!
                   </p>
                 </li>
                 <li>
                   <h4>Austillery (austillery.com)</h4>
                   <p>
                     A events marketplace to list and find local events. My first
-                    play at building a full stack database driven application.
-                    But more notably, the domain and every social handle wasn't
-                    taken! This was my first feature on Product Hunt and I was
-                    overly excited.
+                    play at building a full stack database driven, server side
+                    rendered site. But more notably, the domain and every social
+                    handle wasn't taken! This was my first feature on Product
+                    Hunt and I was overly excited.
                   </p>
                 </li>
               </ul>
@@ -148,8 +146,8 @@ const ResumeIndex = () => {
                   <h4>Acquiring 25% of the company's overall revenue</h4>
                   <p>
                     This sounds nice — though it was the collective effort of
-                    the entire team to build Pro, a good enough product that I
-                    was even able to find customers for.
+                    the entire team to build Pro, a good enough product that our
+                    early customers actually paid $$ for.
                   </p>
                 </li>
                 <li>
@@ -193,11 +191,11 @@ const ResumeIndex = () => {
               <p>
                 This was another job I am extremely grateful to have had. I was
                 1/3 of the pilot product operations team. With no past
-                experience within the field, we partnered with Safeway, FoodsCo,
-                GSO, and OnTrac to develop a logistics food delivery system
-                paired with the Handpick iOS app. We successfully delivered over
-                2500 meal kits within 2 months of launching. Mornings were spent
-                in the office planning and strategizing long term plans while
+                experience, we were able to partner with Safeway, FoodsCo, GSO,
+                and OnTrac to develop a logistics food delivery system paired
+                with the Handpick iOS app. We successfully delivered over 2500
+                meal kits within 2 months of launching. Mornings were spent in
+                the office planning and strategizing long term plans while
                 afternoons were spent with the team in the basement of Safeway
                 at Market St., packing and listening to music.
               </p>

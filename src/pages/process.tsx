@@ -33,11 +33,11 @@ export default function ProcessIndex() {
             </GoBackLink>
             <h1 className="text">Process</h1>
             <p className="text">
-              Product design and development is a ongoing, iterative process.
-              The way we work, think about problems, and create solutions
-              change. Each problem will be approached in slightly different
-              ways, but this is a simple, high level framework for how I
-              approach thinking about and developing new ideas.
+              Building products is an ongoing, iterative process. The way we
+              work, think about problems, and create solutions change. Each
+              problem will be approached in slightly different ways, but this is
+              a simple, high level framework for how I approach thinking about
+              and developing any new ideas.
             </p>
           </Header>
           <h2 className="text">Discovery</h2>
