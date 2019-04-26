@@ -73,7 +73,7 @@ pre {
   background: var(--color-black);
 }
 :not(pre) > code {
-  padding: 0.3em;
+  padding: 0.2em;
   border-radius: 0.3em;
   white-space: normal;
   background: #eee;

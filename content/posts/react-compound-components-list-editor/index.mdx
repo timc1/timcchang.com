@@ -1,0 +1,140 @@
+---
+title: 'Dynamic List Editor With React'
+subtitle: 'Combining React.useReducer and compound components to build a dynamic list editor.'
+keywords: ['React', 'Compound Components', 'useReducer', 'Hooks']
+breadcrumbs: ['React', 'Demo']
+date: '2019-04-25'
+type: 'post'
+---
+
+A few days ago I ran into a little problem while building out a UI that allow users to edit each individual
+item from a list of items.
+
+To better understand the problem, I decided to make a demo with the solution I came up with. Hope
+this might help someone who is figuring out how to compose a similar type of component.
+
+# Image
+
+In this post we will briefly talk about why combining useReducer and compound components worked well
+for this type of UI requirement.
+
+The full repository can be found on [Github](https://github.com/timc1/dynamic-editor-demo/) and a
+full demo can be found on [CodeSandbox](). If you have any questions going through the code, feel
+free to send me an email or DM through [Twitter](https://twitter.com/timcchang)
+
+## React.useReducer & compound components
+
+Our goal is to render a list of "notes", where each note has two states: nonediting and editing. In
+the nonediting state, the note will be displayed alongside toggles to edit and delete the note. In
+the editing state, the note will be placed within a `textarea` with a toggle to go back to the
+nonediting state and a toggle for saving the note.
+
+Our main component, `<NotesApp />` will hold all visual state:
+
+- `notes`: an array of `Note` objects
+
+```js
+// Returns a formatted Note object with a unique id.
+function Note({ id, note }) {
+  return {
+    id: id || randomId(),
+    note: note || '',
+  }
+}
+```
+
+- `isAddNewEditorShowing`: a boolean value to determine whether we should display an empty editor or
+  not
+- `currentEditingIndex`: a number value that represents which `<Note />` is in editing mode.
+
+Nested within `<NotesApp />` is any number of `<Note />` components. Each `<Note />` component will only hold one piece of local state:
+
+- `text` a string value representing the current "note"
+
+`<NotesApp />`'s state is managed by a single `useReducer`:
+
+```js
+const initialState = {
+  notes: [],
+  isAddNewEditorShowing: false,
+  currentEditingIndex: -1,
+}
+
+const notesAppActions = {
+  toggleAddNewEditor: 'TOGGLE_ADD_NEW_EDITOR',
+  toggleEditor: 'TOGGLE_EDITOR',
+  addNewNote: 'ADD_NEW_NOTE',
+  updateNote: 'UPDATE_NOTE',
+  deleteNote: 'DELETE_NOTE',
+}
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case notesAppActions.toggleAddNewEditor:
+      return // ...
+    case notesAppActions.toggleEditor:
+      return // ...
+    case notesAppActions.addNewNote:
+      return // ...
+    case notesAppActions.updateNote:
+      return // ...
+    case notesAppActions.deleteNote: {
+      return // ...
+    default:
+      throw new Error(`No case for type ${action.type} found.`)
+  }
+}
+
+export default function NotesApp() {
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+
+  // ...
+}
+```
+
+How will `<Note />` know when to be in editing or nonediting state? That is where compound
+components come in!
+
+Instead of just rendering `<NotesApp />`'s children, we'll run the children through a recursive
+`React.Children.map`. If we run into a `<Note />` component, we'll pass additional props based
+on `<NotesApp />` state that `<Note />` will use to determine how it should render.
+
+```js
+// Recursively map through each child; if the child has a displayName
+// of 'Note', we'll add appropriate props to the component.
+const mapPropsToChildren = children => {
+  let indexOfComponent = 0
+  const recursiveMap = child => {
+    return React.Children.map(child, child => {
+      if (!React.isValidElement(child)) {
+        return child
+      }
+      if (child.type.displayName === 'Note') {
+        child = React.cloneElement(child, {
+          index: indexOfComponent,
+          isInEditingMode: indexOfComponent === state.currentEditingIndex,
+          dispatch,
+        })
+
+        indexOfComponent++
+        return child
+      }
+
+      if (child.props.children) {
+        child = React.cloneElement(child, {
+          children: recursiveMap(child.props.children),
+        })
+      }
+
+      return child
+    })
+  }
+
+  return recursiveMap(children)
+}
+```
+
+By passing props to `<Note />` directly in our render function using `React.Children.map` and
+`React.cloneElement`, we can
+have a dynamic number of `<Note />`s rendered, with the proper props passed to each. We also don't have to do additional work to pass props down. It simply just works
+:)
