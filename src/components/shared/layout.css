@@ -6,20 +6,6 @@
 }
 
 @font-face {
-  font-family: 'PXGrotesk';
-  src: url('../../assets/fonts/Px-Grotesk-Bold.woff2') format('woff2'),
-    url('../../assets/fonts/Px-Grotesk-Bold.woff') format('woff');
-  font-weight: 500 800;
-}
-
-@font-face {
-  font-family: 'InterUI';
-  src: url('../../assets/fonts/Inter-Light.woff2') format('woff2'),
-    url('../../assets/fonts/Inter-Light.woff') format('woff');
-  font-weight: 100 300;
-}
-
-@font-face {
   font-family: 'InterUI';
   src: url('../../assets/fonts/Inter-Medium.woff2') format('woff2'),
     url('../../assets/fonts/Inter-Medium.woff') format('woff');
@@ -27,29 +13,9 @@
 }
 
 @font-face {
-  font-family: 'InterUI';
-  src: url('../../assets/fonts/Inter-Bold.woff2') format('woff2'),
-    url('../../assets/fonts/Inter-Bold.woff') format('woff');
-  font-weight: 700;
-}
-
-@font-face {
-  font-family: 'InterUI';
-  src: url('../../assets/fonts/Inter-ExtraBold.woff2') format('woff2'),
-    url('../../assets/fonts/Inter-ExtraBold.woff') format('woff');
-  font-weight: 800;
-}
-
-@font-face {
   font-family: 'Input';
-  src: url('../../assets/fonts/InputMono-Regular.ttf');
+  src: url('../../assets/fonts/InputMono-Regular.ttf') format('truetype');
   font-weight: 100 400;
-}
-
-@font-face {
-  font-family: 'Input';
-  src: url('../../assets/fonts/InputMono-Bold.ttf');
-  font-weight: 500 800;
 }
 
 :root {
@@ -81,9 +47,9 @@
   --color-light-4: #f6f9fc;
 
   --light: 300;
-  --medium: 600;
-  --bold: 700;
-  --extra-bold: 800;
+  --medium: 400;
+  --bold: 400;
+  --extra-bold: 400;
 
   --font-xx-large: 56px;
   --font-x-large: 56px;

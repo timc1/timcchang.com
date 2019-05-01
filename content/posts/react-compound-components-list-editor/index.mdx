@@ -7,13 +7,16 @@ date: '2019-04-25'
 type: 'post'
 ---
 
+import Image from 'components/shared/img'
+import demo from 'assets/videos/react-dynamic-list-demo.gif'
+
 A few days ago I ran into a little problem while building out a UI that allow users to edit each individual
 item from a list of items.
 
 To better understand the problem, I decided to make a demo with the solution I came up with. Hope
 this might help someone who is figuring out how to compose a similar type of component.
 
-# Image
+<Image src={demo} alt="demo" shadow />
 
 In this post we will briefly talk about why combining useReducer and compound components worked well
 for this type of UI requirement.
