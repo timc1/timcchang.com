@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { BasicLink, BasicNativeLink } from '../shared/global-styles'
+import { BasicLink, BasicNativeLink, mq } from '../shared/global-styles'
 import { Location } from '@reach/router'
 
 export default function InfoLinks() {
@@ -63,15 +63,23 @@ export const links = [
 ]
 
 const ListItems: any = styled.ul`
-  margin: 0 0 0 calc(var(--base-gap) * -1);
+  margin: 0 0 0 calc(var(--font-small) * -1);
   padding: 0;
   list-style: none;
   display: grid;
-  grid-gap: 25%;
   font-size: var(--font-small);
   font-weight: var(--medium);
 
   ${BasicLink}, ${BasicNativeLink} {
-    padding: var(--base-gap);
+    padding: var(--font-small);
+    display: inline-block;
+
+    ${mq[0]} {
+      padding: var(--font-medium);
+    }
+  }
+
+  ${mq[0]} {
+    margin: 0 0 0 calc(var(--font-medium) * -1);
   }
 `

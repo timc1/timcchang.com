@@ -59,12 +59,7 @@ export default function PageTemplate(data) {
       <PageNav>
         <GoBackLink
           to={`${data.location.pathname.split('/')[1]}/`}
-          css={css`
-            color: var(--color-dark-1);
-            > span::before {
-              background: var(--color-dark-1);
-            }
-          `}
+          color="dark"
         >
           <span>Back</span>
         </GoBackLink>

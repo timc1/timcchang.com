@@ -51,7 +51,7 @@ export const GoBackLink = styled(Link)`
   text-decoration: none;
   display: inline-block;
   padding: var(--base-gap);
-  padding-left: calc(var(--base-gap) * 2);
+  padding-left: calc(var(--font-medium) * 2);
   font-size: var(--font-small);
   font-weight: var(--medium);
   width: max-content;
@@ -61,7 +61,7 @@ export const GoBackLink = styled(Link)`
       content: '';
       position: absolute;
       height: var(--font-medium);
-      width: 15px;
+      width: var(--font-medium);
       top: 50%;
       left: 0;
       transform: translateY(-50%);
