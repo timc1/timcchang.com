@@ -289,7 +289,7 @@ const Content = styled.section`
   }
 
   h2 {
-    font-size: var(--font-honestly-dunno);
+    color: var(--color-black);
   }
 
   p {

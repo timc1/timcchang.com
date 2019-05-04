@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import PageLayout from '../components/shared/page-layout'
 import Footer from '../components/shared/footer'
 
-import { HighlightedLink, mq } from '../components/shared/global-styles'
+import { HighlightedLink } from '../components/shared/global-styles'
 
 export default function Index() {
   return (
@@ -47,9 +47,5 @@ const Container = styled.section`
   // prettier-ignore
   ${Header}:not(:last-of-type) {
     margin-bottom: 10px;
-  }
-
-  ${mq[2]} {
-    padding: 40px var(--base-padding);
   }
 `

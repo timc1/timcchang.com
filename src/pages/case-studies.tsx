@@ -90,7 +90,7 @@ const Subtitle = styled.p`
 `
 
 const Breadcrumbs = styled.ul`
-  margin: 0 0 0 2px;
+  margin: 0;
   padding: 0;
   list-style: none;
   grid-column: 2;
@@ -127,7 +127,6 @@ const CaseStudy = styled.li`
     }
     ${Number} {
       grid-row: 1;
-      margin-left: 0.125rem;
     }
 
     ${Breadcrumbs} {

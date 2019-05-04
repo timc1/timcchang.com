@@ -201,7 +201,7 @@ const Content = styled.section`
 
   h1 {
     margin: var(--base-padding) 0;
-    font-size: var(--font-xx-large);
+    font-size: var(--font-x-large);
     font-weight: var(--medium);
     font-family: var(--ss-font2);
     color: var(--color-light);

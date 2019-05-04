@@ -30,6 +30,7 @@ export const BasicLink: any = styled(Link)`
   color: ${(props: any) =>
     props.active === 'true' ? 'var(--color-dark-0)' : 'var(--color-dark-1)'};
   font-weight: var(--regular);
+  font-size: var(--font-small);
   text-decoration: none;
   width: max-content;
 `
@@ -39,13 +40,14 @@ export const BasicNativeLink: any = styled.a`
   color: ${(props: any) =>
     props.active === 'true' ? 'var(--color-dark-2)' : 'var(--color-dark-1)'};
   font-weight: var(--regular);
+  font-size: var(--font-small);
   text-decoration: none;
 `
 
 export const GoBackLink = styled(Link)`
   position: relative;
   color: ${props =>
-    props.color === 'dark' ? 'var(--color-black)' : 'var(--color-light)'};
+    props.color === 'dark' ? 'var(--color-dark-2)' : 'var(--color-light)'};
   text-decoration: none;
   display: inline-block;
   padding: var(--base-gap);
@@ -53,6 +55,7 @@ export const GoBackLink = styled(Link)`
   font-size: var(--font-small);
   font-weight: var(--medium);
   width: max-content;
+  margin-left: -1px;
   > span {
     &::before {
       content: '';
@@ -63,7 +66,7 @@ export const GoBackLink = styled(Link)`
       left: 0;
       transform: translateY(-50%);
       background: ${props =>
-        props.color === 'dark' ? 'var(--color-black)' : 'var(--color-light)'};
+        props.color === 'dark' ? 'var(--color-dark-2)' : 'var(--color-light)'};
       mask: url(${caret}) center no-repeat / contain;
     }
   }

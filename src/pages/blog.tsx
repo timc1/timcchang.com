@@ -102,7 +102,7 @@ const Subtitle = styled.p`
 `
 
 export const Breadcrumbs = styled.ul`
-  margin: 0 0 0 2px;
+  margin: 0;
   padding: 0;
   list-style: none;
   grid-column: 2;
@@ -126,7 +126,7 @@ export const Breadcrumbs = styled.ul`
 
 const ReadMore = styled.span`
   grid-column: 2;
-  --arrow-width: 15px;
+  --arrow-width: var(--font-small);
   position: relative;
   display: inline-block;
   font-family: var(--ss-font2);
@@ -146,7 +146,7 @@ const ReadMore = styled.span`
     height: 7px;
     width: var(--arrow-width);
     background: var(--color-dark);
-    mask: url(${arrow}) center bottom / contain no-repeat;
+    mask: url(${arrow}) center / contain no-repeat;
     transform: translate(8px, -60%);
     transition: transform 250ms var(--cubic);
   }
@@ -194,7 +194,6 @@ const Post: any = styled.li`
 
     ${Number} {
       grid-row: 1;
-      margin-left: 0.125rem;
     }
 
     ${Breadcrumbs} {
@@ -210,10 +209,6 @@ const Post: any = styled.li`
 
     ${Number}, ${Title}, ${Subtitle}, ${Breadcrumbs}, ${ReadMore} {
       grid-column: unset; 
-    }
-
-    ${Number} {
-      margin-left: 2px; 
     }
   }
 

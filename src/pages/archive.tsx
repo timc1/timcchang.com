@@ -7,7 +7,7 @@ import PageLayout from '../components/shared/page-layout'
 import Footer from '../components/shared/footer'
 
 // @ts-ignore
-import pilotsLogo from '../assets/images/88.svg'
+import alexCareyLogo from '../assets/images/alex_carey_face.jpg'
 
 import useIntersectionObserver from '../components/shared/hooks/useIntersectionObserver'
 
@@ -26,32 +26,31 @@ export default function BlogIndex() {
   return (
     <>
       <SEO
-        title="Archive — Tim Chang"
-        description="A graveyard of past projects eek!"
+        title="Work & Projects — Tim Chang"
+        description="A collection of past projects and work"
       />
       <PageLayout footerComponent={<Footer />}>
         <Content>
           <GoBackLink to="/" color="dark">
             <span>Home</span>
           </GoBackLink>
-          <h1 className="text">Archive</h1>
+          <h1 className="text">Work & Projects</h1>
           <p className="text">
-            A home for past projects, for fun and experimental.
+            A home for past projects — for fun and experimental.
           </p>
         </Content>
         <ProjectsContainer>
           <li>
             <Text className="text">
-              <h2>88pilots</h2>
+              <h2>alexcarey.co</h2>
               <p>
-                A project I worked on with Minh Reigen in building a space for
-                locals to meet new and interesting people. We built a simple
-                browser chat and notification system, which ultimately we ended
-                up using personally to chat.
+                A portfolio site I worked on with Alex Carey in building a space
+                to showcase a variety of work spanning gifs, illustration,
+                video, and print.
               </p>
             </Text>
             <ImageContainer>
-              <Mask src={pilotsLogo} />
+              <Image src={alexCareyLogo} alt="Alex Carey Face Logo" />
             </ImageContainer>
           </li>
           <li>
@@ -73,7 +72,6 @@ export default function BlogIndex() {
 const Content = styled.div`
   padding: var(--base-padding);
   min-height: 100vh;
-  background: var(--yellow);
   line-height: var(--line-height);
 
   h1 {
@@ -101,6 +99,7 @@ const ProjectsContainer = styled.ul`
     display: grid;
     grid-template-columns: 1fr 1fr;
     color: var(--color-dark-0);
+    overflow: hidden;
 
     h2,
     p {
@@ -120,8 +119,8 @@ const ProjectsContainer = styled.ul`
   }
 
   > li:first-of-type {
-    background: var(--blue);
-    color: var(--color-light);
+    background: #06dcfc;
+    color: var(--color-dark-0);
   }
 
   > li:nth-of-type(2) {
@@ -144,16 +143,32 @@ const Text = styled.div`
   padding: var(--base-padding);
   max-width: 700px;
   margin: auto;
+  z-index: 1;
 `
 
 const ImageContainer = styled.div``
 
-const Mask = styled.div`
+//const Mask = styled.div`
+//  position: absolute;
+//  top: 0;
+//  right: 0;
+//  bottom: 0;
+//  left: 60%;
+//  background: var(--color-light);
+//  mask: url(${(props: { src: string }) => props.src}) no-repeat round;
+//`
+
+const Image = styled.div<{ src: string; alt: string }>`
   position: absolute;
   top: 0;
-  right: 0;
-  bottom: 0;
-  left: 60%;
-  background: var(--color-light);
-  mask: url(${(props: { src: string }) => props.src}) no-repeat round;
+  height: 100%;
+  width: 100%;
+  background: url(${props => props.src}) no-repeat round;
+  transform: scale(2) translateX(50%);
+  z-index: 0;
+
+  ${mq[2]} {
+    position: absolute;
+    left: 60%;
+  }
 `

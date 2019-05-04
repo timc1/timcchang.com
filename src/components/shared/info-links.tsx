@@ -39,20 +39,16 @@ export const links = [
     text: 'Blog',
   },
   {
+    link: '/archive/',
+    text: 'Work & Projects',
+  },
+  {
     link: '/case-studies/',
     text: 'Case Studies',
   },
   {
-    link: '/process/',
-    text: 'Process',
-  },
-  {
     link: '/resume/',
     text: 'Resume',
-  },
-  {
-    link: '/archive/',
-    text: 'Archive',
   },
   {
     type: 'native',
@@ -71,7 +67,7 @@ const ListItems: any = styled.ul`
   padding: 0;
   list-style: none;
   display: grid;
-  grid-gap: calc(var(--base-gap) * 2);
+  grid-gap: 25%;
   font-size: var(--font-small);
   font-weight: var(--medium);
 

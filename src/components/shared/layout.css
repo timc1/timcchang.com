@@ -51,10 +51,8 @@
   --bold: 400;
   --extra-bold: 400;
 
-  --font-xx-large: 56px;
   --font-x-large: 56px;
   --font-large: 36.8px;
-  --font-honestly-dunno: 25.6px;
   --font-medium: 20.8px;
   --font-small: 17.6px;
   --font-x-small: 13.6px;
@@ -63,23 +61,32 @@
   --ss-font2: PXGrotesk;
 
   --illustrationavfont: Arial;
+
+  --max-width: 1680px;
 }
 
 @media (max-width: 767px) {
   :root {
-    --base-padding: 20px;
+    --font-x-large: 7vw;
+    --font-large: 4vw;
+    --font-medium: 2.5vw;
+    --font-small: 2vw;
+    --font-x-small: 1.8vw;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --base-padding: 40px;
   }
 }
 
 @media (max-width: 568px) {
   :root {
-    --font-xx-large: 10vw;
     --font-x-large: 6vw;
-    --font-large: 5.5vw;
-    --font-honestly-dunno: 5.5vw;
-    --font-medium: 4vw;
-    --font-small: 3.5vw;
-    --font-x-small: 3.2vw;
+    --font-medium: 3vw;
+    --font-small: 2.8vw;
+    --font-x-small: 2.3vw;
   }
 }
 
@@ -134,7 +141,7 @@ body {
 header,
 main,
 footer {
-  max-width: 2000px;
+  max-width: var(--max-width);
   width: 100%;
   margin: auto;
 }
@@ -154,11 +161,6 @@ body[data-url*='/resume'] {
 body[data-url*='/process/'],
 body[data-url*='/process'] {
   background: var(--color-black);
-}
-
-body[data-url*='/archive/'],
-body[data-url*='/archive'] {
-  background: var(--yellow);
 }
 
 ul,
