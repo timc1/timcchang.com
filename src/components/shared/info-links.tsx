@@ -39,7 +39,7 @@ export const links = [
     text: 'Blog',
   },
   {
-    link: '/archive/',
+    link: '/work/',
     text: 'Work & Projects',
   },
   {

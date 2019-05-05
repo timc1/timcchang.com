@@ -69,8 +69,8 @@ const ResumeIndex = () => {
                 many, many things in order to get good at this.
               </p>
               <p>I've also ventured into contracted client work. Recently:</p>
-              <ul className="text">
-                <li>
+              <ul>
+                <li className="text">
                   <h4>Avrek Law Firm Attorney Micro Site</h4>
                   <p>
                     I developed an interactive micro landing page for Ryan Blake
@@ -79,7 +79,7 @@ const ResumeIndex = () => {
                     entire UI using html, css, and vanilla js.
                   </p>
                 </li>
-                <li>
+                <li className="text">
                   <h4>AV Resources Corporation</h4>
                   <p>
                     A ground up redesign of AVRC's company website. This is a
@@ -89,9 +89,9 @@ const ResumeIndex = () => {
                   </p>
                 </li>
               </ul>
-              <p>Some recent side projects:</p>
-              <ul className="text">
-                <li>
+              <p className="text">Some recent side projects:</p>
+              <ul>
+                <li className="text">
                   <h4>This Next Year (thisnextyear.com)</h4>
                   <p>
                     I teamed up with{' '}
@@ -106,7 +106,7 @@ const ResumeIndex = () => {
                     product on Product Hunt and 47k visitors.
                   </p>
                 </li>
-                <li>
+                <li className="text">
                   <h4>TodoHQ (todohq.co)</h4>
                   <p>
                     A simple todo list that saves everything locally in the
@@ -115,7 +115,7 @@ const ResumeIndex = () => {
                     React features. Featured on Product Hunt!
                   </p>
                 </li>
-                <li>
+                <li className="text">
                   <h4>Austillery (austillery.com)</h4>
                   <p>
                     A events marketplace to list and find local events. My first
@@ -130,7 +130,7 @@ const ResumeIndex = () => {
           </Section>
           <Section className="text">
             <Date>2016 — 2017</Date>
-            <Role>
+            <Role className="text">
               <RoleTitle>Business Development & Product, Verlocal</RoleTitle>
               <p>
                 I joined Verlocal after coming back from my year long venture in
@@ -141,8 +141,8 @@ const ResumeIndex = () => {
                 marketplace website towards a B2B SaaS company.
               </p>
               <p>Some milestones:</p>
-              <ul className="text">
-                <li>
+              <ul>
+                <li className="text">
                   <h4>Acquiring 25% of the company's overall revenue</h4>
                   <p>
                     This sounds nice — though it was the collective effort of
@@ -150,14 +150,14 @@ const ResumeIndex = () => {
                     early customers actually paid $$ for.
                   </p>
                 </li>
-                <li>
+                <li className="text">
                   <h4>Living at the office</h4>
                   <p>
                     Realizing work-life balance is a real thing. I am never
                     doing this again.
                   </p>
                 </li>
-                <li>
+                <li className="text">
                   <h4>Learning that people is everything</h4>
                   <p>
                     A product is only as good as the people that build it. I
@@ -229,7 +229,10 @@ const ResumeIndex = () => {
           <PlainText className="text" css={{ marginBottom: '100px' }}>
             I enjoy working on problems with others. If you think our
             backgrounds, personalities, or skills may work well together, let's{' '}
-            <BasicNativeLink href="mailto:timchang.tcc@gmail.com?subject=hi!">
+            <BasicNativeLink
+              href="mailto:timchang.tcc@gmail.com?subject=hi!"
+              css={{ fontSize: 'var(--font-medium)' }}
+            >
               chat
             </BasicNativeLink>
             !
@@ -276,13 +279,13 @@ const Section = styled.section`
   grid-template-columns: 40px 1fr;
   grid-gap: var(--base-gap);
   align-items: start;
-  margin-bottom: 100px;
+  margin-bottom: calc(var(--base-gap) * 2);
   margin-left: calc((40px + var(--base-gap)) * -1);
   max-width: 750px;
   width: 100%;
 
   h1 {
-    margin: var(--base-padding) 0;
+    margin: 0 0 var(--base-padding) 0;
     font-size: var(--font-large);
     font-family: var(--ss-font2);
     font-weight: var(--light);
@@ -291,12 +294,17 @@ const Section = styled.section`
   h2,
   h3,
   h4 {
-    margin: calc(var(--base-gap) * 2) 0;
+    margin: 0 0 var(--base-gap) 0;
+  }
+
+  h4 {
+    color: var(--color-dark-2);
   }
 
   ul,
   p {
-    margin: calc(var(--base-gap) * 1.5) 0;
+    margin: 0 0 calc(var(--base-gap) * 2.5) 0;
+    color: var(--color-dark-0);
   }
 
   a {
@@ -329,8 +337,6 @@ const Date = styled.h2`
 const Role = styled.div``
 
 const RoleTitle = styled.h3`
-  margin: 0 !important;
-  font-weight: var(--medium);
   color: var(--color-black);
 `
 
