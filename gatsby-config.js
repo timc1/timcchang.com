@@ -86,11 +86,6 @@ module.exports = {
     'gatsby-plugin-remove-serviceworker',
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
-    //{
-    //  resolve: 'gatsby-plugin-offline',
-    //  options: {
-    //    navigateFallbackWhitelist: [],
-    //  },
-    //},
+    'gatsby-plugin-offline',
   ],
 }

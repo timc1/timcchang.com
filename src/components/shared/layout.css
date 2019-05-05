@@ -77,7 +77,7 @@
 
 @media (max-width: 767px) {
   :root {
-    --base-padding: 40px;
+    --base-padding: 20px;
   }
 }
 

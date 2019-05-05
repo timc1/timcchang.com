@@ -11,41 +11,35 @@ export default function Index() {
     <PageLayout footerComponent={<Footer />}>
       <Container>
         <Header>
-          Hello, I am <HighlightedLink to="/">Tim Chang</HighlightedLink>, a
-          product designer and developer. Currently I am based in Los Angeles,
-          CA working on selective client and independent projects.
+          Hello, I'm <HighlightedLink to="/">Tim</HighlightedLink>, a product
+          designer and developer. Currently I am based in Los Angeles working on
+          selective client and independent projects.
         </Header>
         <Header>
-          I design and build digital products that are accessible, performant,
-          and focus on fine, minute detail.
+          Here are my learnings within UI design, development, and connecting
+          with people.
         </Header>
-        <Header>
-          Over the past few years I have worked with startups to ideate
-          products, define goals, and solve business problems.
-        </Header>
-        <Header>I enjoy sharing and documenting the process of my work.</Header>
       </Container>
     </PageLayout>
   )
 }
 
 const Header = styled.p`
-  margin: 0;
-  font-size: var(--font-medium);
+  font-size: var(--font-large);
   line-height: var(--line-height);
   font-weight: var(--medium);
-  color: var(--color-dark-0);
+  color: var(--color-black);
 `
 
 const Container = styled.section`
   padding: var(--base-padding);
 
   ${Header} {
-    max-width: 650px;
+    max-width: 700px;
   }
 
   // prettier-ignore
   ${Header}:not(:last-of-type) {
-    margin-bottom: 10px;
+    margin-bottom: var(--font-medium);
   }
 `
