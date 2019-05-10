@@ -14,7 +14,7 @@ import Footer from '../components/shared/footer'
 // @ts-ignore
 import alexCareyLogo from '../assets/images/alex_carey_face.gif'
 // @ts-ignore
-import avrcLanding from '../assets/images/avrc_landing.jpg'
+import avrcLanding from '../assets/images/avrc_landing.gif'
 // @ts-ignore
 import tnyLanding from '../assets/images/tny.gif'
 // @ts-ignore
@@ -178,7 +178,7 @@ export default function BlogIndex() {
               <p>
                 Austillery is a marketplace for unique and rising events.
                 Visitors can create an account and using the modular editor can
-                easily build their event.
+                easily build their event. Featured on Product Hunt July 2018.
               </p>
               <BasicNativeLink
                 href="https://austillery.com/?ref=tcc"
@@ -204,7 +204,7 @@ export default function BlogIndex() {
             <Text className="text">
               <h2>Ryan Blake @ Avrek Law</h2>
               <p>
-                A single paged, animated marketing site for Attorney Ryan Blake
+                A single page, animated marketing site for Attorney Ryan Blake
                 of Avrek Law Firm. (Site currently in review)
               </p>
               <BasicNativeLink
@@ -215,7 +215,7 @@ export default function BlogIndex() {
               >
                 Visit site
               </BasicNativeLink>
-              <p className="tools">Javascript + HTML + CSS</p>
+              <p className="tools">Javascript + HTML + CSS + Parcel</p>
             </Text>
             <ImageContainer>
               <Image src={ryanblake} alt="Ryan Blake Avrek Law Firm" />
