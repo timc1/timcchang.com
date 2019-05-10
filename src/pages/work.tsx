@@ -186,7 +186,7 @@ export default function BlogIndex() {
                 rel="noopener noreferrer"
                 css={{ color: 'var(--blue)' }}
               >
-                Visit austillery.co
+                Visit austillery.com
               </BasicNativeLink>
               <p className="tools">React + Node.js/Express + EC2 + MySQL</p>
             </Text>

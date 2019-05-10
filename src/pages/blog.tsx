@@ -14,7 +14,7 @@ export default function BlogIndex(data: any) {
   return (
     <>
       <SEO
-        title="Blog — Tim Chang"
+        title="Ideas and Experiments on Building User Interfaces — Tim Chang"
         description="Essays on digital design, software development, personal and professional growth at timcchang.com."
       />
       <SectionIndexLayout title="Blog">

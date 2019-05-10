@@ -1,0 +1,340 @@
+---
+title: 'Checking For Drag And Drop Events From the Operating System'
+subtitle: 'Building a React hook to properly coordinate DOM drag events to check if a file is being dragged
+into the window from the OS, and not directly from within the browser.'
+keywords: ['React', 'Hooks', 'Web Development']
+breadcrumbs: ['React', 'Web API']
+date: '2019-05-09'
+type: 'post'
+---
+
+import Image from 'components/shared/img'
+import demo from 'assets/images/drag-and-drop-demo.gif'
+
+A neat UI feature that I often see is when someone drags a file into the browser window, some CSS is
+toggled on elements that allow for drag and drop. Twitter's implementation on the edit profile view
+is really nice, so I wanted to recreate the functionality by creating a reusable hook that returns
+whether or not a file is being dragged in the window. Something like this:
+
+<Image
+  src={demo}
+  alt="Drag and drop from browser and operating system"
+  shadow
+/>
+
+In this post I will walk through my implementation and thought process — the code can be found
+on Github [here](https://gist.github.com/timc1/d5a190c1bf32c7cf5cffad6427297b1c). Feel free to copy
+this into your own codebase and make changes as you see fit. This post will also be using Typescript!
+
+## What We'll Do
+
+1. Setup our hook
+2. Handling drag events
+3. Figure out how we can detect if a visitor dropped a file outside of the browser window
+
+### Setup our hook
+
+The way we want to use this hook is like this:
+
+```tsx
+import useDropzone from './use-dropzone'
+
+export default function MyComponent() {
+  const isDragging = useDropzone()
+
+  return // ...
+}
+```
+
+We want `isDragging` to be sharing the same state no matter where `useDropzone()` is being called.
+For example, if a home page is composed of many different components, and a few of these components
+are all using `useDropzone`, we want their values to all be reading from the same place.
+
+To do this, we'll need to use React's Context API paired with `React.useContext` (Kent C. Dodd's
+[blog post on using context](https://kentcdodds.com/blog/how-to-use-react-context-effectively) in
+React is a great resource).
+
+In our main `use-dropzone.tsx`, let's create the skeleton of our component:
+
+```tsx
+import React from 'react'
+
+type DropzoneContextValue = {
+  isDragging: boolean
+}
+
+const DropzoneContext = React.createContext<DropzoneContextValue | undefined>(
+  undefined
+)
+
+export function DropzoneProvider({ children }: { children: React.ReactNode }) {
+  const [isDragging, setDragging] = React.useState(false)
+
+  // We'll add all logic here!
+
+  const value = React.useMemo(() => {
+    return { isDragging }
+  }, [isDragging])
+
+  return (
+    <DropzoneContext.Provider value={value}>
+      {children}
+    </DropzoneContext.Provider>
+  )
+}
+
+export default function useDropzone() {
+  const context = React.useContext(DropzoneContext)
+
+  if (!context) {
+    throw new Error(`useDropzone must be used within a DropzoneProvider`)
+  }
+
+  return context.isDragging
+}
+```
+
+Here we set up a our `DropzoneProvider`, the component which will hold all logic that control our
+`isDragging` state.
+
+We then expose the `isDragging` state by passing `DropzoneContext` into
+`React.useContext(DropzoneContext)`. Any nested component that imports and calls `useDropzone()` will
+always receive the latest `isDragging` state.
+
+Okay, now that we've got the base set up, let's move onto implementing the native DOM drag events.
+
+### Handling drag events
+
+When our `DropzoneProvider` mounts, we'll need to use `React.useEffect` to set up event listeners
+that will handle the following:
+
+1. `dragstart` ·
+   In the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API), they state that `dragstart` and `dragend` events are not fired when dragging from
+   the operating system. So, using that bit of information, to determine if a file is being dragged in
+   from the OS, we'll do this:
+
+```tsx
+export function DropzoneProvider(/*...*/) {
+  // const [isDragging, setDragging] = React.useState(false)
+
+  // Defaults to true, when `dragstart` is toggled, we'll switch this to false.
+  const isFileFromOS = React.useRef(true)
+
+  React.useEffect(() => {
+    // dragstart event only fires when a file is dragged from within the browser
+    // window. It won't be fired when coming from the OS.
+    const handleDragStart = () => {
+      isFileFromOS.current = false
+    }
+
+    window.addEventListener('dragstart', handleDragStart)
+
+    return () => {
+      window.removeEventListener('dragstart', handleDragStart)
+    }
+  }, [isDragging])
+
+  // return (...)
+}
+```
+
+What we're doing is setting a flag, `isFileFromOS`, which will be `false` whenever a `dragstart`
+event is fired.
+
+\*\* Note: There was a bug that I came across that I see often - say we're dragging a file around,
+initially the file was dragged from the browser so we set out `isFileFromOS.current = false`. But
+then the user drags the file out of the window view, where if they drop the file, we will have no
+event callback that tells us that they did so. So how do we know if the user dropped the file
+outside of the window and toggle `isFileFromOS.current` back to true?
+
+I found a little hack using `document.hasFocus()` alongside another flag,
+`hasDraggedFileFromBrowserOutsideOfWindow` to determine if the file
+was dropped outside of the window. Let's first set things up:
+
+```tsx
+export function DropzoneProvider(/*...*/) {
+  // ...
+
+  // const isFileFromOS = React.useRef(true)
+
+  const hasDraggedFileFromBrowserOutsideOfWindow = React.useRef(false)
+
+  React.useEffect(() => {
+    // dragstart event only fires when a file is dragged from within the browser
+    // window. It won't be fired when coming from the OS.
+    const handleDragStart = () => {
+      // isFileFromOS.current = false
+      hasDraggedFileFromBrowserOutsideOfWindow.current = false
+    }
+
+    //window.addEventListener('dragstart', handleDragStart)
+
+    // return () => {
+    //   window.removeEventListener('dragstart', handleDragStart)
+    // }
+  }, [isDragging])
+
+  // return (...)
+}
+```
+
+2. `dragenter` · This fires pretty much on every element on the page. What we're going to use
+   this event for is to cache the target that we drag over, and compare that cached value with whatever
+   `dragleave` returns. When the elements are the same, we'll know that the dragged item is out of
+   the window view.
+
+```tsx
+// ...
+
+const cachedTarget = React.useRef<EventTarget | null>(null)
+
+React.useEffect(() => {
+  // const handleDragStart = () => {
+  //   isFileFromOS.current = false
+  //   hasDraggedFileFromBrowserOutsideOfWindow.current = false
+  // }
+
+  const handleDragEnter = (e: DragEvent) => {
+    cachedTarget.current = e.target
+  }
+
+  // window.addEventListener('dragstart', handleDragStart)
+  window.addEventListener('dragenter', handleDragEnter)
+
+  return () => {
+    // window.removeEventListener('dragstart', handleDragStart)
+    window.removeEventListener('dragenter', handleDragEnter)
+  }
+}, [isDragging])
+
+// ...
+```
+
+3. `dragover` · This will fire anytime we are dragging a file across the visible document.
+   This is the event handler that we'll use to determine where the user dragged the file from (OS or
+   browser), and if they dropped the file outside of the window:
+
+```tsx
+// ...
+
+// const handleDragEnter = (e: DragEvent) => {
+//   cachedTarget.current = e.target
+// }
+
+const handleDragOver = (e: DragEvent) => {
+  // e.preventDefault will allow us to drag a file in the browser without it opening.
+  e.preventDefault()
+
+  // If document still has focus, that means the user never dropped the file.
+  if (hasDraggedFileFromBrowserOutsideOfWindow.current && document.hasFocus()) {
+    console.log('Dragged file back into view from browser')
+  } else if (isFileFromOS.current) {
+    console.log('Dragging from OS')
+    hasDraggedFileFromBrowserOutsideOfWindow.current = false
+
+    if (!isDragging) setDragging(true)
+  } else {
+    console.log('Dragging from browser')
+  }
+}
+
+// window.addEventListener('dragstart', handleDragStart)
+// window.addEventListener('dragenter', handleDragEnter)
+window.addEventListener('dragover', handleDragOver)
+
+return () => {
+  // window.removeEventListener('dragstart', handleDragStart)
+  // window.removeEventListener('dragenter', handleDragEnter)
+  window.removeEventListener('dragover', handleDragOver)
+}
+
+// ...
+```
+
+4. `dragleave` · This will fire every time the dragged item leaves any drop target, so again,
+   pretty much every item on the page. So in order to determine that our file is strictly leaving the
+   document, we compare the target value that is returned from `dragleave` with our
+   `cachedTarget.current`. Again, if they are the same, we know that the file is out of the document
+   view. The reason why is when we drag over any element, we update `cachedTarget.current` to reference that
+   element. When `dragleave` fires, it'll return to us the element that it just left, which is the
+   element we saved to `cachedTarget.current`.
+
+```tsx
+// const handleDragOver = () => {...}
+
+const handleDragLeave = (e: DragEvent) => {
+  if (e.target === cachedTarget.current) {
+    if (
+      isFileFromOS.current &&
+      !hasDraggedFileFromBrowserOutsideOfWindow.current
+    ) {
+      console.log('Left view from OS')
+
+      if (isDragging) setDragging(false)
+    } else {
+      console.log('Left view from browser')
+      hasDraggedFileFromBrowserOutsideOfWindow.current = true
+
+      // Reset isFileFromOS flag
+      isFileFromOS.current = true
+    }
+  }
+}
+
+// window.addEventListener('dragstart', handleDragStart)
+// window.addEventListener('dragenter', handleDragEnter)
+// window.addEventListener('dragover', handleDragOver)
+window.addEventListener('dragleave', handleDragLeave)
+
+return () => {
+  // window.removeEventListener('dragstart', handleDragStart)
+  // window.removeEventListener('dragenter', handleDragEnter)
+  // window.removeEventListener('dragover', handleDragOver)
+  window.removeEventListener('dragleave', handleDragLeave)
+}
+
+// ...
+```
+
+5. `drop` · Fired when an item is dropped inside the document. Here we will reset our flags and
+   state.
+
+```tsx
+// ...
+
+const handleDrop = (e: DragEvent) => {
+  // Again, e.preventDefault needs to be here and on dragover event
+  // to prevent the file from opening in the browser.
+  console.log('drop')
+  e.preventDefault()
+  // Reset isFileFromOS flag
+  isFileFromOS.current = true
+  hasDraggedFileFromBrowserOutsideOfWindow.current = false
+
+  if (isDragging) setDragging(false)
+}
+
+// window.addEventListener('dragstart', handleDragStart)
+// window.addEventListener('dragenter', handleDragEnter)
+// window.addEventListener('dragover', handleDragOver)
+// window.addEventListener('dragleave', handleDragLeave)
+window.addEventListener('drop', handleDrop)
+
+return () => {
+  // window.removeEventListener('dragstart', handleDragStart)
+  // window.removeEventListener('dragenter', handleDragEnter)
+  // window.removeEventListener('dragover', handleDragOver)
+  // window.removeEventListener('dragleave', handleDragLeave)
+  window.removeEventListener('drop', handleDrop)
+}
+```
+
+And there we have it! All the event handlers that work on all browsers and are needed to determine
+whether a file is being dragged in from the operating system and not the browser, along with an edge
+case to determine if users have dropped a file outside of the window, where our `drop` handler won't
+fire.
+
+If you have any questions, suggestions, or have an alternative way of working with the DOM drag API,
+please feel free to send me an email or a DM on Twitter.
+
+Best of luck to building your UI! 🙂
