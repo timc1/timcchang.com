@@ -263,7 +263,7 @@ const Title = styled.h5`
     props.theme.isSinglePage ? '18px' : '10px'} !important;
   font-weight: var(--bold);
   font-family: var(--illustrationavfont);
-  margin: 0 0 10px 0;
+  margin: 0 0 10px 0 !important;
 `
 
 const TextContent = styled.div`

@@ -237,6 +237,7 @@ const LaptopScreen = styled.div`
   border-radius: var(--base-radius);
   box-shadow: var(--base-box-shadow);
   overflow: hidden;
+  z-index: 1;
 `
 
 const SiteHeader = styled.div`
@@ -311,6 +312,7 @@ const LaptopBrowserSearchBar = styled.div`
   background: #fff;
   border-radius: 2px;
   font-size: ${props => (props.theme.small ? '5px' : '8px')} !important;
+  font-family: InterUI;
   display: grid;
   align-items: center;
   padding-left: ${props => (props.theme.small ? '20px' : '25px')};
@@ -352,6 +354,5 @@ const LaptopBrowserNavigationContainer = styled.div`
   align-items: center;
   border-top-left-radius: var(--base-radius);
   border-top-right-radius: var(--base-radius);
-
   z-index: 1;
 `

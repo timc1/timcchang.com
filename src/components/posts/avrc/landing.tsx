@@ -106,7 +106,7 @@ const BannerGrid = styled.div`
 const BannerText = styled.div`
   display: grid;
   align-self: center;
-  grid-gap: 15px;
+  grid-gap: 10px;
   padding: 20px;
   > span {
     border-radius: 1px;
