@@ -152,10 +152,10 @@ const MyApp = styled.div`
     position: absolute;
     top: -5px;
     right: -5px;
-    padding: 2px;
+    padding: 2px 2px 1px 2px;
     background: rgb(14, 197, 199);
     color: #fff;
-    font-size: 5px;
+    font-size: 4px;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont);
     text-transform: uppercase;
@@ -194,7 +194,7 @@ const App = styled.div`
     line-height: 1px;
   }
   > span {
-    font-size: 8px;
+    font-size: 7px;
     color: rgb(66, 71, 112);
     &:not(:nth-of-type(3))::after {
       content: '·';

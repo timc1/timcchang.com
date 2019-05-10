@@ -84,6 +84,7 @@
 @media (max-width: 568px) {
   :root {
     --font-x-large: 6vw;
+    --font-large: 6vw;
     --font-medium: 3vw;
     --font-small: 2.8vw;
     --font-x-small: 2.3vw;

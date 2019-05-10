@@ -176,6 +176,7 @@ const ModalImage = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   margin-top: 10px;
+  margin-bottom: 5px !important;
 `
 
 const ModalText = styled.div`

@@ -175,7 +175,7 @@ const Title = styled.h5`
   font-family: var(--illustrationavfont) !important;
   font-weight: var(--bold);
   text-align: ${props => (props.theme.isOverlay ? 'left' : 'center')};
-  margin: 0;
+  margin: 0 !important;
 `
 
 const Author = styled.p`

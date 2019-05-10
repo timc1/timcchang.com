@@ -153,7 +153,7 @@ const Banner = styled.div`
   margin: auto;
 
   > h5 {
-    margin: 0;
+    margin: 0 !important;
     font-size: 18px !important;
     font-weight: var(--bold);
     font-family: var(--illustrationavfont);
