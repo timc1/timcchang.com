@@ -108,10 +108,7 @@ export default function BlogIndex() {
               <p className="tools">React + Node/Express + EC2 + RDS</p>
             </Text>
             <ImageContainer>
-              <Image
-                src={avrcLanding}
-                alt="AV Resources Landing Page Illustration"
-              />
+              <Image src={avrcLanding} alt="AVRC Landing Page" />
             </ImageContainer>
           </li>
           <li
@@ -149,9 +146,10 @@ export default function BlogIndex() {
             <Text className="text">
               <h2>todohq.co</h2>
               <p>
-                A fun and accessible todo list playing with the alpha build of
-                React Hooks. All data saved locally in the browser - sign up to
-                access the list anywhere. Featured on ProductHunt November 2018.
+                A minimal and accessible todo list playing with the alpha build
+                of React Hooks. All data saved locally in the browser - sign up
+                to access the list anywhere. Featured on ProductHunt November
+                2018.
               </p>
               <BasicNativeLink
                 href="https://todohq.co/?ref=tcc"
@@ -196,9 +194,9 @@ export default function BlogIndex() {
           </li>
           <li
             css={{
-              color: 'var(--color-dark-0)',
+              color: 'var(--color-dark-1)',
               background: 'var(--color-light)',
-              borderTop: '1px solid var(--color-dark-0)',
+              borderTop: '2px solid #f1f1f1',
             }}
           >
             <Text className="text">
@@ -284,6 +282,7 @@ const ProjectsContainer = styled.ul`
     margin-right: calc(var(--base-padding) * -1);
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-gap: calc(var(--base-gap) * 3);
     overflow: hidden;
 
     h2,
@@ -313,12 +312,18 @@ const ProjectsContainer = styled.ul`
       }
     }
   }
+
+  ${mq[1]} {
+    > li {
+      padding: calc(var(--base-padding) * 3) var(--base-padding);
+    }
+  }
 `
 
 const Text = styled.div`
   display: grid;
   grid-gap: var(--base-gap);
-  padding: var(--base-padding);
+  padding: 0 var(--base-padding);
   max-width: 700px;
   margin: auto;
   z-index: 1;
@@ -334,7 +339,7 @@ const ImageContainer = styled.div`
   padding-top: 75%;
 
   ${mq[2]} {
-    padding-top: 30%;
+    padding-top: 35%;
   }
 `
 
