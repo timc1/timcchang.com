@@ -1,0 +1,421 @@
+---
+title: 'Recreating Unique Website Layouts'
+subtitle: 'An experiment in taking unique website layouts and recreating them.'
+keywords: ['Website Layouts', 'UI Design', 'React Layouts']
+breadcrumbs: ['React', 'Experiment']
+date: '2019-05-16'
+type: 'post'
+---
+
+import Image from 'components/shared/img'
+import image1 from 'assets/images/canalstreet_1.jpg'
+import gif1 from 'assets/images/canalstreet_1.gif'
+import gif2 from 'assets/images/canalstreet_2.gif'
+import gif3 from 'assets/images/canalstreet_3.gif'
+import gif4 from 'assets/images/canalstreet_4.gif'
+
+Three days ago I came across Canal Street Market's [website](https://canalstreet.market), built by [Zero Studios](https://zero.nyc) in NYC. I was
+fascinated by how well each page transition and animation was implemented and wondered to myself if
+I was able to recreate a UI like that.
+
+In this post I want to break down how I was able to recreate the page navigation with each page's
+content fading in and out. Here's how the final product looks:
+
+<Image src={gif3} alt="Canal Street Demo" />
+
+Here are the moving parts:
+
+- Setting up the nav links
+- Animating the nav when page first loads
+- Animating the nav when transitioning between pages
+- Fading out and in page content on route change
+
+The full repository can be found on [Github](https://github.com/timc1/layouts) and the live demo can
+be found [here](https://musing-mahavira-af3e1c.netlify.com/canalstreet.market/).
+
+Let's get started!
+
+### Setting up the nav links
+
+There are two parts to the nav — the first is the actual `nav` with each link nested within and
+second is a layer of styled `divs` that hold the background color of each section.
+
+If you take a look at this image, you can see that each section doesn't have a background color, but rather the
+color is provided from the layer that animates in and out with the nav links. This is a bit
+different from how Zero Studios did it, but it works 😜. You can check it out if you toggle the
+opacity of the layer:
+
+<Image src={gif1} alt="Canal Street Demo" shadow />
+
+Anyway, the nav is a fixed position nav menu that spans from the top of the viewport to the bottom. Here's
+the basic structure (the styled version can be found [here](https://github.com/timc1/layouts/blob/master/src/canalstreet.market/index.tsx)):
+
+```tsx
+<header>
+  <nav>
+    <ul>
+      {/* Each `li` is has a fixed width of 60px, aliased as var(--nav-link-width). */}
+      <li>
+        <span>主页</span>
+        <span>Home</span>
+      </li>
+      <li>
+        <span>餐饮</span>
+        <span>Food</span>
+      </li>
+      <li>
+        <span>購物</span>
+        <span>Retail</span>
+      </li>
+      <li>
+        <span>文化</span>
+        <span>Community</span>
+      </li>
+    </ul>
+    {/* Here are the background layers */}
+    <div>
+      <span />
+      <span />
+      <span />
+      <span />
+    </div>
+  </nav>
+</header>
+```
+
+Using css `writing-mode: vertical-lr`, we're able to display the nav text vertically, and set the
+Chinese letters to an absolute position.
+
+With that, we'll have our menu looking like this:
+
+<Image src={image1} alt="Fixed position, colored navigation links" shadow />
+
+The only state I used was a number value, `openIndex`, that represents the current open link. This is
+managed by a `useReducer`. Whenever a route change occurs, we'll update the `openIndex`.
+When the `openIndex` is updated, we'll then trigger animation updates.
+
+I'm sure there are other ways to do this nicely, but I found it pretty easy to work with it this
+way.
+
+```tsx
+type StateType = {
+  openIndex: number
+}
+
+type ActionType = {
+  type: string
+  payload?: {
+    [k: string]: any
+  }
+}
+
+const reducer = (state: StateType, action: ActionType) => {
+  switch (action.type) {
+    case 'SET_OPEN_INDEX':
+      return {
+        ...state,
+        openIndex: action.payload.index,
+      }
+    default:
+      throw new Error(`No type of ${action.type} found.`)
+  }
+}
+
+export default function CanalStreetMarket(props: any) {
+  const { section } = props.match.params
+
+  const [state, dispatch] = React.useReducer(reducer, {
+    openIndex: (() => {
+      switch (section) {
+        case 'food':
+          return 1
+        case 'retail':
+          return 2
+        case 'community':
+          return 3
+        default:
+          return 0
+      }
+    })(),
+  })
+}
+
+const links = [
+  { url: url, text: 'Home', chinese: `主页` },
+  { url: `${url}/food`, text: 'Food', chinese: `餐饮` },
+  { url: `${url}/retail`, text: 'Retail', chinese: `購物` },
+  { url: `${url}/community`, text: 'Community', chinese: `文化` },
+]
+```
+
+One more thing — to handle animations, we'll need to target three DOM elements:
+
+- The element wrapping our nav links
+- The element wrapping our page's content
+- The element wrapping our background layers
+
+Using `useRef`, we can keep a reference of these nodes:
+
+```tsx
+//const [state, dispatch] = React.useReducer(reducer, {
+//    openIndex: (() => {
+//      switch (section) {
+//        case 'food':
+//          return 1
+//        case 'retail':
+//          return 2
+//        case 'community':
+//          return 3
+//        default:
+//          return 0
+//      }
+//    })(),
+//  })
+
+const listRef = React.useRef<HTMLUListElement>(null)
+const content = React.useRef<HTMLDivElement>(null)
+const transitionCoverRef = React.useRef<HTMLDivElement>(null)
+
+// ...
+```
+
+### Animating the nav when page first loads
+
+When the page initially loads, we want to position the nav
+links based on which route we're currently on. So, if we were on the `/retail` route, we'll want
+both 'home' and 'retail' links to be positioned left of the screen. Remember, which route we are on
+is represented by our state value, `openIndex`.
+
+Here I used a `useEffect` along with a ref, `initialRender`, which will let us know if this effect
+is firing on the component mounting or not.
+
+\*Note: It's probably more beneficial to use `useLayoutEffect` because we want to calculate the
+position prior to the browser's painting, but since our elements are initially transformed out of
+view, it didn't really seem to matter.
+
+```tsx
+const initRender = React.useRef(false)
+React.useEffect(() => {
+  const links = Array.from(listRef.current.querySelectorAll('li'))
+  if (initRender.current) {
+    // Logic for transitioning nav items by x axis
+  } else {
+    // Transition elements by y axis only if initial mount.
+    initRender.current = true
+    links.forEach((link, index) => {
+      if (index <= state.openIndex) {
+        link.style.left = `${index * 60}px`
+        link.style.right = `unset`
+      }
+      link.style.transform = `translateY(0)`
+      link.style.transformOrigin = `0 0`
+      link.style.transition = `transform ${TRANSITION_DURATION *
+        6}ms var(--ease)`
+      link.style.transitionDelay = `${-100 * index}ms`
+    })
+  }
+}, [state.openIndex])
+```
+
+Look! On initial load, we absolutely position each link based on the current `openIndex`, then
+transform them down to view.
+
+<Image src={gif2} alt="Canal Street Demo" />
+
+### Animating the nav when transitioning between pages
+
+Let's add the logic for transitioning the nav links after the first load.
+
+The first thing I thought of when working on this section is the importance of not animating the
+`left` and `right` properties of the links and the background layers but rather the `transform`
+properties of each element to create that smooth 60fps transition. Paul Lewis and Paul Irish have a
+great article on this you can read about [here](https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/).
+
+So here's the idea:
+
+- When `openIndex` updates, we'll figure out which of the nav links and their respective background layers need to move.
+- We calculate how much each element will need to `translate` in order to slide over to the
+  opposing side of the screen.
+- We transform the elements over smoothly
+- Once the transition completes, we'll immediately absolutely position the elements to THAT position
+  that they're currently located.
+
+In the above function, let's fill in the logic for transitioning the nav items by the x axis. Note
+here that we're using a ref, `previousOpenIndex`, which will keep track of... you guessed it, the
+previous `openIndex`! This will help us determine which elements should transition. Let's see:
+
+```tsx
+if (initRender.current) {
+  if (previousOpenIndex.current !== undefined) {
+    if (state.openIndex > previousOpenIndex.current) {
+      const elements = links.slice(0, state.openIndex + 1)
+
+      // Fade content out
+      if (content.current) {
+        content.current.style.opacity = '0'
+        content.current.style.transition = `opacity ${ANIMATION_DELAY}ms var(--ease)`
+      }
+
+      elements.forEach((el, index) => {
+        const position = el.getBoundingClientRect() as any
+        el.style.transform = `translateX(${-1 * (position.x - index * 60)}px)`
+        el.style.transition = `transform ${TRANSITION_DURATION}ms var(--ease)`
+        el.style.transitionDelay = `${ANIMATION_DELAY}ms`
+
+        setTimeout(() => {
+          if (el) {
+            el.style.transform = `translateY(0)`
+            el.style.transitionDelay = ``
+            el.style.transition = ``
+            el.style.left = `${index * 60}px`
+            el.style.right = `unset`
+
+            // Fade content back in.
+            if (content.current) {
+              content.current.style.opacity = '1'
+              content.current.style.transition = `opacity ${ANIMATION_DELAY}ms var(--ease)`
+              content.current.style.transitionDelay = `${ANIMATION_DELAY}ms`
+            }
+          }
+        }, TRANSITION_DURATION + ANIMATION_DELAY)
+      })
+    } else {
+      // Don't move home link.
+      const elements = links.slice(state.openIndex + 1)
+
+      // Fade content out. We can split this to another function 😬.
+      if (content.current) {
+        content.current.style.opacity = '0'
+        content.current.style.transition = `opacity ${ANIMATION_DELAY}ms var(--ease)`
+      }
+
+      elements.forEach((el, index) => {
+        const position = el.getBoundingClientRect() as any
+        const innerWidth = window.innerWidth
+
+        el.style.transform = `translateX(${innerWidth -
+          (position.x + 60 * (elements.length - index))}px)`
+        el.style.transition = `transform ${TRANSITION_DURATION}ms var(--ease)`
+        el.style.transitionDelay = `${ANIMATION_DELAY}ms`
+
+        setTimeout(() => {
+          if (el) {
+            el.style.transform = `translateY(0)`
+            el.style.transitionDelay = ``
+            el.style.transition = ``
+            el.style.left = `unset`
+            el.style.right = `${60 * (elements.length - 1 - index)}px`
+          }
+
+          // Fade content back in. Ya we can split this to another function too 😬.
+          if (content.current) {
+            content.current.style.opacity = '1'
+            content.current.style.transition = `opacity ${ANIMATION_DELAY}ms var(--ease)`
+            content.current.style.transitionDelay = `${ANIMATION_DELAY}ms`
+          }
+        }, TRANSITION_DURATION + ANIMATION_DELAY)
+      })
+    }
+  }
+} else {
+  // ...
+}
+```
+
+Let's also add the transitions to the background layers:
+
+```tsx
+// Transitions for background transition layer. useUpdatedLayoutEffect
+// is a wrapper around useLayoutEffect that returns a boolean value, `premount`,
+// which lets us know if the current effect that is fired is fired on the initial
+// component mount.
+useUpdatedLayoutEffect(
+  (premount: boolean) => {
+    if (transitionCoverRef.current) {
+      const backgrounds = Array.from(
+        transitionCoverRef.current.querySelectorAll('span')
+      )
+
+      if (premount) {
+        backgrounds.forEach((bg, index) => {
+          if (index > state.openIndex) {
+            bg.style.transform = `translateX(calc(100% - calc(var(--nav-link-width) * 2)))`
+            bg.style.opacity = `0`
+          } else if (index !== state.openIndex) {
+            bg.style.opacity = `0`
+          }
+        })
+        return
+      }
+
+      backgrounds.forEach((bg, index) => {
+        if (index <= state.openIndex) {
+          bg.style.transform = `translateX(0px)`
+          bg.style.opacity = `1`
+          bg.style.transition = `transform ${TRANSITION_DURATION}ms var(--ease) ${ANIMATION_DELAY}ms`
+        } else {
+          bg.style.transform = `translateX(calc(100% - calc(var(--nav-link-width) * 2)))`
+          bg.style.transition = `transform ${TRANSITION_DURATION}ms var(--ease) ${ANIMATION_DELAY}ms`
+        }
+      })
+    }
+  },
+  [state.openIndex],
+  true // Premount - pls make this more clear lol 🙃
+)
+```
+
+<Image src={gif4} alt="Canal Street Demo" />
+
+Now our nav is transitioning nicely. Both on initial load, and subsequent
+route changes. Cool, almost done!
+
+### Fading out and in page content on route change
+
+On each route change, we want to time transitions so that our current page content fades away -> nav
+animates -> content fades back but with updated page's content.
+
+To make this transition, I initially tried `react-transition-group`, but it seems like
+`<TransitionGroup />` from the library causes a browser repaint on initial mount so our nav links weren't able to animate on the first load.
+
+Using `react-pose`, things worked well and really without much work. We can wrap our content body
+with the library like so:
+
+```tsx
+import posed, { PoseGroup } from 'react-pose'
+
+// ...
+
+return (
+  {/* ... */}
+
+  <PoseGroup>
+    <RoutesContainer key={props.match.url}>
+      <Switch location={props.location}>
+        <Route path={`${url}`} exact component={Home} />
+        <Route path={`${url}/food`} exact component={Food} />
+        <Route path={`${url}/retail`} exact component={Retail} />
+        <Route path={`${url}/community`} exact component={Community} />
+      </Switch>
+    </RoutesContainer>
+  </PoseGroup>
+
+  {/* ... */}
+)
+
+const RoutesContainer = posed.div({
+  enter: { opacity: 1, delay: ANIMATION_DELAY },
+  exit: { opacity: 0, delay: ANIMATION_DELAY },
+})
+```
+
+One route change, Pose will transition our previous and next components smoothly by transitioning
+each component's `opacity`.
+
+And there we have it, a really cool and unique layout! There's definitely more optimal ways of
+implementing this UI, and if you want to take an attempt at recreating Canal Street's site, share
+how you implemented it!
+
+If you have any questions, please feel free to DM me on Twitter or email me.
+
+Best of luck on building your UI!
