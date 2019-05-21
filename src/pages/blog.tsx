@@ -77,7 +77,7 @@ export const Number = styled.p`
   color: var(--color-dark-1);
 `
 
-const Title = styled.h1`
+const Title = styled.h2`
   margin: 0;
   grid-column: 2;
   grid-row: 2;
