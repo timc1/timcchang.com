@@ -50,12 +50,196 @@ export default function App() {
 }
 ```
 
-Instead of publishing the code as a module, I just created a gist
+Instead of publishing the final code as a module, I just created a gist
 which you can find on [Github](). Simply copy and paste it into your app, and edit the code based on your
 needs!
 
 We'll go over the following:
 
-1. Setting our component
+1. Setting up our component
 2. Initiating Firebase
 3. Implementing signup, signin, and sendResetEmail methods
+4. Caveats and gotchas
+
+## Setting up our component
+
+Because authentication is a value used by components throughout the app, we will store the user in our component
+state, and expose the user object to all nested components in our app via React's Context API.
+
+The only state that our component will manage are:
+
+- `isInitiallyLoading`: on initial page load, we'll need to fetch the current authentication status from Firebase.
+- `isLoading`: a flag for when we make API calls to Firebase to disable further form
+  submissions/disable buttons.
+- `user`: the user
+
+In a file, `use-auth.js`, let's set up our component with React Context as well as a
+React.useReducer for state management:
+
+```js
+import React from 'react'
+
+// Create aliases for our action types - this helps with
+// autocomplete and allows us to not have to type in the
+// actual string when dispatching updates.
+AuthProvider.actions = {
+  setUser: 'SET_USER',
+  toggleLoading: 'TOGGLE_LOADING',
+}
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    //
+    // We'll add different cases here, later.
+    //
+    default:
+      throw new Error(`No case for type ${action.type} found.`)
+  }
+}
+
+const AuthContext = React.createContext(undefined)
+
+export function AuthProvider({ initialUser, children }) {
+  const [state, dispatch] = React.useReducer(reducer, {
+    isInitiallyLoading: true,
+    isLoading: false,
+    user: null,
+  })
+
+  //
+  // We'll add all our methods here, later.
+  //
+
+  const value = {
+    user: initialUser || state.user,
+    isLoading: state.isLoading,
+  }
+
+  // On our initial page load, we'll be fetching data regarding the user
+  // from Firebase. During this time, we'll simply show a full page loader.
+  return state.isInitiallyLoading ? (
+    <FullPageLoading />
+  ) : (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  )
+}
+```
+
+Okay, now that we have our initial skeleton set up let's move onto incorporating Firebase into our
+component.
+
+### Initiating Firebase
+
+Go to your [Firebase Console](https://console.firebase.google.com) and click '+ New
+Project'. Select your project name (if you don't have a project created, go to [Google Cloud Console](https://console.cloud.google.com)
+and create a new project.
+
+When you've created your new Firebase project, you will be given credentials like this:
+
+```js
+{
+  apiKey: <API_KEY>,
+  authDomain: 'my-new-project-123.firebaseapp.com',
+  databaseURL: 'https://my-new-project-123.firebaseio.com',
+  projectId: 'my-new-project-123',
+  storageBucket: 'my-new-project-123-.appspot.com',
+  messagingSenderId: <SENDER_ID>,
+  appId: <APP_ID>,
+}
+```
+
+We'll need to load these credentials into our component, so I just placed them inside a folder,
+`credentials`, and exported the values as a variable:
+
+In `src/credentials/firebase-config.js` or where ever you'd like to keep the credentials:
+
+```js
+const firebaseConfig = {
+  apiKey: <API_KEY>,
+  authDomain: 'my-new-project-123.firebaseapp.com',
+  databaseURL: 'https://my-new-project-123.firebaseio.com',
+  projectId: 'my-new-project-123',
+  storageBucket: 'my-new-project-123-.appspot.com',
+  messagingSenderId: <SENDER_ID>,
+  appId: <APP_ID>,
+}
+
+export default firebaseConfig
+```
+
+Let's also install Firebase into our app:
+
+```
+yarn add firebase
+
+or
+
+npm install firebase
+```
+
+Back to our main `use-auth.js`, we'll update our imports to include Firebase.
+
+```js
+import React from 'react'
+import firebaseConfig from '../path/to/credentials/firebase-config'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+```
+
+Now, when our component initially mounts, we'll want to setup what Firebase calls an `onAuthStateChanged` listener.
+What this does is sets up a listener that fires any time authorization changes within our app. The
+naming is nice and descriptive 😄. Let's set up a `React.useEffect` that is called only on our
+component's initial mount:
+
+```js
+React.useEffect(() => {
+  // Setup Firebase authentication state observer and get user data.
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig)
+  }
+
+  // Whenever we sign in or out users, authStateChanged callback will be triggered.
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in.
+      dispatch({
+        type: AuthProvider.actions.setUser,
+        payload: {
+          user,
+        },
+      })
+    } else {
+      // User is signed out.
+      dispatch({
+        type: AuthProvider.actions.setUser,
+        payload: {
+          user: null,
+        },
+      })
+    }
+  })
+}, [])
+```
+
+Let's go up to our `reducer` and write the logic for our `AuthProvider.actions.setUser`. This will
+update our `user` state based on whatever value `authStateChanged` returns:
+
+```js
+const reducer = (state, action) => {
+  switch (action.type) {
+    case AuthProvider.actions.setUser:
+      return {
+        user: action.payload.user,
+        isInitiallyLoading: false,
+        isLoading: false,
+      }
+    default:
+      throw new Error(`No case for type ${action.type} found.`)
+  }
+}
+```
+
+We're actually almost done here! Now, on a full page refresh, we'll be displaying a full page
+loading view, then initiating Firebase's `onAuthStateChanged` listener, which will return to a valid
+or invalid user object. We then take the returned user value and dispatch a state update based on
+whatever that value is!
