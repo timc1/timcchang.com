@@ -58,7 +58,7 @@ We'll go over the following:
 
 1. Setting up our component
 2. Initiating Firebase
-3. Implementing signup, signin, and sendResetEmail methods
+3. Implementing signup, signin, and sendResetPasswordEmail methods
 4. Caveats and gotchas
 
 ## Setting up our component
@@ -243,3 +243,18 @@ We're actually almost done here! Now, on a full page refresh, we'll be displayin
 loading view, then initiating Firebase's `onAuthStateChanged` listener, which will return to a valid
 or invalid user object. We then take the returned user value and dispatch a state update based on
 whatever that value is!
+
+### Implementing signup, signin, and sendResetPasswordEmail methods
+
+This part is super simple! Firebase exposes a series of APIs for us to authenticate, register a new
+user, send reset password emails, and more. They literally handle everything 🙏.
+
+In this post we will only be using the following APIs:
+
+- `createUserWithEmailAndPassword`
+- `signInWithEmailAndPassword`
+- `signOut`
+- `sendPasswordResetEmail`
+
+We will simply wrap those APIs in our own functions, adding just a little bit of extra logic to
+update state. Let's go through each method:
