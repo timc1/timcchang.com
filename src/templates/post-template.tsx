@@ -292,6 +292,14 @@ const Content = styled.section`
     margin-bottom: 1.5em;
   }
 
+  hr {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    border: none;
+    height: 1px;
+    background: var(--color-light-2);
+  }
+
   ${mq[1]} {
     padding-top: 1.5em;
     padding-bottom: 1.5em;

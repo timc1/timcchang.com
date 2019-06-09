@@ -1,0 +1,61 @@
+---
+title: 'Simple User Authentication In React Using Firebase'
+subtitle: 'Building a simple React Hook using Firebase that manages all app authentication'
+keywords: ['React', 'Hooks', 'Firebase', 'User Authentication']
+breadcrumbs: ['React', 'Firebase']
+date: '2019-06-08'
+type: 'post'
+---
+
+My current side project requires authorized users to create events. This time around I wanted to try out Google's Firebase
+— after a bit of research, docs, and playing around with the examples, I was amazed at how simple
+authentication can be!
+
+Firebase exposes a series of APIs that handle _all_ user authentication - we can simply wrap the
+APIs with a single, reusable component.
+
+In this post we will be creating a single React hook that uses Firebase to easily manage user
+authentication that you can use throughout your app.
+
+Here's how it can be used:
+
+```js
+const authorizedRoutes = [
+  { path: '/', exact: true, component: Index },
+  { path: '*', exact: true, component: () => <Redirect to="/" /> },
+]
+
+const noUserRoutes = [
+  { path: '/login', exact: true, component: Login },
+  { path: '/signup', exact: true, component: Signup },
+  { path: '/reset-password', exact: true, component: ResetPassword },
+  { path: '*', exact: true, component: () => <Redirect to="/login" /> },
+]
+
+export default function App() {
+  const context = useAuth()
+  const routes = context.user ? authorizedRoutes : noUserRoutes
+
+  return (
+    <Layout>
+      <Router>
+        <Switch>
+          {routes.map(r => (
+            <Route key={r.path} {...r} />
+          ))}
+        </Switch>
+      </Router>
+    </Layout>
+  )
+}
+```
+
+Instead of publishing the code as a module, I just created a gist
+which you can find on [Github](). Simply copy and paste it into your app, and edit the code based on your
+needs!
+
+We'll go over the following:
+
+1. Setting our component
+2. Initiating Firebase
+3. Implementing signup, signin, and sendResetEmail methods
