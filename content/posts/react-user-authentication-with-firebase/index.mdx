@@ -20,18 +20,6 @@ authentication that you can use throughout your app.
 Here's how it can be used:
 
 ```js
-const authorizedRoutes = [
-  { path: '/', exact: true, component: Index },
-  { path: '*', exact: true, component: () => <Redirect to="/" /> },
-]
-
-const noUserRoutes = [
-  { path: '/login', exact: true, component: Login },
-  { path: '/signup', exact: true, component: Signup },
-  { path: '/reset-password', exact: true, component: ResetPassword },
-  { path: '*', exact: true, component: () => <Redirect to="/login" /> },
-]
-
 export default function App() {
   const context = useAuth()
   const routes = context.user ? authorizedRoutes : noUserRoutes
@@ -258,3 +246,275 @@ In this post we will only be using the following APIs:
 
 We will simply wrap those APIs in our own functions, adding just a little bit of extra logic to
 update state. Let's go through each method:
+
+#### createUserWithEmailAndPassword
+
+```js
+const signup = (email, password, displayName) => {
+  toggleLoading(true)
+
+  let user: any
+
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      user = firebase.auth().currentUser
+      user.sendEmailVerification()
+    })
+    .then(() => {
+      user.updateProfile({
+        displayName,
+      })
+    })
+    .then(() => {
+      toggleLoading(false)
+    })
+    .catch(function(error) {
+      // Handle Errors here - you can dispatch some action here that
+      // displays an error message.
+      const errorCode = error.code
+      const errorMessage = error.message
+
+      console.log('errorCode', errorCode, 'errorMessage', errorMessage)
+      toggleLoading(false)
+    })
+}
+```
+
+Firebase's `createUserWithEmailAndPassword` API only creates a user with an email and password;
+however, when signing up new users we also want to add their names.
+
+In our case, once `createUserWithEmailAndPassword` finishes, we'll take the updated user and
+additionally call `updateProfile`, updating the user's displayName.
+
+#### signInWithEmailAndPassword
+
+```js
+const signin = (email, password) => {
+  toggleLoading(true)
+
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(() => {
+      toggleLoading(false)
+    })
+    .catch(function(error) {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+
+      console.log('errorCode', errorCode, 'errorMessage', errorMessage)
+      toggleLoading(false)
+    })
+}
+```
+
+#### signOut
+
+```js
+const signout = () => {
+  toggleLoading(true)
+
+  firebase
+    .auth()
+    .signOut()
+    .then(function() {
+      // Sign-out successful.
+      toggleLoading(false)
+    })
+    .catch(function(error) {
+      // An error happened.
+      toggleLoading(false)
+    })
+}
+```
+
+#### sendPasswordResetEmail
+
+```js
+const sendResetPasswordEmail = email => {
+  toggleLoading(true)
+
+  firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .then(function() {
+      // Email sent.
+      toggleLoading(true)
+    })
+    .catch(function(error) {
+      // An error happened.
+      toggleLoading(false)
+      console.log('error', error)
+    })
+}
+```
+
+We'll add these new methods to our Context value.
+
+```js
+// const value = {
+//   user: initialUser || state.user,
+//   isLoading: state.isLoading,
+// }
+
+const value = {
+  user: initialUser || state.user,
+  isLoading: state.isLoading,
+  signup,
+  signin,
+  signout,
+  sendResetPasswordEmail,
+}
+```
+
+Okay great! Everything is pretty much done. Let's wrap our entire component with a simple hook
+— this is what users of our API will import and use:
+
+```js
+export default function useAuth() {
+  const context = React.useContext(AuthContext)
+
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+
+  return context
+}
+```
+
+The last step is to wrap our `App` within the `AuthProvider` that we created. This will allow all
+nested child components to have access to our Context. In `index.js`:
+
+```js
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+
+import { AuthProvider } from './path/to/use-auth'
+
+ReactDOM.render(
+  <AuthProvider>
+    <App />
+  </AuthProvider>,
+  document.getElementById('root')
+)
+```
+
+Booom. Done! 🎉 We've created a component which uses React's Context and Hooks to interface with
+Firebase's APIs to provide any components within our app access to user authentication!
+
+Say we are in our `<Signup />` component and we want to handle signing users up. We simply do the
+following:
+
+```js
+import React from 'react'
+import useAuth from '../path/to/use-auth'
+
+export default function Signup() {
+  const { isLoading, signup } = useAuth()
+
+  return (
+    <Form onSubmit={signup}>
+      <Label htmlFor="email" />
+      <Input />
+      <Label htmlFor="password" />
+      <Input />
+      <Button disabled={isLoading} type="submit">
+        {isLoading ? 'Signing up...' : 'Sign up'}
+      </Button>
+    </Form>
+  )
+}
+```
+
+### Caveats and gotchas
+
+While building out my project, I noticed that when we initially call `createUserWithEmailAndPassword`
+during signup, our user is created and `onAuthStateChanged` callback is triggered prior to
+`user.updateProfile` completes. I figured it has to do with `updateProfile` being an async API.
+
+So when we first signup a user and our `user` state is updated, the user's `displayName` property
+will still be null.
+
+To combat this issue, we can edit our `onAuthStateChanged` callback and `signup` code and do a little workout like this:
+
+```js
+// Set a flag to determine if onAuthStateChange is triggered from signup.
+const signingInSoDontDispatchOnAuthStateChange = React.useRef(false)
+
+React.useEffect(() => {
+  // ...
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // If our onAuthStateChanged is called after a user signs up, we
+      // won't dispatch any updates here. Instead, we'll dispatch the
+      // update in our signup method.
+      if (signingInSoDontDispatchOnAuthStateChange.current) {
+        signingInSoDontDispatchOnAuthStateChange.current = false
+        return
+      }
+
+      dispatch({
+        type: AuthProvider.actions.setUser,
+        payload: {
+          user,
+        },
+      })
+    } else {
+      // ...
+    }
+  })
+}, [])
+
+const signup = (email, password, displayName) => {
+  signingInSoDontDispatchOnAuthStateChange.current = true
+
+  toggleLoading(true)
+
+  let user: any
+
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      user = firebase.auth().currentUser
+      user.sendEmailVerification()
+    })
+    .then(() => {
+      user.updateProfile({
+        displayName,
+      })
+    })
+    .then(() => {
+      toggleLoading(false)
+      // Set user with displayName here because user.updateProfile
+      // is async and our onAuthStateChanged listener will fire
+      // before the user is updated. When that happens, user.displayName
+      // value will be null. Now, our user state will be updated with
+      // a valid displayName.
+      // Reference: https://github.com/firebase/firebaseui-web/issues/36
+      const updatedUserWithDisplayName = {
+        ...user,
+        displayName,
+      }
+
+      dispatch({
+        type: AuthProvider.actions.setUser,
+        payload: {
+          user: updatedUserWithDisplayName,
+        },
+      })
+    })
+    .catch(function(error) {
+      // ...
+    })
+}
+```
+
+And that's it! If you have any questions or have found an alternative way of simplifying user
+authentication in your React app, please feel free to reach out to me on
+[Twitter](https://twitter.com/timcchang). Until then, have fun building your UI!

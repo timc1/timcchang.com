@@ -279,6 +279,11 @@ const Content = styled.section`
     margin: 1.5em 0;
   }
 
+  h4,
+  h5 {
+    font-size: var(--font-small);
+  }
+
   h1 {
     font-size: var(--font-large);
   }
