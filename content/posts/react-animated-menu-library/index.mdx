@@ -1,0 +1,192 @@
+---
+title: 'Building a React component that handles all visual state for menus and lists'
+subtitle: 'Combining a compound component with a render prop to create a simple, toggleable menu UI'
+keywords: ['React', 'Compound Components', 'Render Props', 'UI']
+breadcrumbs: ['React', 'Open Source']
+date: '2019-06-13'
+type: 'post'
+---
+
+While building the dashboard menu interface for my side project, I wanted to make the transitions
+between each menu opening and closing smooth. After a few iterations and going through different
+concepts of how to tackle this requirement, I found that a combination of a compound component
+paired with a render prop worked great - giving the end API user little to no additional work.
+
+Here's how the current implementation looks:
+
+# Image 1
+
+The repository can be found on [Github](https://github.com/timc1/react-animated-menu) and the
+library can be installed as a dependency in your project.
+
+```
+npm install --save react-animated-menu
+
+or
+
+yarn add -D react-animated-menu
+```
+
+In this post I will go over the specifics of how this implementation works. Here's the timeline:
+
+1. UI requirements
+2. State management - Why use both a compound component and a render prop?
+3. Building our compound component
+4. Building our render prop
+
+## UI requirements
+
+1. Given a markup structure like the following, we want to dynamically animate in and out the menu's
+   `ul` based on whether that specific menu is open.
+
+```html
+<aside className="menu">
+  <button>Dashboard</button>
+  <ul>
+    <li>
+      <a href="/dashboard/home">Home</a>
+    </li>
+    <li>
+      <a href="/dashboard/manage-users">Manage Users</a>
+    </li>
+  </ul>
+  <button>Account</button>
+  <ul>
+    <li>
+      <a href="/account/profile">Profile</a>
+    </li>
+    <li>
+      <a href="/account/settings">Settings</a>
+    </li>
+    <li>
+      <a href="/account/privacy">Privacy</a>
+    </li>
+  </ul>
+</aside>
+```
+
+2. Let our component manage all state and logic for opening and closing menu items based on
+   its internal state — exposing only the necessary properties for our end user to plug and play and just
+   make things work.
+
+3. Allow our end user to specify:
+
+- How many menu items can be open at once
+- Which menu items are initially opened
+- The opening/closing animation speed and ease
+
+## State Management
+
+I decided to go with a combination of using a compund component, `DynamicMenu`, for the main component, which our
+user will wrap around their entire menu component, and a render prop `MenuItem`, for each item within the menu.
+
+So in the above example, the compound component will wrap the entire `aside` while each `button`/`ul` combo will be
+wrapped by the render prop. This is how we want to use the component:
+
+```js
+import DynamicMenu, { MenuItem } from 'react-animated-menu'
+
+export default function Menu() {
+  return (
+    <aside>
+      {/* Wrap the menu in a Higher Ordered Component */}
+      <DynamicMenu
+        initialOpenIndex={0}
+        easeDuration={150}
+        numberOfMenusThatCanBeOpenedAtOnce={1}
+      >
+        {/* Each menu toggler and the menu list content must be wrapped by a MenuItem
+            render prop - and spreading the prop getters to their respective sections. */}
+        <MenuItem>
+          {({ isOpen, getToggleProps, getMenuProps, getLinkProps }) => (
+            <>
+              <button {...getToggleProps()} isOpen={isOpen}>
+                Dashboard
+              </button>
+              <ul {...getMenuProps()}>
+                {dashboardPaths.map(p => (
+                  <li key={p.route}>
+                    <Link to={`/${p.route}/`} {...getLinkProps()}>
+                      {p.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </MenuItem>
+      </DynamicMenu>
+    </aside>
+  )
+}
+```
+
+#### DynamicMenu
+
+Our compound component will manage a single state, `currentOpenIndex`, which is an array of numbers
+representing the index of open menu items. It will pass a prop, `isOpen`, to all child `MenuItem`
+components.
+
+#### MenuItem
+
+Nested within `DynamicMenu` is any number of `MenuItem`s.
+
+This component, given the `isOpen` prop from `DynamicMenu`, will return a series of prop getters
+that our end user will use to spread values onto their own components.
+
+Let's dive deeper into each component!
+
+## Building our compound component
+
+Using `React.Children.map`, we can map through each child node of a component and, if a specific
+condition that we set is matched, we can use `React.cloneElement` to pass additional props to the
+component.
+
+Because we want to check every nested child from `DynamicMenu`, we'll create a recursive
+implementation of `React.Children.map`.
+
+```js
+export default function DynamicMenu({ children }) {
+  // For now, just set the current open index to 0,
+  // the first MenuItem component.
+  const [currentOpenIndex, setOpenIndex] = React.useState(0)
+
+  const mapPropsToChildren = children => {
+    let indexOfMatchedChildrenComponents = 0
+
+    const recursiveMap = children => {
+      return React.Children.map(children, child => {
+        if (!React.isValidElement(child)) {
+          return child
+        }
+
+        if (child.type.displayName === MenuItem.displayName) {
+          const cachedIndex = indexOfMatchedChildrenComponents
+          child = React.cloneElement(child, {
+            onClick: () => setOpenIndex(cachedIndex),
+            isOpen: cachedIndex === currentOpenIndex,
+          })
+          indexOfMatchedChildrenComponents++
+
+          return child
+        }
+
+        if (child.props.children) {
+          child = React.cloneElement(child, {
+            children: recursiveMap(child.props.children),
+          })
+        }
+
+        return child
+      })
+    }
+
+    return recursiveMap(children)
+  }
+  return mapPropsToChildren(children)
+}
+```
+
+> Note: In the actual implementation of this component, we allow the ability for have
+> multiple menu items to be open (see [here](https://github.com/timc1/react-animated-menu/blob/master/src/dynamic-menu.tsx)).
+> State is stored as an array of numbers. But for this post, we'll skip this added feature.

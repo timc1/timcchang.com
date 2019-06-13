@@ -305,6 +305,16 @@ const Content = styled.section`
     background: var(--color-light-2);
   }
 
+  blockquote {
+    p {
+      color: var(--color-dark-2);
+    }
+    p,
+    a {
+      font-size: var(--font-x-small);
+    }
+  }
+
   ${mq[1]} {
     padding-top: 1.5em;
     padding-bottom: 1.5em;
