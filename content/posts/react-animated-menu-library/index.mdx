@@ -7,6 +7,9 @@ date: '2019-06-13'
 type: 'post'
 ---
 
+import Image from 'components/shared/img'
+import demo from 'assets/images/react-animated-menu.gif'
+
 While building the dashboard menu interface for my side project, I wanted to make the transitions
 between each menu opening and closing smooth. After a few iterations and going through different
 concepts of how to tackle this requirement, I found that a combination of a compound component
@@ -14,7 +17,7 @@ paired with a render prop worked great - giving the end API user little to no ad
 
 Here's how the current implementation looks:
 
-# Image 1
+<Image src={demo} alt="react animated menu demo" shadow />
 
 The repository can be found on [Github](https://github.com/timc1/react-animated-menu) and the
 library can be installed as a dependency in your project.
@@ -189,4 +192,202 @@ export default function DynamicMenu({ children }) {
 
 > Note: In the actual implementation of this component, we allow the ability for have
 > multiple menu items to be open (see [here](https://github.com/timc1/react-animated-menu/blob/master/src/dynamic-menu.tsx)).
-> State is stored as an array of numbers. But for this post, we'll skip this added feature.
+> State is stored as an array of numbers. But for this post, we'll skip this added feature. We'll
+> also remove easeDuration and numberOfMenusThatCanBeOpenedAtOnce so we can focus on the main
+> function of the component.
+
+So, let's break down what's happening here. Our `DynamicMenu` will recursively map through each
+child component and increment a count, `indexOfMatchedChildrenComponents`, for each `MenuItem` that
+is found. If the child component is a `MenuItem`, it will apply two props to the component:
+`onClick`, which will update the `currentOpenIndex` state, and `isOpen`, a boolean value to flag
+whether this specific `MenuItem` is open.
+
+Taking the `isOpen` prop, let's create our `MenuItem` component, which will take the prop and update
+the UI.
+
+## Building our render prop
+
+`MenuItem` will expose a few prop getters for our end user to use spread across their respective components:
+
+- `getToggleProps` - adds ARIA attributes and click events to the menu button/toggler
+- `getMenuProps` - adds ARIA attributes and a `ref` to the menu for our component to reference the DOM node and manipulate its CSS properties
+- `getLinkProps` - adds `tab-index` values to links within a menu item based on whether the menu is
+  open or not
+
+Let's set that up:
+
+```js
+export function MenuItem(props) {
+  const { isOpen, onClick } = props
+  const container = React.useRef()
+
+  const getToggleProps = () => ({
+    onClick: isAnimating ? () => {} : onClick,
+    'aria-haspopup': true,
+    'aria-expanded': isOpen,
+  })
+
+  const getMenuProps = () => ({
+    ref: container,
+    'aria-hidden': !isOpen,
+  })
+
+  const getLinkProps = () => ({
+    tabIndex: isOpen ? '0' : '-1',
+  })
+
+  return children({
+    getToggleProps,
+    getMenuProps,
+    getLinkProps,
+    isOpen,
+  })
+}
+
+MenuItem.displayName = `MenuItem`
+```
+
+The primary logic behind this component comes from a single effect hook. Every time our
+`isOpen` prop updates, we'll want to determine how to handle transitioning the menu element's
+`height`.
+
+> Note: I know, we should be animating CSS transforms BUT
+> `transform: scaleY()` will require us to have to
+> calculate how much to translateY each MenuItem
+> that comes after this, also making it more confusing
+> when we have to allow multiple MenuItems to be open.
+> Let's not do that right now. 😳
+
+Every time the `isOpen` prop is updated from `DynamicMenu`, this component will run an [effect](https://reactjs.org/docs/hooks-reference.html#uselayouteffect):
+
+```js
+export function MenuItem(props) {
+  // ...
+  // const container = React.useRef()
+
+  // A flag to tell if we are coming from an initial render.
+  // On initial render we won't want to do any animating,
+  // but just immediately set the position.
+  const initialRender = React.useRef(false)
+  // Cache the height of our menu item on initial load
+  // so when we animate we'll know how much the target
+  // height will be.
+  const cachedHeight = React.useRef(0)
+  React.useLayoutEffect(() => {
+    const node = container.current
+    if (!node) {
+      throw new Error(
+        `The component that you apply getMenuProps to 
+        will need to be wrapped in a React.forwardRef(). 
+        Please see: https://reactjs.org/docs/forwarding-refs.html`
+      )
+    }
+
+    let animationId = -1
+    let animationStartTime: any = null
+    let from = 0
+    let to = 0
+
+    // We will use requestAnimationFrame to transition the
+    // list's height.
+    const animateHeight = () => {
+      const difference = to - from
+      const elapsed = Date.now() - animationStartTime
+
+      animationId = requestAnimationFrame(animateHeight)
+
+      if (elapsed < 250) {
+        cancelAnimationFrame(animationId)
+        let ease: number = Number(easeFn(elapsed / 250).toFixed(2))
+
+        if (difference < 0) {
+          ease = 1 - ease
+        }
+
+        const height = Math.abs(ease * difference) + 'px'
+        node.style.height = height
+        node.style.opacity = String(ease)
+        node.style.position = 'relative'
+
+        animationId = requestAnimationFrame(animateHeight)
+      } else {
+        // Reset height to auto if we're scaling up.
+        if (difference < 0) {
+          node.style.height = '0px'
+          node.style.opacity = '0'
+        } else {
+          node.style.height = 'auto'
+          node.style.opacity = '1'
+        }
+
+        cancelAnimationFrame(animationId)
+        setAnimating(false)
+      }
+    }
+
+    // We only animate after the component has already
+    // initially rendered.
+    if (initialRender.current) {
+      animationStartTime = Date.now()
+      setAnimating(true)
+
+      if (isOpen) {
+        // Animate open.
+        from = 0
+        to = cachedHeight.current
+        animateHeight()
+      } else {
+        // Animate close.
+        from = cachedHeight.current
+        to = 0
+        animateHeight()
+      }
+    } else {
+      // We'll use setTimeout here because on initialRender,
+      // it seems like getBoundingClientRect returns a slightly
+      // off value for the element's size. With setTimeout,
+      // we'll get an accurate size.
+      setTimeout(() => {
+        cachedHeight.current = node.getBoundingClientRect().height
+        // Once we have the accurate height of the element, we'll
+        // set its height to 0px. Since everything is hidden we
+        // won't see any flashes.
+        if (!isOpen && node) node.style.height = '0px'
+      }, 100)
+
+      if (isOpen) {
+        node.style.opacity = '1'
+        node.style.position = 'relative'
+      } else {
+        node.style.opacity = '0'
+        node.style.position = 'absolute'
+      }
+      node.style.overflow = 'hidden'
+
+      initialRender.current = true
+    }
+
+    // Cleanup.
+    return () => cancelAnimationFrame(animationId)
+  }, [isOpen])
+
+  // ...
+}
+```
+
+A few things are happening here —
+
+1. On initial load, we'll cache the original height of the node that our `container` ref is
+   referencing. This will allow us to know how much to programatically resize our menu during
+   animation.
+2. If we're coming from an initial render, we immediately size the elements; if not, we'll
+   smoothly transition the resizing.
+3. When implementing a smooth `height` transition, we use `requestAnimationFrame` to use
+   Javascript to manipulate the menu's height over a set `duration` (In our example, 150ms).
+
+And that should be it! We now have two components, leveraging both the compound component and render
+prop model to create two simple components that handle all logic for building on an accessible and
+snappy menu UI.
+
+If you have suggestions, questions, or have found ways to continue improving this project, please
+feel free to reach out to me on [Twitter](https://twitter.com/timcchang)!
