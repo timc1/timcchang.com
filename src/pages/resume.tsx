@@ -52,7 +52,7 @@ const ResumeIndex = () => {
             product. 
           </PlainText>
           <PlainText className="text">
-            I currently live and work in Los Angeles.
+            I currently live and work in San Francisco.
           </PlainText>
 
           <SectionTitle className="text">Work Experience</SectionTitle>
@@ -61,12 +61,11 @@ const ResumeIndex = () => {
             <Role>
               <RoleTitle>Independent Product Developer</RoleTitle>
               <p>
-                In mid 2017 I made a decision to put full attention toward
+                In mid 2017 I made a decision to put full efforts toward
                 learning web development. It is something that's always been of
                 interest, but with many things creative, I had imposter
                 syndrome. I bit the bullet, moved down to LA, and started
-                learning and making things. I've learned that we have to build
-                many, many things in order to get good at this.
+                learning and making things.
               </p>
               <p>I've also ventured into contracted client work. Recently:</p>
               <ul>

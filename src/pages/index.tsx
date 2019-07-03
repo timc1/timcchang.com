@@ -11,9 +11,16 @@ export default function Index() {
     <PageLayout footerComponent={<Footer />}>
       <Container>
         <Header>
-          Hello, I'm <HighlightedLink to="/">Tim</HighlightedLink>, a product
-          designer and developer. Currently I am based in Los Angeles working on
-          selective client and independent projects.
+          Hello, I'm <HighlightedLink to="/">Tim</HighlightedLink>, a software
+          engineer currently based in San Francisco. I work at{' '}
+          <OuterLink
+            href="https://abstract.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Abstract
+          </OuterLink>{' '}
+          alongside selective client and independent projects.
         </Header>
         <Header>
           Here are my learnings within UI design, development, and connecting
@@ -41,5 +48,18 @@ const Container = styled.section`
   // prettier-ignore
   ${Header}:not(:last-of-type) {
     margin-bottom: var(--font-medium);
+  }
+`
+
+const OuterLink = styled.a`
+  color: var(--color-dark-2);
+  transform: skewY(-8deg) rotate(8deg);
+  display: inline-block;
+  text-decoration: none;
+
+  @media (hover: hover) {
+    :hover {
+      color: var(--color-dark-3);
+    }
   }
 `
