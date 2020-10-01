@@ -2,7 +2,7 @@
 
 Portfolio & blog using Gatsby.js! (https://timcchang.com/)
 
-Previously,
+Previous Versions, 
 
 [First Version](https://v0.timcchang.com)
 
