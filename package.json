@@ -67,7 +67,7 @@
     "gatsby-remark-prismjs": "^3.2.4",
     "gatsby-transformer-remark": "^2.2.5",
     "prettier": "^1.16.4",
-    "prismjs": "^1.15.0",
+    "prismjs": "^1.25.0",
     "typescript": "^3.3.3333"
   }
 }
