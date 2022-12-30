@@ -10,7 +10,7 @@
     "@mdx-js/mdx": "^0.15.7",
     "@mdx-js/tag": "^0.15.6",
     "emotion-theming": "^10.0.7",
-    "gatsby": "^2.1.4",
+    "gatsby": "^2.32.13",
     "gatsby-image": "^2.0.29",
     "gatsby-mdx": "^0.1.4",
     "gatsby-plugin-layout": "^1.0.12",
